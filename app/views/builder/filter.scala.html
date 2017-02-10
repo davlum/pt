@@ -1,0 +1,29 @@
+@import models.pivottable.PivotTable
+
+@(pivotTable : PivotTable)
+
+<div class="panel panel-default">
+  <div class="panel-heading">Values
+      <a data-toggle="modal" data-target="#filtersModal">
+        <i class="fa fa-plus mrgT3 addSign pull-right"></i>
+      </a>
+    </div>
+  <div class="panel-body">
+  @for(filter <- pivotTable.getFiltersList){
+    <div class="padB10">
+      @filter.getField.getFieldName
+    <a data-toggle="modal" data-target="#filtersModal">
+      <i class="fa fa-info mrgT3 pull-right"></i>
+    </a>
+    <a class="red" href="@routes.PivotTableController.deleteValue(filter.getId)">
+      <i class="fa fa-times mrgT3 pull-right"></i>
+    </a>
+    </div>
+  }
+  </div>
+</div>
+
+
+@for(filter <- pivotTable.getFiltersList){
+
+}

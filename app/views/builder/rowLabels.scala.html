@@ -1,0 +1,23 @@
+@import models.pivottable.PivotTable
+
+@(pivotTable : PivotTable)
+
+<div class="panel panel-default">
+  <div class="panel-heading">Row Labels
+    @if(pivotTable.getPivotRowList.size() < 2){
+      <a data-toggle="modal" data-target="#rowLabelsModal">
+        <i class="fa fa-plus mrgT3 addSign pull-right"></i>
+      </a>
+    }
+  </div>
+  <div class="panel-body">
+      @for(row <- pivotTable.getPivotRowList){
+          <div class="padB10">
+            @row.getField.getFieldName
+            <a class="red" href="@routes.PivotTableController.deleteRow(row.getId)">
+              <i class="fa fa-times danger mrgT3 pull-right"></i>
+            </a>
+          </div>
+      }
+  </div>
+</div>

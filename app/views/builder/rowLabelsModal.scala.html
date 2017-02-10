@@ -1,0 +1,35 @@
+@import helper._
+@import models.pivottable.PivotTable
+@import utils.FieldForm
+
+
+@(pivotTable : PivotTable,rowForm : play.data.Form[FieldForm])
+
+<!-- Modal -->
+<div id="rowLabelsModal" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+
+      <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Row Labels</h4>
+      </div>
+      @helper.form(controllers.routes.PivotTableController.addRow(), 'enctype -> "multipart/form-data", 'class -> "rowForm",  'id -> "rowForm"){
+        @CSRF.formField
+        <div class="modal-body">
+          @select(
+            field = rowForm("fieldID"),
+            options = pivotTable.availableFields.map(field => field.getId.toString -> field.getFieldName),
+            '_default -> "Please Select a Field"
+          )
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      }
+    </div>
+
+  </div>
+</div>
