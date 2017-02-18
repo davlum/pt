@@ -4,20 +4,24 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">Values
-        @if(pivotTable.getPivotRowList.size() < 2){
+
+        @if(pivotTable != null && pivotTable.getPivotRowList.size() < 2){
             <a data-toggle="modal" data-target="#valuesModal">
                 <i class="fa fa-plus mrgT3 addSign pull-right"></i>
             </a>
         }
         </div>
     <div class="panel-body">
-    @for(value <- pivotTable.getValuesList){
-        <div class="padB10">
-            @value.getField.getFieldName - @value.getPivotValueType.getDisplayName
-        <a class="red" href="@routes.PivotTableController.deleteValue(value.getId)">
-            <i class="fa fa-times danger mrgT3 pull-right"></i>
-        </a>
-        </div>
+    @if(pivotTable != null) {
+
+        @for(value <- pivotTable.getValuesList){
+            <div class="padB10">
+                @value.getField.getFieldName - @value.getPivotValueType.getDisplayName
+            <a class="red" href="@routes.PivotTableController.deleteValue(value.getId)">
+                <i class="fa fa-times danger mrgT3 pull-right"></i>
+            </a>
+            </div>
+        }
     }
     </div>
 </div>

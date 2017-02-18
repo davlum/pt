@@ -18,11 +18,14 @@
       @helper.form(controllers.routes.PivotTableController.addRow(), 'enctype -> "multipart/form-data", 'class -> "rowForm",  'id -> "rowForm"){
         @CSRF.formField
         <div class="modal-body">
-          @select(
-            field = rowForm("fieldID"),
-            options = pivotTable.availableFields.map(field => field.getId.toString -> field.getFieldName),
-            '_default -> "Please Select a Field"
-          )
+            @if(pivotTable != null) {
+
+              @select(
+                field = rowForm("fieldID"),
+                options = pivotTable.availableFields.map(field => field.getId.toString -> field.getFieldName),
+                '_default -> "Please Select a Field"
+              )
+            }
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
