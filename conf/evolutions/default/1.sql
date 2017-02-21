@@ -40,7 +40,12 @@ create table filter (
 create table filter_valid_value (
   id                            bigserial not null,
   filter_id                     bigint,
-  valid_value                   varchar(255),
+  value_type                    varchar(255),
+  specific_value                varchar(255),
+  start_date                    timestamptz,
+  end_date                      timestamptz,
+  min_value                     bigint,
+  max_value                     bigint,
   constraint pk_filter_valid_value primary key (id)
 );
 

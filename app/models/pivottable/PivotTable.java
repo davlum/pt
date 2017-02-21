@@ -23,6 +23,9 @@ public class PivotTable extends Model {
     private List<PivotColumn> pivotColumnList;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<PivotPage> pivotPageList;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<PivotValue> valuesList;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -127,5 +130,13 @@ public class PivotTable extends Model {
 
     public void setFiltersList(List<Filter> filtersList) {
         this.filtersList = filtersList;
+    }
+
+    public List<PivotPage> getPivotPageList() {
+        return pivotPageList;
+    }
+
+    public void setPivotPageList(List<PivotPage> pivotPageList) {
+        this.pivotPageList = pivotPageList;
     }
 }
