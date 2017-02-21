@@ -24,7 +24,9 @@ create table company (
 create table field (
   id                            bigserial not null,
   field_name                    varchar(255),
+  field_type                    varchar(8),
   pivot_table_id                bigint,
+  constraint ck_field_field_type check ( field_type in ('String','Boolean','Integer','Number','Date','Time','DateTime')),
   constraint pk_field primary key (id)
 );
 
@@ -47,6 +49,13 @@ create table pivot_column (
   field_id                      bigint,
   pivot_table_id                bigint,
   constraint pk_pivot_column primary key (id)
+);
+
+create table pivot_page (
+  id                            bigserial not null,
+  field_id                      bigint,
+  pivot_table_id                bigint,
+  constraint pk_pivot_page primary key (id)
 );
 
 create table pivot_row (
@@ -113,6 +122,12 @@ create index ix_pivot_column_field_id on pivot_column (field_id);
 alter table pivot_column add constraint fk_pivot_column_pivot_table_id foreign key (pivot_table_id) references pivot_table (id) on delete restrict on update restrict;
 create index ix_pivot_column_pivot_table_id on pivot_column (pivot_table_id);
 
+alter table pivot_page add constraint fk_pivot_page_field_id foreign key (field_id) references field (id) on delete restrict on update restrict;
+create index ix_pivot_page_field_id on pivot_page (field_id);
+
+alter table pivot_page add constraint fk_pivot_page_pivot_table_id foreign key (pivot_table_id) references pivot_table (id) on delete restrict on update restrict;
+create index ix_pivot_page_pivot_table_id on pivot_page (pivot_table_id);
+
 alter table pivot_row add constraint fk_pivot_row_field_id foreign key (field_id) references field (id) on delete restrict on update restrict;
 create index ix_pivot_row_field_id on pivot_row (field_id);
 
@@ -149,6 +164,12 @@ drop index if exists ix_pivot_column_field_id;
 alter table if exists pivot_column drop constraint if exists fk_pivot_column_pivot_table_id;
 drop index if exists ix_pivot_column_pivot_table_id;
 
+alter table if exists pivot_page drop constraint if exists fk_pivot_page_field_id;
+drop index if exists ix_pivot_page_field_id;
+
+alter table if exists pivot_page drop constraint if exists fk_pivot_page_pivot_table_id;
+drop index if exists ix_pivot_page_pivot_table_id;
+
 alter table if exists pivot_row drop constraint if exists fk_pivot_row_field_id;
 drop index if exists ix_pivot_row_field_id;
 
@@ -175,6 +196,8 @@ drop table if exists filter cascade;
 drop table if exists filter_valid_value cascade;
 
 drop table if exists pivot_column cascade;
+
+drop table if exists pivot_page cascade;
 
 drop table if exists pivot_row cascade;
 

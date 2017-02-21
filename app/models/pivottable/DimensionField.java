@@ -4,10 +4,9 @@ import com.avaje.ebean.Model;
 import com.avaje.ebean.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.List;
 
-@Entity
-public class Filter extends Model {
+@MappedSuperclass
+public class DimensionField extends Model {
 
     @Id
     @GeneratedValue
@@ -18,13 +17,11 @@ public class Filter extends Model {
     @JsonIgnore
     private Field field;
 
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @ManyToOne(cascade= CascadeType.PERSIST, fetch= FetchType.LAZY)
     @JoinColumn(name = "pivot_table_id")
     @JsonIgnore
     private PivotTable pivotTable;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<FilterValidValue> filterValidValues;
 
     public Long getId() {
         return id;
@@ -48,13 +45,5 @@ public class Filter extends Model {
 
     public void setPivotTable(PivotTable pivotTable) {
         this.pivotTable = pivotTable;
-    }
-
-    public List<FilterValidValue> getFilterValidValues() {
-        return filterValidValues;
-    }
-
-    public void setFilterValidValues(List<FilterValidValue> filterValidValues) {
-        this.filterValidValues = filterValidValues;
     }
 }

@@ -4,6 +4,7 @@ import com.avaje.ebean.Model;
 import com.avaje.ebean.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 public class FilterValidValue extends Model {
@@ -17,7 +18,17 @@ public class FilterValidValue extends Model {
     @JsonIgnore
     private Filter filter;
 
-    private String validValue;
+    private String valueType;
+
+    private String specificValue;
+
+    private Date startDate;
+
+    private Date endDate;
+
+    private Long minValue;
+
+    private Long maxValue;
 
     public Long getId() {
         return id;
@@ -35,11 +46,51 @@ public class FilterValidValue extends Model {
         this.filter = filter;
     }
 
-    public String getValidValue() {
-        return validValue;
+    public String getValueType() {
+        return valueType;
     }
 
-    public void setValidValue(String validValue) {
-        this.validValue = validValue;
+    public void setValueType(String valueType) {
+        this.valueType = valueType;
+    }
+
+    public String getSpecificValue() {
+        return specificValue;
+    }
+
+    public void setSpecificValue(String specificValue) {
+        this.specificValue = specificValue;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public Long getMinValue() {
+        return minValue;
+    }
+
+    public void setMinValue(Long minValue) {
+        this.minValue = minValue;
+    }
+
+    public Long getMaxValue() {
+        return maxValue;
+    }
+
+    public void setMaxValue(Long maxValue) {
+        this.maxValue = maxValue;
     }
 }

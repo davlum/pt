@@ -15,6 +15,9 @@ public class Field extends Model {
 
     private String fieldName;
 
+    @Enumerated(EnumType.STRING)
+    private FieldType fieldType;
+
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "pivot_table_id")
     @JsonIgnore
@@ -25,6 +28,9 @@ public class Field extends Model {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<PivotColumn> pivotColumns;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<PivotPage> pivotPages;
 
     public static Model.Finder<Long, Field> find = new Model.Finder<>(Field.class);
 
@@ -60,4 +66,27 @@ public class Field extends Model {
         this.pivotColumns = pivotColumns;
     }
 
+    public List<PivotPage> getPivotPages() {
+        return pivotPages;
+    }
+
+    public void setPivotPages(List<PivotPage> pivotPages) {
+        this.pivotPages = pivotPages;
+    }
+
+    public PivotTable getPivotTable() {
+        return pivotTable;
+    }
+
+    public void setPivotTable(PivotTable pivotTable) {
+        this.pivotTable = pivotTable;
+    }
+
+    public FieldType getFieldType() {
+        return fieldType;
+    }
+
+    public void setFieldType(FieldType fieldType) {
+        this.fieldType = fieldType;
+    }
 }
