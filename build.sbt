@@ -12,5 +12,7 @@ libraryDependencies ++= Seq(
   javaWs,
   javaCore,
   filters,
-  "org.postgresql" % "postgresql" % "9.4.1212.jre7"
+  "org.postgresql" % "postgresql" % "9.4.1212.jre7",
+  "org.jooq" % "jooq" % "3.9.0",
+  "org.jooq" % "jooq-meta" % "3.9.0"
 )

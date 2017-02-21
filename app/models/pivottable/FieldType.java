@@ -1,6 +1,5 @@
 package models.pivottable;
 
-
 public enum FieldType {
     String("String"), Boolean("Boolean"), Integer("Integer"), Number("Number"),
     Date("Date"), Time("Time"), DateTime("DateTime");

@@ -3,6 +3,16 @@
 
 # --- !Ups
 
+create table csvconnection (
+  connection_id                 serial not null,
+  connection_path               varchar(255),
+  connection_name               varchar(255),
+  delimiter                     varchar(255),
+  quote_character               varchar(255),
+  newline_character             varchar(255),
+  constraint pk_csvconnection primary key (connection_id)
+);
+
 create table client (
   id                            bigserial not null,
   first_name                    varchar(255),
@@ -24,9 +34,15 @@ create table company (
 create table field (
   id                            bigserial not null,
   field_name                    varchar(255),
+<<<<<<< HEAD
   field_type                    varchar(8),
   pivot_table_id                bigint,
   constraint ck_field_field_type check ( field_type in ('String','Boolean','Integer','Number','Date','Time','DateTime')),
+=======
+  field_type                    integer,
+  pivot_table_id                bigint,
+  constraint ck_field_field_type check ( field_type in (0,1,2,3,4,5,6)),
+>>>>>>> 21aa999... work in progress for manman
   constraint pk_field primary key (id)
 );
 
@@ -101,6 +117,18 @@ create table product_sale (
   id                            bigserial not null,
   quantity                      bigint,
   constraint pk_product_sale primary key (id)
+);
+
+create table sqlconnection (
+  id                            serial not null,
+  connection_name               varchar(255),
+  connection_description        varchar(255),
+  connection_host               varchar(255),
+  connection_port               integer,
+  connection_user               varchar(255),
+  connection_password           varchar(255),
+  connection_dbname             varchar(255),
+  constraint pk_sqlconnection primary key (id)
 );
 
 create table sale (
@@ -190,6 +218,8 @@ drop index if exists ix_pivot_value_pivot_table_id;
 alter table if exists pivot_value drop constraint if exists fk_pivot_value_pivot_value_type_id;
 drop index if exists ix_pivot_value_pivot_value_type_id;
 
+drop table if exists csvconnection cascade;
+
 drop table if exists client cascade;
 
 drop table if exists company cascade;
@@ -215,6 +245,8 @@ drop table if exists pivot_value_type cascade;
 drop table if exists product cascade;
 
 drop table if exists product_sale cascade;
+
+drop table if exists sqlconnection cascade;
 
 drop table if exists sale cascade;
 
