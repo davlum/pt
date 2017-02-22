@@ -5,35 +5,36 @@ import models.connections.SQLConnection;
 import models.pivottable.Field;
 import models.pivottable.FieldType;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Entity
 public class SqlSource extends Model {
     @Id
     @GeneratedValue
     private Integer sourceId;
 
     private String sourceName;
+
     @ManyToOne
+    @JoinColumn(name = "sqlconnection_id")
     private SQLConnection connection;
 
     private String factTable;
 
-    private List<String> dimensionTables;
+    private ArrayList<String> dimensionTables;
 
     private String fromClause;
 
-    SqlSource(Long connectionId, String name, String fact, String fromClause)
+    public SqlSource(Long connectionId, String name, String fact, String fromClause)
     {
-        SQLConnection conn = SQLConnection.find.byId(connectionId);
+        connection = SQLConnection.find.byId(connectionId);
         sourceName = name;
         factTable = fact;
         this.fromClause = fromClause;
+        this.dimensionTables = new ArrayList<>();
     }
 
     public void addDimensionTable(String dimensionTable)
@@ -55,10 +56,6 @@ public class SqlSource extends Model {
 
     public String getFromClause() {
         return fromClause;
-    }
-
-    public Object connect() {
-        return null;
     }
 
     public static FieldType mapDatabaseFieldType(String dbType)
@@ -131,11 +128,13 @@ public class SqlSource extends Model {
                 }
             }
         }
+        conn.close();
         return fields;
     }
 
-    public void executeQuery(List<Field> dimensions,
+    public ResultSet executeQuery(List<Field> dimensions,
                         List<AggregateExpression> aggregates)
+            throws SQLException
     {
         ArrayList<String> fields = new ArrayList<>();
         for (Field s: dimensions) {
@@ -147,10 +146,10 @@ public class SqlSource extends Model {
         }
 
         String stmt = "SELECT " + String.join(", ", fields) + " " + fromClause + " GROUP BY " + String.join(", dimensions");
-//        build connection to db
-//        execute query
-//        fetch results
-//        profit!
-
+        Connection conn = connection.connect();
+        Statement s = conn.createStatement();
+        ResultSet r =  s.executeQuery(stmt);
+        conn.close();
+        return r;
     }
 }
