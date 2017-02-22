@@ -34,15 +34,9 @@ create table company (
 create table field (
   id                            bigserial not null,
   field_name                    varchar(255),
-<<<<<<< HEAD
   field_type                    varchar(8),
   pivot_table_id                bigint,
   constraint ck_field_field_type check ( field_type in ('String','Boolean','Integer','Number','Date','Time','DateTime')),
-=======
-  field_type                    integer,
-  pivot_table_id                bigint,
-  constraint ck_field_field_type check ( field_type in (0,1,2,3,4,5,6)),
->>>>>>> 21aa999... work in progress for manman
   constraint pk_field primary key (id)
 );
 
