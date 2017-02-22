@@ -3,6 +3,9 @@ package models.connections;
 import com.avaje.ebean.Model;
 
 import javax.persistence.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Created by hal on 2017-02-17.
@@ -12,6 +15,8 @@ public class SQLConnection extends Model {
     @Id
     @GeneratedValue
     private Integer id;
+
+    private String connectionDriver;
 
     private String connectionName;
 
@@ -71,4 +76,16 @@ public class SQLConnection extends Model {
     }
 
     public static Model.Finder<Long, SQLConnection> find = new Model.Finder<>(SQLConnection.class);
+
+    public String getUrl()
+    {
+        return "jdbc:" + connectionDriver + "://" + connectionHost + ":" + connectionPort + "/" + connectionDBName;
+    }
+
+    public Connection connect() throws SQLException {
+        return DriverManager.getConnection(
+                getUrl(),
+                connectionUser,
+                connectionPassword);
+    }
 }

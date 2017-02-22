@@ -21,17 +21,20 @@ public class ConnectionController extends Controller {
     }
 
     public Result index() {
-        SQLConnection existing = SQLConnection.find.byId(1L); // find.all(); find.eq("desc", "desc value")
+        SQLConnection existing;
+        existing = SQLConnection.find.byId(1L); // find.all(); find.eq("desc", "desc value")
         if (existing == null) {
-            (new SQLConnection(
+            existing = new SQLConnection(
                     "bixi", "database of bixi trips",
                     "ec2-52-90-93-63.compute-1.amazonaws.com",
                     5432, "bixi_pivot","bixi_select",
                     "select_bixi"
-            )).save();
+            );
+            existing.save();
+            return ok("new connection created");
         }
-        return ok("ok");
-
+        String json = "{\"host\": " +"\"" + existing.getConnectionHost() + "\"}";
+        return ok("existing connection.\n" + json);
     }
 
     public Result addSQLConnection() {
