@@ -14,13 +14,24 @@ public class ConnectionController extends Controller {
 
     private final FormFactory formFactory;
 
+
     @Inject
     public ConnectionController(FormFactory formFactory) {
         this.formFactory = formFactory;
     }
 
     public Result index() {
-        return ok("hello");
+        SQLConnection existing = SQLConnection.find.byId(1L); // find.all(); find.eq("desc", "desc value")
+        if (existing == null) {
+            (new SQLConnection(
+                    "bixi", "database of bixi trips",
+                    "ec2-52-90-93-63.compute-1.amazonaws.com",
+                    5432, "bixi_pivot","bixi_select",
+                    "select_bixi"
+            )).save();
+        }
+        return ok("ok");
+
     }
 
     public Result addSQLConnection() {

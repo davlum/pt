@@ -58,4 +58,17 @@ public class SQLConnection extends Model {
     public String getConnectionDBName() {
         return connectionDBName;
     }
+
+    public SQLConnection(String name, String desc, String host, Integer port, String db, String user, String password)
+    {
+        connectionName = name;
+        connectionDescription = desc;
+        connectionHost = host;
+        connectionPort = port;
+        connectionDBName = db;
+        connectionUser = user;
+        connectionPassword = password;
+    }
+
+    public static Model.Finder<Long, SQLConnection> find = new Model.Finder<>(SQLConnection.class);
 }
