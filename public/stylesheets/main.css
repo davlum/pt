@@ -75,3 +75,9 @@ body {
         margin-right: 0;
     }
 }
+
+
+textarea[name=connectionDescription] {
+    resize: none;
+    border: none;
+}
