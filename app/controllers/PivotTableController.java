@@ -76,7 +76,7 @@ public class PivotTableController extends Controller {
 
         PivotTableHandler handler = new PivotTableHandler(list, PivotTable.pivotTable());
 
-        return ok(index.render(handler, PivotTable.pivotTable(), rowForm, columnForm, valueForm));
+        return ok(pivot.render(handler, PivotTable.pivotTable(), rowForm, columnForm, valueForm));
     }
 
     public Result addRow(){

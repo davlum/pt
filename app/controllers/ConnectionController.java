@@ -7,18 +7,24 @@ import play.mvc.*;
 import views.html.datasources.datasources;
 import views.html.datasources.addCsv;
 import views.html.datasources.addSql;
+import views.html.connections;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public class ConnectionController extends AuthController {
 
-    private final FormFactory formFactory;
-
     private final String activeTab = "datasources";
+
+    private final FormFactory formFactory;
+    private Form<SQLConnection> sqlConnectionForm;
+    private Form<CSVConnection> csvConnectionForm;
 
     @Inject
     public ConnectionController(FormFactory formFactory) {
         this.formFactory = formFactory;
+        this.sqlConnectionForm = formFactory.form(SQLConnection.class);
+        this.csvConnectionForm = formFactory.form(CSVConnection.class);
     }
 
     public Result datasources(){
@@ -42,16 +48,20 @@ public class ConnectionController extends AuthController {
     }
 
     public Result index() {
-        SQLConnection existing = SQLConnection.find.byId(1L); // find.all(); find.eq("desc", "desc value")
-        if (existing == null) {
-            (new SQLConnection(
-                    "bixi", "database of bixi trips",
-                    "ec2-52-90-93-63.compute-1.amazonaws.com",
-                    5432, "bixi_pivot","bixi_select",
-                    "select_bixi"
-            )).save();
-        }
-        return ok("ok");
-
+        List<SQLConnection> sqlConnections = SQLConnection.find.all();
+        List<CSVConnection> csvConnections = CSVConnection.find.all();
+        return ok(connections.render(sqlConnections, csvConnections, sqlConnectionForm));
     }
+
+    /*public Result addSQLConnection() {
+
+        SQLConnection connection = sqlConnectionForm.bindFromRequest().get();
+        return null;
+    }
+
+    public Result addCSVConnection() {
+
+        CSVConnection connection = csvConnectionForm.bindFromRequest().get();
+        return null;
+    }*/
 }

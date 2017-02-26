@@ -20,15 +20,18 @@ POST                /datasources/sql/save                       controllers.Conn
 
 
 GET                 /pivot-table                                controllers.PivotTableController.index
+GET                 /index                                      controllers.IndexController.index
 
-POST                /add-row                                    controllers.PivotTableController.addRow()
-GET                 /delete-row/:id                             controllers.PivotTableController.deleteRow(id:Long)
 
-POST                /add-column                                 controllers.PivotTableController.addColumn()
-GET                 /delete-column/:id                          controllers.PivotTableController.deleteColumn(id:Long)
+GET                 /pivot                                      controllers.PivotTableController.index
+POST                /pivot/add-row                              controllers.PivotTableController.addRow()
+GET                 /pivot/delete-row/:id                       controllers.PivotTableController.deleteRow(id:Long)
 
-POST                /add-value                                  controllers.PivotTableController.addValue()
-GET                 /delete-value/:id                           controllers.PivotTableController.deleteValue(id:Long)
+POST                /pivot/add-column                           controllers.PivotTableController.addColumn()
+GET                 /pivot/delete-column/:id                    controllers.PivotTableController.deleteColumn(id:Long)
+
+POST                /pivot/add-value                            controllers.PivotTableController.addValue()
+GET                 /pivot/delete-value/:id                     controllers.PivotTableController.deleteValue(id:Long)
 
 
 #GET                 /connections                                controllers.ConnectionController.index
@@ -37,7 +40,10 @@ GET                 /delete-value/:id                           controllers.Pivo
 
 #POST                /connections/csv/add                        controllers.ConnectionController.addCSVFile()
 
+
 GET                 /users                                      controllers.UsersController.users
+
+GET                 /sources                                    controllers.SourceController.index
 
 # Map static resources from the /public folder to the /assets URL path
 GET                 /assets/*file                               controllers.Assets.versioned(path="/public", file: Asset)

@@ -22,6 +22,8 @@ public class CSVConnection extends Model {
 
     private String newlineCharacter;
 
+    private Boolean header;
+
     public Integer getConnectionId() {
         return connectionId;
     }
@@ -50,4 +52,22 @@ public class CSVConnection extends Model {
         return newlineCharacter;
     }
 
+    public CSVConnection(String connectionPath, String connectionName, String delimiter, String quoteCharacter, String newlineCharacter) {
+        this.connectionPath = connectionPath;
+        this.connectionName = connectionName;
+        this.delimiter = delimiter;
+        this.quoteCharacter = quoteCharacter;
+        this.newlineCharacter = newlineCharacter;
+    }
+
+    public CSVConnection(String connectionPath, String connectionName, String delimiter, String quoteCharacter, String newlineCharacter, Boolean header) {
+        this.connectionPath = connectionPath;
+        this.connectionName = connectionName;
+        this.delimiter = delimiter;
+        this.quoteCharacter = quoteCharacter;
+        this.newlineCharacter = newlineCharacter;
+        this.header = header;
+    }
+
+    public static Model.Finder<Long, CSVConnection> find = new Model.Finder<>(CSVConnection.class);
 }

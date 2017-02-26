@@ -18,6 +18,16 @@ public class Field extends Model {
     @Enumerated(EnumType.STRING)
     private FieldType fieldType;
 
+    private String tableName;
+
+    public Field(String fieldName, FieldType fieldType, String tableName) {
+        this.fieldName = fieldName;
+        this.fieldType = fieldType;
+        this.tableName = tableName;
+    }
+
+    public String qualifiedName() { return "\"" + tableName + "\"" + "." + "\"" + fieldName + "\""; }
+
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "pivot_table_id")
     @JsonIgnore
