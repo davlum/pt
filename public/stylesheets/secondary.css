@@ -1,0 +1,74 @@
+body {
+    overflow-x: hidden;
+}
+
+#wrapper {
+    padding-left: 0;
+}
+
+#sidebar-wrapper {
+    z-index: 1000;
+    position: fixed;
+    left: 250px;
+    width: 0;
+    top: 50px;
+    height: 100%;
+    margin-left: -250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-color: #080808;
+}
+
+.nav-sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    padding-top: 10px;
+    border-color: #080808;
+}
+
+#page-content-wrapper {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    padding: 15px;
+    top: 0;
+    overflow-y: auto;
+}
+
+
+@media(min-width:768px) {
+    #wrapper {
+        padding-left: 250px;
+    }
+
+    #wrapper.toggled {
+        padding-left: 0;
+    }
+
+    #sidebar-wrapper {
+        width: 250px;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        width: 0;
+    }
+
+    #page-content-wrapper {
+        padding: 20px;
+        position: relative;
+    }
+
+    #wrapper.toggled #page-content-wrapper {
+        position: relative;
+        margin-right: 0;
+    }
+}
+
+
+textarea[name=connectionDescription] {
+    resize: none;
+    border: none;
+}

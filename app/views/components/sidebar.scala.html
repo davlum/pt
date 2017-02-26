@@ -1,0 +1,15 @@
+@import utils.SidebarElement
+
+@(sidebarElements: List[SidebarElement])
+
+@renderSidebarElement(name: String, link: String, hover: String="") = {
+<li><a href="@link">@name</a></li>
+}
+
+<div class="col-sm-3 col-md-2 sidebar">
+    <ul class="nav nav-sidebar">
+        @for(e <- sidebarElements) {
+        @renderSidebarElement(e.name, e.link, e.hover)
+        }
+    </ul>
+</div>

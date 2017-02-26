@@ -1,10 +1,11 @@
 @import helper._
-@import views.html.components.main
 @import models.users.User
+@import models.connections.SQLConnection
+@import utils._
+@import views.html.components._
 
-@(user : User, activeTab : String)
-
-@main(user, activeTab){
+@(user : User, sidebarSQL: List[SidebarElement], sidebarCSV: List[SidebarElement])
+@main(user)(sidebar(sidebarSQL)){
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <h1 class="page-header">Datasources</h1>
 

@@ -4,7 +4,7 @@
 # --- !Ups
 
 create table csvconnection (
-  connection_id                 serial not null,
+  id                            serial not null,
   connection_name               varchar(255),
   connection_path               varchar(255),
   connection_description        varchar(255),
@@ -12,7 +12,7 @@ create table csvconnection (
   quote_character               varchar(255),
   newline_character             varchar(255),
   header                        boolean,
-  constraint pk_csvconnection primary key (connection_id)
+  constraint pk_csvconnection primary key (id)
 );
 
 create table field (
@@ -98,6 +98,15 @@ create table sqlconnection (
   constraint pk_sqlconnection primary key (id)
 );
 
+create table sql_source (
+  source_id                     serial not null,
+  source_name                   varchar(255),
+  sqlconnection_id              integer,
+  fact_table                    varchar(255),
+  from_clause                   varchar(255),
+  constraint pk_sql_source primary key (source_id)
+);
+
 create table user_list (
   id                            bigserial not null,
   email                         varchar(255),
@@ -108,15 +117,6 @@ create table user_list (
   date_creation                 timestamptz not null,
   constraint uq_user_list_email unique (email),
   constraint pk_user_list primary key (id)
-);
-
-create table sql_source (
-  source_id                     serial not null,
-  source_name                   varchar(255),
-  sqlconnection_id              integer,
-  fact_table                    varchar(255),
-  from_clause                   varchar(255),
-  constraint pk_sql_source primary key (source_id)
 );
 
 alter table field add constraint fk_field_pivot_table_id foreign key (pivot_table_id) references pivot_table (id) on delete restrict on update restrict;
@@ -228,7 +228,7 @@ drop table if exists pivot_value_type cascade;
 
 drop table if exists sqlconnection cascade;
 
-drop table if exists user_list cascade;
-
 drop table if exists sql_source cascade;
+
+drop table if exists user_list cascade;
 

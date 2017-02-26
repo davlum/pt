@@ -1,6 +1,6 @@
 @import models.users.User
 
-@(user : User, activeTab : String)(content: Html)
+@(user : User)(sidebar: Html)(content: Html)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -37,6 +37,11 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="#">X-Tab</a>
+            <ul class="nav navbar-nav" >
+                <li><a href="/sources">Sources</a></li>
+                <li><a href="@controllers.routes.ConnectionController.index">Connections</a></li>
+            </ul>
+
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -47,24 +52,12 @@
       </div>
     </nav>
 
+
     <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-          <ul class="nav nav-sidebar">
-            <li @if(activeTab.equals("datasources")){class="active"}>
-              <a href="@controllers.routes.ConnectionController.datasources">Data Sources</a>
-            </li>
-            <li @if(activeTab.equals("pivot-table")){class="active"}>
-              <a href="@controllers.routes.PivotTableController.index">Pivot Table</a>
-            </li>
-            <li @if(activeTab.equals("users")){class="active"}>
-              <a href="@controllers.routes.UsersController.users">Users</a>
-            </li>
-          </ul>
-        </div>
+          @sidebar
 
-        @content
-
+          @content
       </div>
     </div>
 

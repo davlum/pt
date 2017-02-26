@@ -1,9 +1,12 @@
 @import models.connections.CSVConnection
 @import models.connections.SQLConnection
+@import utils.SidebarElement
+@import views.html.components._
+@import models.users.User
 
-@(sqlConnections: List[SQLConnection], csvConnections: List[CSVConnection], sqlConnectionForm: Form[SQLConnection])
+@(user: User, sqlConnectionForm: Form[SQLConnection], sidebarSQL: List[SidebarElement], sidebarCSV: List[SidebarElement])
 
-@main("[x]tab")(sidebar("connection", "/connections/1")) {
+@main(user)(sidebar(sidebarSQL)) {
     <div class="well">
 
         <div class="container-fluid">

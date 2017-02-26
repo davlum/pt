@@ -8,7 +8,7 @@ public class CSVConnection extends Model {
 
     @Id
     @GeneratedValue
-    private Integer connectionId;
+    private Integer id;
 
     private String connectionName;
 
@@ -24,8 +24,8 @@ public class CSVConnection extends Model {
 
     private Boolean header;
 
-    public Integer getConnectionId() {
-        return connectionId;
+    public Integer getId() {
+        return id;
     }
 
     public String getConnectionName() {
