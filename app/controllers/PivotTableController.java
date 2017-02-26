@@ -26,7 +26,7 @@ public class PivotTableController extends Controller {
         Form<FieldForm> rowForm = formFactory.form(FieldForm.class);
         Form<FieldForm> columnForm = formFactory.form(FieldForm.class);
         Form<ValueForm> valueForm = formFactory.form(ValueForm.class);
-        return ok(index.render(PivotTable.pivotTable(), rowForm, columnForm, valueForm));
+        return ok(pivot.render(PivotTable.pivotTable(), rowForm, columnForm, valueForm));
     }
 
     public Result addRow(){

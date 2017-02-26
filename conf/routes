@@ -3,16 +3,17 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET                 /                                           controllers.PivotTableController.index
+GET                 /                                           controllers.IndexController.index
 
-POST                /add-row                                    controllers.PivotTableController.addRow()
-GET                 /delete-row/:id                             controllers.PivotTableController.deleteRow(id:Long)
+GET                 /pivot                                      controllers.PivotTableController.index
+POST                /pivot/add-row                              controllers.PivotTableController.addRow()
+GET                 /pivot/delete-row/:id                       controllers.PivotTableController.deleteRow(id:Long)
 
-POST                /add-column                                 controllers.PivotTableController.addColumn()
-GET                 /delete-column/:id                          controllers.PivotTableController.deleteColumn(id:Long)
+POST                /pivot/add-column                           controllers.PivotTableController.addColumn()
+GET                 /pivot/delete-column/:id                    controllers.PivotTableController.deleteColumn(id:Long)
 
-POST                /add-value                                  controllers.PivotTableController.addValue()
-GET                 /delete-value/:id                           controllers.PivotTableController.deleteValue(id:Long)
+POST                /pivot/add-value                            controllers.PivotTableController.addValue()
+GET                 /pivot/delete-value/:id                     controllers.PivotTableController.deleteValue(id:Long)
 
 
 GET                 /connections                                controllers.ConnectionController.index
@@ -21,7 +22,7 @@ POST                /connections/sql/add                        controllers.Conn
 
 POST                /connections/csv/add                        controllers.ConnectionController.addCSVConnection()
 
-
+GET                 /sources                                    controllers.SourceController.index
 # Map static resources from the /public folder to the /assets URL path
 GET                 /assets/*file                               controllers.Assets.versioned(path="/public", file: Asset)
 

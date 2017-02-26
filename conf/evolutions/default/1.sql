@@ -10,6 +10,7 @@ create table csvconnection (
   delimiter                     varchar(255),
   quote_character               varchar(255),
   newline_character             varchar(255),
+  header                        boolean,
   constraint pk_csvconnection primary key (connection_id)
 );
 
@@ -35,6 +36,7 @@ create table field (
   id                            bigserial not null,
   field_name                    varchar(255),
   field_type                    varchar(8),
+  table_name                    varchar(255),
   pivot_table_id                bigint,
   constraint ck_field_field_type check ( field_type in ('String','Boolean','Integer','Number','Date','Time','DateTime')),
   constraint pk_field primary key (id)
@@ -115,6 +117,7 @@ create table product_sale (
 
 create table sqlconnection (
   id                            serial not null,
+  connection_driver             varchar(255),
   connection_name               varchar(255),
   connection_description        varchar(255),
   connection_host               varchar(255),
@@ -129,6 +132,15 @@ create table sale (
   id                            bigserial not null,
   date                          timestamptz,
   constraint pk_sale primary key (id)
+);
+
+create table sql_source (
+  source_id                     serial not null,
+  source_name                   varchar(255),
+  sqlconnection_id              integer,
+  fact_table                    varchar(255),
+  from_clause                   varchar(255),
+  constraint pk_sql_source primary key (source_id)
 );
 
 alter table field add constraint fk_field_pivot_table_id foreign key (pivot_table_id) references pivot_table (id) on delete restrict on update restrict;
@@ -169,6 +181,9 @@ create index ix_pivot_value_pivot_table_id on pivot_value (pivot_table_id);
 
 alter table pivot_value add constraint fk_pivot_value_pivot_value_type_id foreign key (pivot_value_type_id) references pivot_value_type (id) on delete restrict on update restrict;
 create index ix_pivot_value_pivot_value_type_id on pivot_value (pivot_value_type_id);
+
+alter table sql_source add constraint fk_sql_source_sqlconnection_id foreign key (sqlconnection_id) references sqlconnection (id) on delete restrict on update restrict;
+create index ix_sql_source_sqlconnection_id on sql_source (sqlconnection_id);
 
 
 # --- !Downs
@@ -212,6 +227,9 @@ drop index if exists ix_pivot_value_pivot_table_id;
 alter table if exists pivot_value drop constraint if exists fk_pivot_value_pivot_value_type_id;
 drop index if exists ix_pivot_value_pivot_value_type_id;
 
+alter table if exists sql_source drop constraint if exists fk_sql_source_sqlconnection_id;
+drop index if exists ix_sql_source_sqlconnection_id;
+
 drop table if exists csvconnection cascade;
 
 drop table if exists client cascade;
@@ -243,4 +261,6 @@ drop table if exists product_sale cascade;
 drop table if exists sqlconnection cascade;
 
 drop table if exists sale cascade;
+
+drop table if exists sql_source cascade;
 

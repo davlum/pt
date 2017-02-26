@@ -1,53 +1,41 @@
+@(title: String)(sidenav: Html)(content: Html)
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>Table Style</title>
-        <meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; width=device-width;">
+        <title>@title</title>
+        <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, width=device-width">
+        <link href="@routes.Assets.versioned("assets/bootstrap/css/bootstrap.min.css")" rel="stylesheet" type="text/css"/>
+        <link href="@routes.Assets.versioned("assets/bootstrap/css/bootstrap-theme.min.css")" rel="stylesheet" type="text/css"/>
+        <link href="@routes.Assets.versioned("assets/bootstrap/css/bootstrap.min.css")" rel="stylesheet" type="text/css"/>
+        <link href="@routes.Assets.versioned("assets/font-awesome/css/font-awesome.min.css")" rel="stylesheet" type="text/css"/>
         <link href="@routes.Assets.versioned("stylesheets/main.css")" rel="stylesheet" type="text/css"/>
+
+        <script src="@routes.Assets.versioned("assets/jquery/jquery-3.1.1.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("assets/bootstrap/js/bootstrap.min.js")" type="text/javascript"></script>
     </head>
 
     <body>
-        <div>
-            <div>
-                <div class="table-title">
-                    <h3>Data Table</h3>
+        <section class="navbar">
+            <nav class="navbar navbar-fixed-top navbar-inverse">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">[x]tab</a>
+                    </div>
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/sources">Sources</a></li>
+                        <li><a href="/connections">Connections</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/signup">Sign Up / Log In</a></li>
+                    </ul>
                 </div>
-            </div>
-            <div class="table-title">
-                <h3>Data Table</h3>
-            </div>
-            <table class="table-fill">
-                <thead>
-                    <tr>
-                        <th class="text-left">Month</th>
-                        <th class="text-left">Sales</th>
-                    </tr>
-                </thead>
-                <tbody class="table-hover">
-                    <tr>
-                        <td class="text-left">January</td>
-                        <td class="text-left">$ 50,000.00</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">February</td>
-                        <td class="text-left">$ 10,000.00</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">March</td>
-                        <td class="text-left">$ 85,000.00</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">April</td>
-                        <td class="text-left">$ 56,000.00</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">May</td>
-                        <td class="text-left">$ 98,000.00</td>
-                    </tr>
-                </tbody>
-            </table>
+            </nav>
+        </section>
+        <div id="wrapper">
+            <div id="sidebar-wrapper">@sidenav</div>
+            <div id="page-content-wrapper">@content</div>
         </div>
-
-
     </body>
 </html>

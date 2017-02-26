@@ -1,6 +1,7 @@
 package models.connections;
 
 import com.avaje.ebean.Model;
+import play.data.validation.Constraints;
 
 import javax.persistence.*;
 import java.sql.Connection;
@@ -16,20 +17,29 @@ public class SQLConnection extends Model {
     @GeneratedValue
     private Integer id;
 
+    @Constraints.Required
     private String connectionDriver;
 
+    @Constraints.Required
     private String connectionName;
 
+
+    @Constraints.Required
     private String connectionDescription;
 
+    @Constraints.Required
     private String connectionHost;
 
+    @Constraints.Required
     private Integer connectionPort;
 
+    @Constraints.Required
     private String connectionUser;
 
+    @Constraints.Required
     private String connectionPassword;
 
+    @Constraints.Required
     private String connectionDBName;
 
     public Integer getId() {
@@ -64,7 +74,8 @@ public class SQLConnection extends Model {
         return connectionDBName;
     }
 
-    public SQLConnection(String name, String desc, String host, Integer port, String db, String user, String password)
+    public SQLConnection(String name, String driver, String desc, String host, Integer port,
+                         String db, String user, String password)
     {
         connectionName = name;
         connectionDescription = desc;
@@ -73,6 +84,7 @@ public class SQLConnection extends Model {
         connectionDBName = db;
         connectionUser = user;
         connectionPassword = password;
+        connectionDriver = driver;
     }
 
     public static Model.Finder<Long, SQLConnection> find = new Model.Finder<>(SQLConnection.class);

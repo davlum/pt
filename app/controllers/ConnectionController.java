@@ -4,48 +4,42 @@ import models.connections.*;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.*;
+import views.html.connections;
 
 import javax.inject.Inject;
+import java.util.List;
+
 /**
  * Created by hal on 2017-02-17.
  */
 public class ConnectionController extends Controller {
-//    private Result GO_TABLE = redirect(controllers.routes.DBConnectionController.index());
 
     private final FormFactory formFactory;
-
+    private Form<SQLConnection> sqlConnectionForm;
+    private Form<CSVConnection> csvConnectionForm;
 
     @Inject
     public ConnectionController(FormFactory formFactory) {
         this.formFactory = formFactory;
+        this.sqlConnectionForm = formFactory.form(SQLConnection.class);
+        this.csvConnectionForm = formFactory.form(CSVConnection.class);
     }
 
     public Result index() {
-        SQLConnection existing;
-        existing = SQLConnection.find.byId(1L); // find.all(); find.eq("desc", "desc value")
-        if (existing == null) {
-            existing = new SQLConnection(
-                    "bixi", "database of bixi trips",
-                    "ec2-52-90-93-63.compute-1.amazonaws.com",
-                    5432, "bixi_pivot","bixi_select",
-                    "select_bixi"
-            );
-            existing.save();
-            return ok("new connection created");
-        }
-        String json = "{\"host\": " +"\"" + existing.getConnectionHost() + "\"}";
-        return ok("existing connection.\n" + json);
+        List<SQLConnection> sqlConnections = SQLConnection.find.all();
+        List<CSVConnection> csvConnections = CSVConnection.find.all();
+        return ok(connections.render(sqlConnections, csvConnections, sqlConnectionForm));
     }
 
     public Result addSQLConnection() {
-        Form<SQLConnection> connectionForm = formFactory.form(SQLConnection.class);
-        SQLConnection connection = connectionForm.bindFromRequest().get();
+
+        SQLConnection connection = sqlConnectionForm.bindFromRequest().get();
         return null;
     }
 
     public Result addCSVConnection() {
-        Form<CSVConnection> connectionForm = formFactory.form(CSVConnection.class);
-        CSVConnection connection = connectionForm.bindFromRequest().get();
+
+        CSVConnection connection = csvConnectionForm.bindFromRequest().get();
         return null;
     }
 
