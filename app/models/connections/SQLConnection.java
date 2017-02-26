@@ -4,9 +4,6 @@ import com.avaje.ebean.Model;
 
 import javax.persistence.*;
 
-/**
- * Created by hal on 2017-02-17.
- */
 @Entity
 public class SQLConnection extends Model {
     @Id

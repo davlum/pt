@@ -3,7 +3,23 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET                 /                                           controllers.PivotTableController.index
+GET                 /                                           controllers.LoginController.index
+POST                /                                           controllers.LoginController.login
+GET                 /logout                                     controllers.LoginController.logout
+
+GET                 /forgot-password                            controllers.LoginController.forgotPassword
+POST                /forgot-password                            controllers.LoginController.forgotSubmit
+
+GET                 /datasources                                controllers.ConnectionController.datasources
+GET                 /datasources/sql/add                        controllers.ConnectionController.addSQLConnection()
+POST                /datasources/sql/add                        controllers.ConnectionController.addSQLConnection()
+GET                 /datasources/csv/add                        controllers.ConnectionController.addCSVFile()
+POST                /datasources/csv/add                        controllers.ConnectionController.addCSVFile()
+
+POST                /datasources/sql/save                       controllers.ConnectionController.saveCSVConnection()
+
+
+GET                 /pivot-table                                controllers.PivotTableController.index
 
 POST                /add-row                                    controllers.PivotTableController.addRow()
 GET                 /delete-row/:id                             controllers.PivotTableController.deleteRow(id:Long)
@@ -15,12 +31,13 @@ POST                /add-value                                  controllers.Pivo
 GET                 /delete-value/:id                           controllers.PivotTableController.deleteValue(id:Long)
 
 
-GET                 /connections                                controllers.ConnectionController.index
+#GET                 /connections                                controllers.ConnectionController.index
 
-POST                /connections/sql/add                        controllers.ConnectionController.addSQLConnection()
+#POST                /connections/sql/add                        controllers.ConnectionController.addSQLConnection()
 
-POST                /connections/csv/add                        controllers.ConnectionController.addCSVConnection()
+#POST                /connections/csv/add                        controllers.ConnectionController.addCSVFile()
 
+GET                 /users                                      controllers.UsersController.users
 
 # Map static resources from the /public folder to the /assets URL path
 GET                 /assets/*file                               controllers.Assets.versioned(path="/public", file: Asset)

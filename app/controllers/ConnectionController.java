@@ -4,20 +4,41 @@ import models.connections.*;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.*;
+import views.html.datasources.datasources;
+import views.html.datasources.addCsv;
+import views.html.datasources.addSql;
 
 import javax.inject.Inject;
-/**
- * Created by hal on 2017-02-17.
- */
-public class ConnectionController extends Controller {
-//    private Result GO_TABLE = redirect(controllers.routes.DBConnectionController.index());
+
+public class ConnectionController extends AuthController {
 
     private final FormFactory formFactory;
 
+    private final String activeTab = "datasources";
 
     @Inject
     public ConnectionController(FormFactory formFactory) {
         this.formFactory = formFactory;
+    }
+
+    public Result datasources(){
+        return ok(datasources.render(getCurrentUser(), activeTab));
+    }
+
+    public Result addCSVFile() {
+        Form<CSVConnection> connectionForm = formFactory.form(CSVConnection.class);
+        return ok(addCsv.render(getCurrentUser(), activeTab, connectionForm));
+    }
+
+    public Result saveCSVConnection() {
+        Form<CSVConnection> connectionForm = formFactory.form(CSVConnection.class);
+        return ok(addCsv.render(getCurrentUser(), activeTab, connectionForm));
+    }
+
+    public Result addSQLConnection() {
+        Form<SQLConnection> connectionForm = formFactory.form(SQLConnection.class);
+        SQLConnection connection = connectionForm.bindFromRequest().get();
+        return ok(addSql.render(getCurrentUser(), activeTab));
     }
 
     public Result index() {
@@ -33,17 +54,4 @@ public class ConnectionController extends Controller {
         return ok("ok");
 
     }
-
-    public Result addSQLConnection() {
-        Form<SQLConnection> connectionForm = formFactory.form(SQLConnection.class);
-        SQLConnection connection = connectionForm.bindFromRequest().get();
-        return null;
-    }
-
-    public Result addCSVConnection() {
-        Form<CSVConnection> connectionForm = formFactory.form(CSVConnection.class);
-        CSVConnection connection = connectionForm.bindFromRequest().get();
-        return null;
-    }
-
 }

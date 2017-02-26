@@ -1,0 +1,18 @@
+@import views.html.components.main
+@import models.users.User
+
+@(user : User, activeTab : String)
+
+@main(user, activeTab){
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">Datasources</h1>
+
+    <h2 class="sub-header">New SQL Connection</h2>
+
+
+
+    <a href="@controllers.routes.ConnectionController.datasources()">
+      <button type="button" class="btn btn-secondary">Back</button>
+    </a>
+  </div>
+}

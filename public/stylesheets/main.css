@@ -2,7 +2,15 @@
     margin-top: 3px;
 }
 
+.mrgT10 {
+    margin-top: 10px;
+}
+
 .addSign {
     cursor: pointer;
     color: #5cb85c;
+}
+
+.inline-block {
+    display: inline-block;
 }

@@ -5,11 +5,17 @@ import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.*;
 
-import utils.FieldForm;
-import utils.ValueForm;
+import utils.forms.FieldForm;
+import utils.forms.ValueForm;
+import utils.pivotTableHandler.PivotTableHandler;
 import views.html.*;
 
 import javax.inject.Inject;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PivotTableController extends Controller {
 
@@ -26,7 +32,51 @@ public class PivotTableController extends Controller {
         Form<FieldForm> rowForm = formFactory.form(FieldForm.class);
         Form<FieldForm> columnForm = formFactory.form(FieldForm.class);
         Form<ValueForm> valueForm = formFactory.form(ValueForm.class);
-        return ok(index.render(PivotTable.pivotTable(), rowForm, columnForm, valueForm));
+        List<Map<String, String>> list = new ArrayList<>();
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:postgresql://ec2-52-90-93-63.compute-1.amazonaws.com/bixi_pivot",
+                    "bixi_select", "select_bixi");
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM trips LIMIT 10;");
+            ResultSetMetaData meta = resultSet.getMetaData();
+            while (resultSet.next()) {
+                Map<String, String> map = new HashMap<>();
+                for (int i = 1; i <= meta.getColumnCount(); i++) {
+                    String key = meta.getColumnName(i);
+                    map.put(key, resultSet.getString(key));
+                }
+                list.add(map);
+            }
+            resultSet.close();
+            statement.close();
+            connection.close();
+
+            //list.forEach(System.out::println);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+
+
+        /*List<Map<String, String>> testList = new ArrayList<>();
+        int i = 0;
+        while (i < 1000){
+            Map<String, String> testMap = new HashMap<>();
+            testMap.put("Date", );
+            testMap.put("Client Name",);
+            testMap.put("Company Name",);
+            testMap.put("Company Nb Employees",);
+            testMap.put("Product Name",);
+            testMap.put("Quantity",);
+            testMap.put("Product Unit Price",);
+
+            testList.add(testMap);
+            i++;
+        }*/
+
+        PivotTableHandler handler = new PivotTableHandler(list, PivotTable.pivotTable());
+
+        return ok(index.render(handler, PivotTable.pivotTable(), rowForm, columnForm, valueForm));
     }
 
     public Result addRow(){

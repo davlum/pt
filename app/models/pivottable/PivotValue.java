@@ -27,6 +27,10 @@ public class PivotValue extends Model {
     @JsonIgnore
     private PivotValueType pivotValueType;
 
+    public String displayTitle(){
+        return pivotValueType.getDisplayName() + " - " + field.getFieldName();
+    }
+
     public Long getId() {
         return id;
     }

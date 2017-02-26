@@ -5,30 +5,13 @@
 
 create table csvconnection (
   connection_id                 serial not null,
-  connection_path               varchar(255),
   connection_name               varchar(255),
+  connection_path               varchar(255),
+  connection_description        varchar(255),
   delimiter                     varchar(255),
   quote_character               varchar(255),
   newline_character             varchar(255),
   constraint pk_csvconnection primary key (connection_id)
-);
-
-create table client (
-  id                            bigserial not null,
-  first_name                    varchar(255),
-  last_name                     varchar(255),
-  address                       varchar(255),
-  phone_number                  varchar(255),
-  age                           integer,
-  constraint pk_client primary key (id)
-);
-
-create table company (
-  id                            bigserial not null,
-  name                          varchar(255),
-  address                       varchar(255),
-  nb_employees                  bigint,
-  constraint pk_company primary key (id)
 );
 
 create table field (
@@ -36,7 +19,7 @@ create table field (
   field_name                    varchar(255),
   field_type                    varchar(8),
   pivot_table_id                bigint,
-  constraint ck_field_field_type check ( field_type in ('String','Boolean','Integer','Number','Date','Time','DateTime')),
+  constraint ck_field_field_type check ( field_type in ('String','Boolean','Integer','Number','Date','Time','DateTime','Double')),
   constraint pk_field primary key (id)
 );
 
@@ -100,19 +83,6 @@ create table pivot_value_type (
   constraint pk_pivot_value_type primary key (id)
 );
 
-create table product (
-  id                            bigserial not null,
-  name                          varchar(255),
-  unit_price                    float,
-  constraint pk_product primary key (id)
-);
-
-create table product_sale (
-  id                            bigserial not null,
-  quantity                      bigint,
-  constraint pk_product_sale primary key (id)
-);
-
 create table sqlconnection (
   id                            serial not null,
   connection_name               varchar(255),
@@ -125,10 +95,16 @@ create table sqlconnection (
   constraint pk_sqlconnection primary key (id)
 );
 
-create table sale (
+create table user_list (
   id                            bigserial not null,
-  date                          timestamptz,
-  constraint pk_sale primary key (id)
+  email                         varchar(255),
+  full_name                     varchar(255),
+  password_hash                 varchar(255),
+  last_login                    timestamptz,
+  confirmation_token            varchar(255),
+  date_creation                 timestamptz not null,
+  constraint uq_user_list_email unique (email),
+  constraint pk_user_list primary key (id)
 );
 
 alter table field add constraint fk_field_pivot_table_id foreign key (pivot_table_id) references pivot_table (id) on delete restrict on update restrict;
@@ -214,10 +190,6 @@ drop index if exists ix_pivot_value_pivot_value_type_id;
 
 drop table if exists csvconnection cascade;
 
-drop table if exists client cascade;
-
-drop table if exists company cascade;
-
 drop table if exists field cascade;
 
 drop table if exists filter cascade;
@@ -236,11 +208,7 @@ drop table if exists pivot_value cascade;
 
 drop table if exists pivot_value_type cascade;
 
-drop table if exists product cascade;
-
-drop table if exists product_sale cascade;
-
 drop table if exists sqlconnection cascade;
 
-drop table if exists sale cascade;
+drop table if exists user_list cascade;
 

@@ -32,6 +32,9 @@ public class Field extends Model {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<PivotPage> pivotPages;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<PivotValue> pivotValues;
+
     public static Model.Finder<Long, Field> find = new Model.Finder<>(Field.class);
 
     public Long getId() {
@@ -88,5 +91,13 @@ public class Field extends Model {
 
     public void setFieldType(FieldType fieldType) {
         this.fieldType = fieldType;
+    }
+
+    public List<PivotValue> getPivotValues() {
+        return pivotValues;
+    }
+
+    public void setPivotValues(List<PivotValue> pivotValues) {
+        this.pivotValues = pivotValues;
     }
 }

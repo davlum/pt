@@ -1,7 +1,7 @@
 @import helper._
 @import models.pivottable.PivotTable
 @import models.pivottable.PivotValueType
-@import utils.ValueForm
+@import utils.forms.ValueForm
 
 
 @(pivotTable : PivotTable, valueForm : play.data.Form[ValueForm])
@@ -19,7 +19,20 @@
             @helper.form(controllers.routes.PivotTableController.addValue(), 'enctype -> "multipart/form-data", 'class -> "valueForm",  'id -> "valueForm"){
                 @CSRF.formField
                 <div class="modal-body">
+                @if(pivotTable != null) {
 
+                    @select(
+                        field = valueForm("fieldID"),
+                        options = pivotTable.availableFields.map(field => field.getId.toString -> field.getFieldName),
+                        '_default -> "Please Select a Field"
+                    )
+
+                    @select(
+                        field = valueForm("valueTypeID"),
+                        options = PivotValueType.find.all().map(field => field.getId.toString -> field.getDisplayName),
+                        '_default -> "Please Select a Field"
+                    )
+                }
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
