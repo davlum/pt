@@ -3,18 +3,18 @@ package models.connections;
 import javax.persistence.*;
 import com.avaje.ebean.Model;
 
-/**
- * Created by hal on 2017-02-17.
- */
 @Entity
 public class CSVConnection extends Model {
+
     @Id
     @GeneratedValue
     private Integer connectionId;
 
+    private String connectionName;
+
     private String connectionPath;
 
-    private String connectionName;
+    private String connectionDescription;
 
     private String delimiter;
 
@@ -28,12 +28,16 @@ public class CSVConnection extends Model {
         return connectionId;
     }
 
+    public String getConnectionName() {
+        return connectionName;
+    }
+
     public String getConnectionPath() {
         return connectionPath;
     }
 
-    public String getConnectionName() {
-        return connectionName;
+    public String getConnectionDescription() {
+        return connectionDescription;
     }
 
     public String getDelimiter() {

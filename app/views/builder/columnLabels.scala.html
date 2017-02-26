@@ -4,12 +4,10 @@
 
 <div class="panel panel-default">
   <div class="panel-heading">Column Labels
-      @if(pivotTable != null && pivotTable.getPivotColumnList.size() < 2){
-          <a data-toggle="modal" data-target="#columnLabelsModal">
-            <i class="fa fa-plus mrgT3 addSign pull-right"></i>
-          </a>
-      }
-    </div>
+    <a data-toggle="modal" data-target="#columnLabelsModal">
+        <i class="fa fa-plus mrgT3 addSign pull-right"></i>
+    </a>
+</div>
   <div class="panel-body">
       @if(pivotTable != null) {
           @for(column <- pivotTable.getPivotColumnList){

@@ -8,9 +8,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- * Created by hal on 2017-02-17.
- */
 @Entity
 public class SQLConnection extends Model {
     @Id

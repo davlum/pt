@@ -1,9 +1,10 @@
 @import models.pivottable.PivotTable
 @import views.html.builder._
-@import utils.FieldForm
-@import utils.ValueForm
+@import utils.forms.ValueForm
+@import utils.forms.FieldForm
+@import utils.pivotTableHandler.PivotTableHandler
 
-@(pivotTable: PivotTable, rowForm : play.data.Form[FieldForm],
+@(pivotTableHandler : PivotTableHandler, pivotTable: PivotTable, rowForm : play.data.Form[FieldForm],
         columnForm : play.data.Form[FieldForm], valueForm : play.data.Form[ValueForm])
 
 <html lang="en">
@@ -30,25 +31,7 @@
                 <div class="col-md-7">
                     <h3>Results</h3>
                     <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Field 1</th>
-                                <th>Field 2</th>
-                                <th>Field 3</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Value 1</td>
-                                <td>Value 2</td>
-                                <td>Value 3</td>
-                            </tr>
-                            <tr>
-                                <td>Value 4</td>
-                                <td>Value 5</td>
-                                <td>Value 6</td>
-                            </tr>
-                        </tbody>
+                    @Html(pivotTableHandler.tableHtml())
                     </table>
                 </div>
                 <div class="col-md-5">
@@ -63,17 +46,17 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    @columnLabels(pivotTable)
+                                @columnLabels(pivotTable)
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div>
                                 <div class="col-md-6">
-                                    @rowLabels(pivotTable)
+                                @rowLabels(pivotTable)
                                 </div>
                                 <div class="col-md-6">
-                                    @values(pivotTable)
+                                @values(pivotTable)
                                 </div>
                             </div>
                         </div>

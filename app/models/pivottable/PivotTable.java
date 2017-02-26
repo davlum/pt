@@ -81,7 +81,25 @@ public class PivotTable extends Model {
         return fieldList.stream().filter(field ->
                 !pivotRowList.stream().map(PivotRow::getField).collect(Collectors.toList()).contains(field)
                 && !pivotColumnList.stream().map(PivotColumn::getField).collect(Collectors.toList()).contains(field)
+                && !valuesList.stream().map(PivotValue::getField).collect(Collectors.toList()).contains(field)
         ).collect(Collectors.toList());
+    }
+
+    public enum Dimension {
+        ROW, COLUMN, PAGE
+    }
+
+    public List<Field> fieldsByDimension(String dimension){
+        switch (dimension){
+            case "column":
+                return getPivotColumnList().stream().map(PivotColumn::getField).collect(Collectors.toList());
+            case "row":
+                return getPivotRowList().stream().map(PivotRow::getField).collect(Collectors.toList());
+            case "page":
+                return getPivotPageList().stream().map(PivotPage::getField).collect(Collectors.toList());
+            default:
+                return null;
+        }
     }
 
     public Long getId() {

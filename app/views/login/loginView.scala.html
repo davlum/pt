@@ -1,0 +1,63 @@
+@import helper._
+@import utils.forms.LoginForm
+
+
+@(loginForm: play.data.Form[LoginForm])
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pivot Table</title>
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, width=device-width">
+    <link href="@routes.Assets.versioned("assets/bootstrap/css/bootstrap.min.css")" rel="stylesheet" type="text/css"/>
+    <link href="@routes.Assets.versioned("assets/bootstrap/css/bootstrap-theme.min.css")" rel="stylesheet" type="text/css"/>
+    <link href="@routes.Assets.versioned("assets/bootstrap/css/bootstrap.min.css")" rel="stylesheet" type="text/css"/>
+    <link href="@routes.Assets.versioned("assets/font-awesome/css/font-awesome.min.css")" rel="stylesheet" type="text/css"/>
+    <link href="@routes.Assets.versioned("stylesheets/main.css")" rel="stylesheet" type="text/css"/>
+    <link href="@routes.Assets.versioned("stylesheets/login.css")" rel="stylesheet" type="text/css"/>
+
+    <script src="@routes.Assets.versioned("assets/jquery/jquery-3.1.1.min.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.versioned("assets/bootstrap/js/bootstrap.min.js")" type="text/javascript"></script>
+    <link rel="icon" href="@routes.Assets.versioned("images/favicon.png")">
+  </head>
+
+  <body>
+    <div class="container">
+      @helper.form(controllers.routes.LoginController.login, 'enctype -> "multipart/form-data", 'class -> "form-signin"){
+        @CSRF.formField
+        <h2 class="form-signin-heading">Pivot Table Application</h2>
+        <h3>Team X-Tab</h3>
+        @if(Controller.flash.containsKey("error")) {
+          <div class="alert alert-danger">
+            <button class="close mrgTop4" data-close="alert"></button>
+            <span>
+            @Messages(Controller.flash.get("error"))
+            </span>
+          </div>
+        }
+        @if(Controller.flash.containsKey("success")) {
+          <div class="alert alert-success">
+            <button class="close" data-close="alert"></button>
+            <span>
+            @Messages(Controller.flash.get("success"))
+            </span>
+          </div>
+        }
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" id="inputEmail" name="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" name="inputPassword" class="form-control" placeholder="Password" required>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" value="remember-me"> Remember me
+          </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <div class="mrgT10">
+          <a href="@controllers.routes.LoginController.forgotPassword">Forgot Password?</a>
+        </div>
+      }
+
+    </div> <!-- /container -->
+  </body>
+</html>

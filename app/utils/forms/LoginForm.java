@@ -1,0 +1,45 @@
+package utils.forms;
+
+import exceptions.UserException;
+import models.users.User;
+import play.data.validation.Constraints;
+
+public class LoginForm {
+
+    @Constraints.Required
+    private String inputEmail;
+
+    @Constraints.Required
+    private String inputPassword;
+
+    public String validate() {
+
+        User user;
+        try {
+            user = User.authenticate(inputEmail, inputPassword);
+        } catch (UserException e) {
+            return "An error has occurred.";
+        }
+        if (user == null) {
+            return "Invalid User or password. Please, try again.";
+        }
+
+        return null;
+    }
+
+    public String getInputEmail() {
+        return inputEmail;
+    }
+
+    public void setInputEmail(String inputEmail) {
+        this.inputEmail = inputEmail;
+    }
+
+    public String getInputPassword() {
+        return inputPassword;
+    }
+
+    public void setInputPassword(String inputPassword) {
+        this.inputPassword = inputPassword;
+    }
+}
