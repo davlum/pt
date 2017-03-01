@@ -56,24 +56,6 @@ public class PivotTableController extends Controller {
             e.printStackTrace();
         }
 
-
-
-        /*List<Map<String, String>> testList = new ArrayList<>();
-        int i = 0;
-        while (i < 1000){
-            Map<String, String> testMap = new HashMap<>();
-            testMap.put("Date", );
-            testMap.put("Client Name",);
-            testMap.put("Company Name",);
-            testMap.put("Company Nb Employees",);
-            testMap.put("Product Name",);
-            testMap.put("Quantity",);
-            testMap.put("Product Unit Price",);
-
-            testList.add(testMap);
-            i++;
-        }*/
-
         PivotTableHandler handler = new PivotTableHandler(list, PivotTable.pivotTable());
 
         return ok(pivot.render(handler, PivotTable.pivotTable(), rowForm, columnForm, valueForm));

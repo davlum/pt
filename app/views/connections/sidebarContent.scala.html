@@ -1,0 +1,12 @@
+@import views.html.components._
+@import utils.SidebarElement
+
+@(sqlList: List[SidebarElement], csvList: List[SidebarElement])
+
+<div>
+    @sidebarGroup(sqlList, "sql connections:")
+</div>
+<hr>
+<div>
+    @sidebarGroup(csvList, "csv connections:")
+</div>

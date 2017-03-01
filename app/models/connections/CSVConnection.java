@@ -20,8 +20,6 @@ public class CSVConnection extends Model {
 
     private String quoteCharacter;
 
-    private String newlineCharacter;
-
     private Boolean header;
 
     public Integer getId() {
@@ -48,24 +46,22 @@ public class CSVConnection extends Model {
         return quoteCharacter;
     }
 
-    public String getNewlineCharacter() {
-        return newlineCharacter;
-    }
 
-    public CSVConnection(String connectionPath, String connectionName, String delimiter, String quoteCharacter, String newlineCharacter) {
+    public CSVConnection(String connectionPath, String connectionName, String delimiter, String quoteCharacter, String connectionDescription) {
         this.connectionPath = connectionPath;
         this.connectionName = connectionName;
         this.delimiter = delimiter;
         this.quoteCharacter = quoteCharacter;
-        this.newlineCharacter = newlineCharacter;
+        this.header = false;
+        this.connectionDescription = connectionDescription;
     }
 
-    public CSVConnection(String connectionPath, String connectionName, String delimiter, String quoteCharacter, String newlineCharacter, Boolean header) {
+    public CSVConnection(String connectionPath, String connectionName, String delimiter, String quoteCharacter, String connectionDescription, Boolean header) {
         this.connectionPath = connectionPath;
         this.connectionName = connectionName;
         this.delimiter = delimiter;
         this.quoteCharacter = quoteCharacter;
-        this.newlineCharacter = newlineCharacter;
+        this.connectionDescription = connectionDescription;
         this.header = header;
     }
 

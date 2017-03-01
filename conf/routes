@@ -11,14 +11,12 @@ GET                 /forgot-password                            controllers.Logi
 POST                /forgot-password                            controllers.LoginController.forgotSubmit
 
 GET                 /connections                                controllers.ConnectionController.index
-GET                 /connections/datasources                    controllers.ConnectionController.datasources()
-POST                /connections/sql/add                        controllers.ConnectionController.addSQLConnection()
-POST                /connections/csv/add                        controllers.ConnectionController.addCSVFile()
-GET                 /connections/sql/add                        controllers.ConnectionController.addSQLConnection()
-GET                 /connections/csv/add                        controllers.ConnectionController.addCSVFile()
-
-
-
+POST                /connections/addsql                         controllers.ConnectionController.addSQLConnection()
+POST                /connections/addcsv                         controllers.ConnectionController.addCSVConnection()
+GET                 /connections/sql/:id                        controllers.ConnectionController.getSQLConnection(id:Long)
+GET                 /connections/csv/:id                        controllers.ConnectionController.getCSVConnection(id:Long)
+#POST                /connections/sql/:id                        controllers.ConnectionController.saveSQLConnection(id:Long)
+#POST                /connections/csv/:id                        controllers.ConnectionController.saveCSVConnection(id:Long)
 
 GET                 /pivot-table                                controllers.PivotTableController.index
 
@@ -33,6 +31,11 @@ POST                /pivot/add-value                            controllers.Pivo
 GET                 /pivot/delete-value/:id                     controllers.PivotTableController.deleteValue(id:Long)
 
 GET                 /users                                      controllers.UsersController.users
+#GET                 /users/add                                  controllers.UsersController.add
+#POST                /users/add                                  controllers.UsersController.add()
+#GET                 /users/:id                                  controllers.UsersController.get(id:Long)
+#POST                /users/:id                                  controllers.UsersController.save(id:Long)
+
 
 GET                 /sources                                    controllers.SourceController.index
 

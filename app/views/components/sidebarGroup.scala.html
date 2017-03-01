@@ -1,0 +1,16 @@
+@import utils.SidebarElement
+
+@(elements: List[SidebarElement], title: String)
+
+<div>
+    <div>
+        @title
+    </div>
+    <div>
+        <ul class="nav nav-sidebar">
+            @for(a <- elements) {
+            <li><a href="@a.link">@a.name</a></li>
+            }
+        </ul>
+    </div>
+</div>

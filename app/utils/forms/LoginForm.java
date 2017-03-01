@@ -17,13 +17,12 @@ public class LoginForm {
         User user;
         try {
             user = User.authenticate(inputEmail, inputPassword);
+            if (user == null) {
+                return "Invalid User or password. Please, try again.";
+            }
         } catch (UserException e) {
             return "An error has occurred.";
         }
-        if (user == null) {
-            return "Invalid User or password. Please, try again.";
-        }
-
         return null;
     }
 

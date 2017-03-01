@@ -1,0 +1,78 @@
+@import models.connections.SQLConnection
+@import helper._
+@(sqlConnectionForm: Form[SQLConnection], formTitle: String = "")
+
+<fieldset>
+    <!-- Header -->
+    <div id="legend">
+        <legend>@formTitle</legend>
+    </div>
+
+    @select(
+    field = sqlConnectionForm("connectionDriver"),
+    options = Seq("postgresql"->"Postgres / Greenplum",
+    "redshift"->"Redshift",
+    "mysql"->"MySql / Mariadb"
+    ),
+    '_showConstraints->false,
+    'help->"Select the database type",
+    '_label-> null,
+    'style-> "width:100%",
+    'class-> " input",
+    '_default -> "-- Select Driver --")
+
+    @inputText(sqlConnectionForm("connectionName"),
+    '_showConstraints->false,
+    '_label->"Connection Name",
+    'placeholder->"my-first-connection",
+    'style-> "width:100%",
+    'help->"Enter a name for this connection")
+
+    @textarea(sqlConnectionForm("connectionDescription"),
+    '_showConstraints->false,
+    '_label->"Connection Description",
+    'placeholder->"Analyze All the Data",
+    'rows->3, 'style-> "width:100%; resize:none;",
+    'help->"Enter the connection description")
+
+    @inputText(sqlConnectionForm("connectionHost"),
+    '_label->"Connection Host",
+    'placeholder->"my.database.com",
+    '_showConstraints->false,
+    'style-> "width:100%",
+    'help->"Enter the database server host name or ip address")
+
+    @inputText(sqlConnectionForm("connectionPort"),
+    '_label->"Connection Port Number",
+    'placeholder->"5432",
+    '_showConstraints->false,
+    'help->"Enter the database server port number")
+
+    @inputText(sqlConnectionForm("connectionUser"),
+    '_label->"Connection User Name",
+    'placeholder->"user_name",
+    'style-> "width:100%",
+    '_showConstraints->false,
+    'help->"Enter the database user name")
+
+    @inputPassword(sqlConnectionForm("connectionPassword"),
+    '_label->"Connection Password",
+    'placeholder->"password",
+    'style-> "width:100%",
+    '_showConstraints->false,
+    'help->"Enter the database server password")
+
+    @inputText(sqlConnectionForm("connectionDBName"),
+    '_label->"Connection Database Name",
+    'placeholder->"database_name",
+    'style-> "width:100%",
+    '_showConstraints->false,
+    'help->"Enter the database name")
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button id="submit" type="submit" value="Submit" class="btn btn-primary">Submit</button>
+            <button id="cancel" class="btn cancel">Cancel</button>
+        </div>
+    </div>
+</fieldset>

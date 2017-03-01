@@ -20,7 +20,6 @@ public class SQLConnection extends Model {
     @Constraints.Required
     private String connectionName;
 
-
     @Constraints.Required
     private String connectionDescription;
 
@@ -42,6 +41,8 @@ public class SQLConnection extends Model {
     public Integer getId() {
         return id;
     }
+
+    public String getConnectionDriver() { return connectionDriver; }
 
     public String getConnectionName() {
         return connectionName;
@@ -69,6 +70,38 @@ public class SQLConnection extends Model {
 
     public String getConnectionDBName() {
         return connectionDBName;
+    }
+
+    public void setConnectionDriver(String connectionDriver) {
+        this.connectionDriver = connectionDriver;
+    }
+
+    public void setConnectionName(String connectionName) {
+        this.connectionName = connectionName;
+    }
+
+    public void setConnectionDescription(String connectionDescription) {
+        this.connectionDescription = connectionDescription;
+    }
+
+    public void setConnectionHost(String connectionHost) {
+        this.connectionHost = connectionHost;
+    }
+
+    public void setConnectionPort(Integer connectionPort) {
+        this.connectionPort = connectionPort;
+    }
+
+    public void setConnectionUser(String connectionUser) {
+        this.connectionUser = connectionUser;
+    }
+
+    public void setConnectionPassword(String connectionPassword) {
+        this.connectionPassword = connectionPassword;
+    }
+
+    public void setConnectionDBName(String connectionDBName) {
+        this.connectionDBName = connectionDBName;
     }
 
     public SQLConnection(String name, String driver, String desc, String host, Integer port,

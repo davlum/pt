@@ -10,7 +10,6 @@ create table csvconnection (
   connection_description        varchar(255),
   delimiter                     varchar(255),
   quote_character               varchar(255),
-  newline_character             varchar(255),
   header                        boolean,
   constraint pk_csvconnection primary key (id)
 );

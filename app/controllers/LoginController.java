@@ -29,7 +29,7 @@ public class LoginController extends Controller {
         if (userID != null) {
             User user = User.find.byId(Long.parseLong(session("userID")));
             if (user != null) {
-                return redirect(controllers.routes.ConnectionController.datasources());
+                return redirect(controllers.routes.ConnectionController.index());
             } else {
                 session().clear();
             }
@@ -45,11 +45,12 @@ public class LoginController extends Controller {
             return redirect(controllers.routes.LoginController.index());
         } else {
             User user = User.findByEmail(loginForm.get().getInputEmail());
+            session().clear();
             session("userID", user.getId().toString());
             user.setLastLogin(new Date());
             user.update();
 
-            return redirect(controllers.routes.ConnectionController.datasources());
+            return redirect(controllers.routes.ConnectionController.index());
         }
     }
 

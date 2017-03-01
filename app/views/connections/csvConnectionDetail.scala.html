@@ -1,0 +1,36 @@
+@import models.connections.CSVConnection
+@import models.users.User
+
+@import views.html.components._
+@import utils.SidebarElement
+@import helper._
+
+
+@(user: User, csvForm: Form[CSVConnection], sidebarCSV: List[SidebarElement], sidebarSQL: List[SidebarElement])
+
+@main(user)(sidebar(sidebarContent(sidebarSQL, sidebarCSV))){
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    @if(flash.containsKey("success")) {
+    <div class="well">
+        <div id="success-message" class="text-success">
+            @flash.get("New Connection Added.")
+        </div>
+    </div>
+    }
+    @if(flash.containsKey("error")) {
+    <div class="well">
+        <div id="error-message" class="text-danger">
+            @flash.get("Error: Could not Add Connection.")
+        </div>
+    </div>
+    }
+    <div>
+        <div id="add-new-sql">
+            @form(action = controllers.routes.ConnectionController.addCSVConnection(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal") {
+            @CSRF.formField
+            @views.html.connections.csvConnectionFieldset("Edit CSV Connection")
+            }
+        </div>
+    </div>
+</div>
+}

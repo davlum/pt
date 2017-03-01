@@ -1,0 +1,55 @@
+@import models.connections.CSVConnection
+@import models.connections.SQLConnection
+@import models.users.User
+
+@import views.html.components._
+@import utils.SidebarElement
+@import helper._
+
+
+@(user: User, sqlForm: Form[SQLConnection], csvFrom: Form[CSVConnection], sidebarCSV: List[SidebarElement], sidebarSQL: List[SidebarElement])
+
+
+
+@main(user)(sidebar(sidebarContent(sidebarSQL, sidebarCSV))){
+    <div class="col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-2 main">
+        @if(flash.containsKey("success")) {
+        <div class="well">
+            <div id="success-message" class="text-success">
+                @flash.get("New Connection Added.")
+            </div>
+        </div>
+        }
+        @if(flash.containsKey("error")) {
+        <div class="well">
+            <div id="error-message" class="text-danger">
+                @flash.get("Error: Could not Add Connection.")
+            </div>
+        </div>
+        }
+        <div>
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a data-toggle="tab" href="#add-new-sql">Add New SQL Connection</a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#add-new-csv">Add New CSV Connection</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div id="add-new-sql" class="tab-pane fade in active">
+                    @form(action = controllers.routes.ConnectionController.addSQLConnection(), 'class -> "form-horizontal") {
+                    @CSRF.formField
+                    @views.html.connections.sqlConnectionFieldset(sqlForm, "Add New SQL Connection")
+                    }
+                </div>
+                <div id="add-new-csv" class="tab-pane fade">
+                    @form(action = controllers.routes.ConnectionController.addCSVConnection(), 'class -> "form-horizontal") {
+                    @CSRF.formField
+                    @views.html.connections.csvConnectionFieldset("Add New CSV Connection")
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
