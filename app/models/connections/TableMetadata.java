@@ -20,6 +20,23 @@ public class TableMetadata extends Model {
     @Constraints.Required
     private String tableName;
 
+    public void setSchemaName(String schemaName) {
+        this.schemaName = schemaName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    public String getSchemaName() {
+
+        return schemaName;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
     public TableMetadata(String schemaName, String tableName) {
         this.schemaName = schemaName;
         this.tableName = tableName;

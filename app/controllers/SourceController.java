@@ -22,4 +22,21 @@ public class SourceController extends Controller {
         return ok();
     }
 
+
+    public Result get(Long id)
+    {
+        return ok("Not implemented yet");
+    }
+    public Result add()
+    {
+        return ok("Not implemented yet");
+    }
+    public Result save(Long id)
+    {
+        return ok("Not implemented yet");
+    }
+    public Result del(Long id)
+    {
+        return ok("Not implemented yet");
+    }
 }

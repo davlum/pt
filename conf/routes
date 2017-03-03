@@ -15,8 +15,10 @@ POST                /connections/addsql                         controllers.Conn
 POST                /connections/addcsv                         controllers.ConnectionController.addCSVConnection()
 GET                 /connections/sql/:id                        controllers.ConnectionController.getSQLConnection(id:Long)
 GET                 /connections/csv/:id                        controllers.ConnectionController.getCSVConnection(id:Long)
-#POST                /connections/sql/:id                        controllers.ConnectionController.saveSQLConnection(id:Long)
-#POST                /connections/csv/:id                        controllers.ConnectionController.saveCSVConnection(id:Long)
+#POST                /connections/sql/:id/save                   controllers.ConnectionController.saveSQLConnection(id:Long)
+#POST                /connections/csv/:id/save                   controllers.ConnectionController.saveCSVConnection(id:Long)
+#POST                /connections/sql/:id/del                    controllers.ConnectionController.saveSQLConnection(id:Long)
+#POST                /connections/csv/:id/del                    controllers.ConnectionController.saveCSVConnection(id:Long)
 
 GET                 /pivot-table                                controllers.PivotTableController.index
 
@@ -38,6 +40,10 @@ GET                 /users                                      controllers.User
 
 
 GET                 /sources                                    controllers.SourceController.index
+GET                 /sources/:id                                controllers.SourceController.get(id:Long)
+POST                /sources/add                                controllers.SourceController.add()
+POST                /sources/:id/save                           controllers.SourceController.save(id:Long)
+POST                /sources/:id/del                            controllers.SourceController.del(id:Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET                 /assets/*file                               controllers.Assets.versioned(path="/public", file: Asset)
