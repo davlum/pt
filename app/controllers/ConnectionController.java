@@ -8,8 +8,13 @@ import utils.SidebarElement;
 import views.html.connections.*;
 
 import javax.inject.Inject;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 public class ConnectionController extends AuthController {
 
@@ -30,11 +35,29 @@ public class ConnectionController extends AuthController {
     public Result addSQLConnection() {
         Form<SQLConnection> connectionForm = formFactory.form(SQLConnection.class).bindFromRequest();
         SQLConnection connection = connectionForm.get();
-        connection.save();
+        try (Connection conn = connection.connect()){
+            reflectTables(conn);
+            connection.save();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return redirect(controllers.routes.ConnectionController.index());
 
     }
 
+    private void reflectTables(Connection conn)
+            throws SQLException
+    {
+        String query = "SELECT table_schema, table_name "
+                     + "FROM information_schema.tables "
+                     + "WHERE table_schema NOT IN ('information_schema', 'pg_catalog')";
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        while (rs.next()) {
+            (new TableMetadata(rs.getString("table_schema"),
+                               rs.getString("table_name"))).save();
+        }
+    }
     public Result getSQLConnection(Long id) {
         return ok(sqlConnectionDetail.render(getCurrentUser(),
                 formFactory.form(SQLConnection.class).fill(SQLConnection.find.byId(id)),
