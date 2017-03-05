@@ -9,14 +9,17 @@ import javax.persistence.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
-public class SqlSource extends Model {
+public class SQL extends Model {
     @Id
     @GeneratedValue
-    private Integer sourceId;
+    private Integer id;
 
     private String sourceName;
+
+    private String sourceDescription;
 
     @ManyToOne
     @JoinColumn(name = "sqlconnection_id")
@@ -28,7 +31,7 @@ public class SqlSource extends Model {
 
     private String fromClause;
 
-    public SqlSource(Long connectionId, String name, String fact, String fromClause)
+    public SQL(Long connectionId, String name, String fact, String fromClause)
     {
         connection = SQLConnection.find.byId(connectionId);
         sourceName = name;
@@ -40,6 +43,14 @@ public class SqlSource extends Model {
     public void addDimensionTable(String dimensionTable)
     {
         dimensionTables.add(dimensionTable);
+    }
+
+    public String getSourceDescription() {
+        return sourceDescription;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public String getSourceName() {
@@ -144,12 +155,17 @@ public class SqlSource extends Model {
         for (AggregateExpression s: aggregates) {
             fields.add(s.toString());
         }
-
-        String stmt = "SELECT " + String.join(", ", fields) + " " + fromClause + " GROUP BY " + String.join(", dimensions");
+        String stmt = "SELECT "
+                + String.join(", ", fields) + " "
+                + fromClause
+                + " GROUP BY "
+                + String.join(", ", dimensions.stream().map(s -> s.qualifiedName()).collect(Collectors.toList()));
         Connection conn = connection.connect();
         Statement s = conn.createStatement();
         ResultSet r =  s.executeQuery(stmt);
         conn.close();
         return r;
     }
+
+    public static Model.Finder<Long, SQL> find = new Model.Finder<>(SQL.class);
 }

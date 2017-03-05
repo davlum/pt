@@ -8,7 +8,7 @@ public class CSVConnection extends Model {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
 
     private String connectionName;
 
@@ -22,7 +22,7 @@ public class CSVConnection extends Model {
 
     private Boolean header;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 

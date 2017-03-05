@@ -110,4 +110,8 @@ public class Field extends Model {
     public void setPivotValues(List<PivotValue> pivotValues) {
         this.pivotValues = pivotValues;
     }
+
+    public String getTableName() {
+        return tableName;
+    }
 }

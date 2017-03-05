@@ -1,0 +1,17 @@
+@import models.source.SQL
+
+@import models.users.User
+
+@import views.html.components._
+@import utils.SidebarElement
+@import helper._
+
+@(user: User, sidebarSources: List[SidebarElement], sourceForm: Form[SQL])
+
+@p = {
+<p>sidebar</p>>
+}
+
+@main(user)(sidebar(p)) {
+<div>Hello World</div>
+}

@@ -12,7 +12,7 @@ import java.sql.SQLException;
 public class SQLConnection extends Model {
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
 
     @Constraints.Required
     private String connectionDriver;
@@ -38,7 +38,7 @@ public class SQLConnection extends Model {
     @Constraints.Required
     private String connectionDBName;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
