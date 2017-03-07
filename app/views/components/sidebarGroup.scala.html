@@ -1,15 +1,18 @@
 @import utils.SidebarElement
 
-@(elements: List[SidebarElement], title: String)
+@(elements: java.util.List[SidebarElement], title: String)
 
 <div>
-    <div>
-        @title
-    </div>
+    <h4>
+        @Html(title)
+    </h4>
     <div>
         <ul class="nav nav-sidebar">
             @for(a <- elements) {
-            <li><a href="@a.link">@a.name</a></li>
+            <li><a href="@a.link" title="@a.hover">@a.name</a></li>
+            }
+            @if(elements.size == 0){
+                <li><a href="#">Empty</a></li>
             }
         </ul>
     </div>

@@ -3,12 +3,11 @@ package models.connections;
 import com.avaje.ebean.Model;
 import play.data.validation.Constraints;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-/**
- * Created by hal on 2017-03-02.
- */
+@Entity
 public class TableMetadata extends Model {
     @Id
     @GeneratedValue

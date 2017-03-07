@@ -1,8 +1,5 @@
 package utils;
 
-/**
- * Created by hal on 2017-02-26.
- */
 public class SidebarElement {
     public String link;
     public String name;

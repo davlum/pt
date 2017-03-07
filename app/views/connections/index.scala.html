@@ -2,28 +2,30 @@
 @import models.connections.SQLConnection
 @import models.users.User
 
-@import views.html.components._
+@import views.html.components.main
+@import views.html.components.sidebar
+@import views.html.connections.sidebarContent
 @import utils.SidebarElement
 @import helper._
 
 
-@(user: User, sqlForm: Form[SQLConnection], csvFrom: Form[CSVConnection], sidebarCSV: List[SidebarElement], sidebarSQL: List[SidebarElement])
+@(user: User, sqlForm: play.data.Form[SQLConnection], csvFrom: play.data.Form[CSVConnection], sidebarCSV: java.util.List[SidebarElement], sidebarSQL: java.util.List[SidebarElement])
 
 
 
 @main(user)(sidebar(sidebarContent(sidebarSQL, sidebarCSV))){
-    <div class="col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-2 main">
+    <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-2 main">
         @if(flash.containsKey("success")) {
         <div class="well">
             <div id="success-message" class="text-success">
-                @flash.get("New Connection Added.")
+                New Connection Added.
             </div>
         </div>
         }
         @if(flash.containsKey("error")) {
         <div class="well">
             <div id="error-message" class="text-danger">
-                @flash.get("Error: Could not Add Connection.")
+                Error: Could not Add Connection.
             </div>
         </div>
         }
