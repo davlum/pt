@@ -1,12 +1,12 @@
-@import views.html.components._
 @import utils.SidebarElement
+@import views.html.components.sidebarGroup
 
-@(sqlList: List[SidebarElement], csvList: List[SidebarElement])
+@(sqlList: java.util.List[SidebarElement], csvList: java.util.List[SidebarElement])
 
 <div>
-    @sidebarGroup(sqlList, "sql connections:")
+    @sidebarGroup(sqlList, "SQL connections")
 </div>
 <hr>
 <div>
-    @sidebarGroup(csvList, "csv connections:")
+    @sidebarGroup(csvList, "CSV connections")
 </div>

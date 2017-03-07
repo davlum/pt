@@ -106,6 +106,13 @@ create table sql_source (
   constraint pk_sql_source primary key (source_id)
 );
 
+create table table_metadata (
+  table_id                      bigserial not null,
+  schema_name                   varchar(255),
+  table_name                    varchar(255),
+  constraint pk_table_metadata primary key (table_id)
+);
+
 create table user_list (
   id                            bigserial not null,
   email                         varchar(255),
@@ -228,6 +235,8 @@ drop table if exists pivot_value_type cascade;
 drop table if exists sqlconnection cascade;
 
 drop table if exists sql_source cascade;
+
+drop table if exists table_metadata cascade;
 
 drop table if exists user_list cascade;
 
