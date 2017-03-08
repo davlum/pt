@@ -118,9 +118,7 @@ public class ConnectionController extends AuthController {
                     flash("error", "Error: Please select a unique connection name!");
                 } else {
                     List<TableMetadata> list = conn.getTableMetadataList();
-                    conn = connection;
-                    conn.setTableMetadataList(list);
-                    conn.update();
+                    conn.updateSQLConnection(connection, list);
                     System.out.println(conn.getConnectionName());
                     flash("success", "Connection Updated!");
                 }

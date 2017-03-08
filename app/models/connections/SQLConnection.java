@@ -77,6 +77,10 @@ public class SQLConnection extends Model {
         return connectionDBName;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setConnectionDriver(String connectionDriver) {
         this.connectionDriver = connectionDriver;
     }
@@ -128,6 +132,20 @@ public class SQLConnection extends Model {
         connectionUser = user;
         connectionPassword = password;
         connectionDriver = driver;
+    }
+
+    public void updateSQLConnection(SQLConnection conn, List<TableMetadata> metadataList)
+    {
+        this.setConnectionName(conn.getConnectionName());
+        this.setConnectionDescription(conn.getConnectionDescription());
+        this.setConnectionHost(conn.getConnectionHost());
+        this.setConnectionPort(conn.getConnectionPort());
+        this.setConnectionDBName(conn.getConnectionDBName());
+        this.setConnectionUser(conn.getConnectionUser());
+        this.setConnectionPassword(conn.getConnectionPassword());
+        this.setConnectionDriver(conn.getConnectionDriver());
+        this.setTableMetadataList(metadataList);
+        this.update();
     }
 
     public static Model.Finder<Long, SQLConnection> find = new Model.Finder<>(SQLConnection.class);

@@ -8,7 +8,7 @@
     </h4>
     <div>
         <ul class="nav nav-sidebar">
-            @for(a <- elements) {
+            @for(a <- elements.sortWith(_.name < _.name)) {
             <li @if(Controller.request.path.equals(a.link)){class="active"}><a href="@a.link" title="@a.hover">@a.name</a></li>
             }
             @if(elements.size == 0){
