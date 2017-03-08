@@ -16,18 +16,18 @@
 @main(user)(sidebar(sidebarContent(sidebarSQL, sidebarCSV))){
     <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-2 main">
         @if(flash.containsKey("success")) {
-        <div class="well">
-            <div id="success-message" class="text-success">
-                New Connection Added.
+            <div class="well">
+                <div id="success-message" class="text-success">
+                @Controller.flash.get("success")
+                </div>
             </div>
-        </div>
         }
         @if(flash.containsKey("error")) {
-        <div class="well">
-            <div id="error-message" class="text-danger">
-                Error: Could not Add Connection.
+            <div class="well">
+                <div id="error-message" class="text-danger">
+                @Controller.flash.get("error")
+                </div>
             </div>
-        </div>
         }
         <div>
             <ul class="nav nav-tabs nav-justified">
@@ -42,7 +42,7 @@
                 <div id="add-new-sql" class="tab-pane fade in active">
                     @form(action = controllers.routes.ConnectionController.addSQLConnection(), 'class -> "form-horizontal") {
                     @CSRF.formField
-                    @views.html.connections.sqlConnectionFieldset(sqlForm, "Add New SQL Connection")
+                    @views.html.connections.sqlConnectionFieldset(sqlForm, "Add New SQL Connection", false)
                     }
                 </div>
                 <div id="add-new-csv" class="tab-pane fade">

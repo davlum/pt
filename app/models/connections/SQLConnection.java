@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
 
 @Entity
 public class SQLConnection extends Model {
@@ -17,6 +18,7 @@ public class SQLConnection extends Model {
     @Constraints.Required
     private String connectionDriver;
 
+    @Column(unique=true)
     @Constraints.Required
     private String connectionName;
 
@@ -37,6 +39,9 @@ public class SQLConnection extends Model {
 
     @Constraints.Required
     private String connectionDBName;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<TableMetadata> tableMetadataList;
 
     public Long getId() {
         return id;
@@ -102,6 +107,14 @@ public class SQLConnection extends Model {
 
     public void setConnectionDBName(String connectionDBName) {
         this.connectionDBName = connectionDBName;
+    }
+
+    public List<TableMetadata> getTableMetadataList() {
+        return tableMetadataList;
+    }
+
+    public void setTableMetadataList(List<TableMetadata> tableMetadataList) {
+        this.tableMetadataList = tableMetadataList;
     }
 
     public SQLConnection(String name, String driver, String desc, String host, Integer port,

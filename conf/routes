@@ -11,10 +11,14 @@ GET                 /forgot-password                            controllers.Logi
 POST                /forgot-password                            controllers.LoginController.forgotSubmit
 
 GET                 /connections                                controllers.ConnectionController.index
-POST                /connections/addsql                         controllers.ConnectionController.addSQLConnection()
-POST                /connections/addcsv                         controllers.ConnectionController.addCSVConnection()
+POST                /connections/add-sql                        controllers.ConnectionController.addSQLConnection()
+POST                /connections/add-csv                        controllers.ConnectionController.addCSVConnection()
 GET                 /connections/sql/:id                        controllers.ConnectionController.getSQLConnection(id:Long)
 GET                 /connections/csv/:id                        controllers.ConnectionController.getCSVConnection(id:Long)
+POST                /connections/update-sql/:id                 controllers.ConnectionController.updateSQLConnection(id:Long)
+POST                /connections/update-csv/:id                 controllers.ConnectionController.updateCSVConnection(id:Long)
+GET                 /connections/delete-sql/:id                 controllers.ConnectionController.deleteSQLConnection(id:Long)
+GET                 /connections/delete-csv/:id                 controllers.ConnectionController.deleteCSVConnection(id:Long)
 #POST                /connections/sql/:id/save                   controllers.ConnectionController.saveSQLConnection(id:Long)
 #POST                /connections/csv/:id/save                   controllers.ConnectionController.saveCSVConnection(id:Long)
 #POST                /connections/sql/:id/del                    controllers.ConnectionController.saveSQLConnection(id:Long)

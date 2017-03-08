@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,42 +62,38 @@ public class ConnectionController extends AuthController {
     public Result addSQLConnection() {
         Form<SQLConnection> connectionForm = formFactory.form(SQLConnection.class).bindFromRequest();
         if (connectionForm.hasErrors()) {
-            flash("error", "Oops! Something went wrong!");
+            flash("error", "Error: Could not add connection. Please check the information you entered.");
             return ok(index.render(getCurrentUser(), connectionForm, formFactory.form(CSVConnection.class),
                     getCSVSidebarElements(), getSQLSidebarElement()));
         } else {
             SQLConnection connection = connectionForm.get();
+            if (SQLConnection.find.where().eq("connectionName", connection.getConnectionName()).findCount() > 0){
+                flash("error", "Error: Please select a unique connection name!");
+                return ok(index.render(getCurrentUser(), connectionForm, formFactory.form(CSVConnection.class),
+                        getCSVSidebarElements(), getSQLSidebarElement()));
+            }
             try (Connection conn = connection.connect()){
-                reflectTables(conn);
+                connection.setTableMetadataList(reflectTables(conn));
                 connection.save();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            flash("success", "New Connection Added");
             return redirect(controllers.routes.ConnectionController.index());
         }
     }
 
-    private void reflectTables(Connection conn)
-            throws SQLException
-    {
-        String query = "SELECT table_schema, table_name "
-                     + "FROM information_schema.tables "
-                     + "WHERE table_schema NOT IN ('information_schema', 'pg_catalog')";
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(query);
-        while (rs.next()) {
-            (new TableMetadata(rs.getString("table_schema"),
-                               rs.getString("table_name"))).save();
-        }
-        rs.close();
-        stmt.close();
-        conn.close();
-    }
     public Result getSQLConnection(Long id) {
-        return ok(sqlConnectionDetail.render(getCurrentUser(),
-                formFactory.form(SQLConnection.class).fill(SQLConnection.find.byId(id)),
-                getCSVSidebarElements(),
-                getSQLSidebarElement()));
+        SQLConnection connection = SQLConnection.find.byId(id);
+        if(connection != null) {
+            return ok(sqlConnectionDetail.render(getCurrentUser(),
+                    formFactory.form(SQLConnection.class).fill(connection),
+                    getCSVSidebarElements(),
+                    getSQLSidebarElement()));
+        } else {
+            flash("error", "Connection Does Not Exist");
+            return redirect(controllers.routes.ConnectionController.index());
+        }
     }
 
     public Result getCSVConnection(Long id) {
@@ -104,5 +101,70 @@ public class ConnectionController extends AuthController {
                 formFactory.form(CSVConnection.class).fill(CSVConnection.find.byId(id)),
                 getCSVSidebarElements(),
                 getSQLSidebarElement()));
+    }
+
+    public Result updateSQLConnection(Long id) {
+        Form<SQLConnection> connectionForm = formFactory.form(SQLConnection.class).bindFromRequest();
+        if (connectionForm.hasErrors()) {
+            flash("error", "Error: Could not update the connection. Please check the information you entered.");
+            return redirect(controllers.routes.ConnectionController.getCSVConnection(id));
+        } else {
+            SQLConnection connection = connectionForm.get();
+
+            SQLConnection conn = SQLConnection.find.byId(id);
+            if(conn != null) {
+                if (SQLConnection.find.where().eq("connectionName", connection.getConnectionName())
+                        .ne("id", id).findCount() > 0){
+                    flash("error", "Error: Please select a unique connection name!");
+                } else {
+                    List<TableMetadata> list = conn.getTableMetadataList();
+                    conn = connection;
+                    conn.setTableMetadataList(list);
+                    conn.update();
+                    System.out.println(conn.getConnectionName());
+                    flash("success", "Connection Updated!");
+                }
+            }
+            return redirect(controllers.routes.ConnectionController.getSQLConnection(id));
+        }
+    }
+
+    public Result updateCSVConnection(Long id) {
+        return ok();
+    }
+
+    public Result deleteSQLConnection(Long id) {
+        SQLConnection connection = SQLConnection.find.byId(id);
+        if(connection != null) {
+            connection.delete();
+            flash("success", "Connection successfully deleted!");
+        } else {
+            flash("error", "Connection Does Not Exist");
+        }
+        return redirect(controllers.routes.ConnectionController.index());
+    }
+
+    public Result deleteCSVConnection(Long id) {
+        return ok();
+    }
+
+    private List<TableMetadata> reflectTables(Connection conn)
+            throws SQLException
+    {
+        String query = "SELECT table_schema, table_name "
+                     + "FROM information_schema.tables "
+                     + "WHERE table_schema NOT IN ('information_schema', 'pg_catalog')";
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        List<TableMetadata> tableMetadataList = new ArrayList<>();
+        while (rs.next()) {
+            tableMetadataList.add(new TableMetadata(rs.getString("table_schema"),
+                               rs.getString("table_name")));
+        }
+        rs.close();
+        stmt.close();
+        conn.close();
+
+        return tableMetadataList;
     }
 }
