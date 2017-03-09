@@ -1,4 +1,4 @@
-package models.source;
+package models.sources;
 
 /**
  * Created by hal on 2017-02-21.

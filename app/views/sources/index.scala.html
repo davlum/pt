@@ -1,4 +1,4 @@
-@import models.source.SQL
+@import models.sources.SQLSource
 
 @import models.users.User
 
@@ -6,12 +6,18 @@
 @import utils.SidebarElement
 @import helper._
 
-@(user: User, sidebarSources: List[SidebarElement], sourceForm: Form[SQL])
+@(user: User, sidebarSources: java.util.List[SidebarElement], sqlSourceForm: play.data.Form[SQLSource])
 
 @p = {
-<p>sidebar</p>>
+<p>sidebar</p>
 }
 
 @main(user)(sidebar(p)) {
-<div>Hello World</div>
+    <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-2 main">
+        @form(action = controllers.routes.SourceController.addSQLSource()) {
+            @CSRF.formField
+            @views.html.sources.sqlSourceFieldset(sqlSourceForm, "Add New SQL Source")
+        }
+    </div>
+
 }

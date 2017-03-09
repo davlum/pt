@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
 
 @Entity
 public class SQLConnection extends Model {

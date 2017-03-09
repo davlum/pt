@@ -1,6 +1,6 @@
 package controllers;
 
-import models.source.SQL;
+import models.sources.SQLSource;
 import play.data.FormFactory;
 import play.mvc.*;
 import utils.SidebarElement;
@@ -25,20 +25,20 @@ public class SourceController extends AuthController {
         return ok(views.html.sources.index.render(
                 getCurrentUser(),
                 getSidebarElements(),
-                formFactory.form(SQL.class)));
+                formFactory.form(SQLSource.class)));
     }
 
 
-    public Result get(Long id) {
+    public Result getSQLSource(Long id) {
 
         return ok();
     }
 
-    public Result add() {
+    public Result addSQLSource() {
         return ok("Not implemented yet");
     }
 
-    public Result save(Long id) {
+    public Result saveSQLSource(Long id) {
         return ok("Not implemented yet");
     }
 
@@ -47,9 +47,9 @@ public class SourceController extends AuthController {
     }
 
     private List<SidebarElement> getSidebarElements() {
-        return SQL.find.all()
+        return SQLSource.find.all()
                 .stream().map(s -> new SidebarElement(
-                        controllers.routes.SourceController.get(s.getId()).url(),
+                        controllers.routes.SourceController.getSQLSource(s.getId()).url(),
                         s.getSourceName(),
                         s.getSourceDescription()))
                 .collect(Collectors.toList());

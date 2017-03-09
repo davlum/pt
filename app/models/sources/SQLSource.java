@@ -1,4 +1,4 @@
-package models.source;
+package models.sources;
 
 import com.avaje.ebean.Model;
 import models.connections.SQLConnection;
@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
-public class SQL extends Model {
+public class SQLSource extends Model {
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
 
     private String sourceName;
 
@@ -25,13 +25,16 @@ public class SQL extends Model {
     @JoinColumn(name = "sqlconnection_id")
     private SQLConnection connection;
 
+    @Transient
+    private Long connId;
+
     private String factTable;
 
-    private ArrayList<String> dimensionTables;
+    private List<String> dimensionTables;
 
     private String fromClause;
 
-    public SQL(Long connectionId, String name, String fact, String fromClause)
+    public SQLSource(Long connectionId, String name, String fact, String fromClause)
     {
         connection = SQLConnection.find.byId(connectionId);
         sourceName = name;
@@ -49,7 +52,7 @@ public class SQL extends Model {
         return sourceDescription;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -159,7 +162,7 @@ public class SQL extends Model {
                 + String.join(", ", fields) + " "
                 + fromClause
                 + " GROUP BY "
-                + String.join(", ", dimensions.stream().map(s -> s.qualifiedName()).collect(Collectors.toList()));
+                + String.join(", ", dimensions.stream().map(Field::qualifiedName).collect(Collectors.toList()));
         Connection conn = connection.connect();
         Statement s = conn.createStatement();
         ResultSet r =  s.executeQuery(stmt);
@@ -167,5 +170,5 @@ public class SQL extends Model {
         return r;
     }
 
-    public static Model.Finder<Long, SQL> find = new Model.Finder<>(SQL.class);
+    public static Model.Finder<Long, SQLSource> find = new Model.Finder<>(SQLSource.class);
 }

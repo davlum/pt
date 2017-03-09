@@ -1,0 +1,36 @@
+@import models.connections.SQLConnection
+@import models.connections.TableMetadata
+@import models.sources.SQLSource
+@import helper._
+
+@(sourceForm: play.data.Form[SQLSource], formTitle: String = "")
+
+<fieldset>
+    <div id="legend" class="mrgT10">
+        <legend>@Html(formTitle)</legend>
+    </div>
+
+    @inputText(sourceForm("sourceName"),
+        '_label -> "Source Name",
+        '_default -> "Give your source a unique name")
+
+    @inputText(sourceForm("sourceDescription"),
+        '_label -> "Description",
+        '_default -> "Describe this source")
+
+    @select(sourceForm("connId"),
+        options = SQLConnection.find.all.map(s => s.getId.toString -> s.getConnectionName)
+        '_label -> "SQL Connection", '_default -> "--- Choose Connection ---")
+
+    @select(sourceForm("factTable"),
+        options = TableMetadata.find.f
+    )
+
+
+    <div class="form-group pull-right">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button id="submit" type="submit" value="Next" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+
+</fieldset>

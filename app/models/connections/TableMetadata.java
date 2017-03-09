@@ -6,6 +6,7 @@ import play.data.validation.Constraints;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.List;
 
 @Entity
 public class TableMetadata extends Model {
@@ -41,4 +42,5 @@ public class TableMetadata extends Model {
         this.tableName = tableName;
     }
     public static Model.Finder<Long, TableMetadata> find = new Model.Finder<>(TableMetadata.class);
+
 }

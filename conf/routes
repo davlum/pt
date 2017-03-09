@@ -40,10 +40,10 @@ GET                 /users                                      controllers.User
 
 
 GET                 /sources                                    controllers.SourceController.index
-GET                 /sources/:id                                controllers.SourceController.get(id:Long)
-POST                /sources/add                                controllers.SourceController.add()
-POST                /sources/:id/save                           controllers.SourceController.save(id:Long)
-POST                /sources/:id/del                            controllers.SourceController.del(id:Long)
+GET                 /sources/sql/:id                            controllers.SourceController.getSQLSource(id:Long)
+POST                /sources/add-sql                            controllers.SourceController.addSQLSource()
+POST                /sources/sql/:id/save                       controllers.SourceController.saveSQLSource(id:Long)
+POST                /sources/sql/:id/del                        controllers.SourceController.del(id:Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET                 /assets/*file                               controllers.Assets.versioned(path="/public", file: Asset)
