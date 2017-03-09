@@ -15,22 +15,22 @@
     @if(flash.containsKey("success")) {
     <div class="well">
         <div id="success-message" class="text-success">
-            New Connection Added.
+        @Controller.flash.get("success")
         </div>
     </div>
     }
     @if(flash.containsKey("error")) {
     <div class="well">
         <div id="error-message" class="text-danger">
-            Error: Could not Add Connection.
+            @Controller.flash.get("error")
         </div>
     </div>
     }
     <div>
         <div id="add-new-sql">
-            @form(action = controllers.routes.ConnectionController.addSQLConnection(), 'class -> "form-horizontal") {
-            @CSRF.formField
-            @views.html.connections.sqlConnectionFieldset(sqlForm, "Edit SQL Connection")
+            @form(action = controllers.routes.ConnectionController.updateSQLConnection(sqlForm.get().getId), 'class -> "form-horizontal") {
+                @CSRF.formField
+                @views.html.connections.sqlConnectionFieldset(sqlForm, "Edit SQL Connection", true)
             }
         </div>
     </div>

@@ -1,7 +1,7 @@
 @import helper._
 @import models.connections.SQLConnection
 
-@(sqlConnectionForm: play.data.Form[SQLConnection], formTitle: String = "")
+@(sqlConnectionForm: play.data.Form[SQLConnection], formTitle: String = "", deleteButton : Boolean)
 
 <fieldset>
     <!-- Header -->
@@ -85,10 +85,14 @@
         'required -> true,
         'help->"Enter the database name")
 
-    <div class="form-group  pull-right">
-        <div class="col-sm-offset-2 col-sm-10">
+    <div class="pull-right">
+        @if(deleteButton){
+            <button id="submit" type="submit" value="Submit" class="btn btn-success">Update</button>
+            <a href="@controllers.routes.ConnectionController.deleteSQLConnection(sqlConnectionForm.get.getId)" class="no-style">
+                <button type="button" class="btn btn-danger">Delete</button>
+            </a>
+        } else {
             <button id="submit" type="submit" value="Submit" class="btn btn-primary">Submit</button>
-            <button id="cancel" class="btn cancel">Cancel</button>
-        </div>
+        }
     </div>
 </fieldset>

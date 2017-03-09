@@ -13,7 +13,6 @@
 
 .inline-block {
     display: inline-block;
-<<<<<<< HEAD
 }
 
 body {
@@ -23,6 +22,12 @@ body {
 #wrapper {
     padding-left: 0;
 }
+
+.remove-style {
+    text-decoration: none;
+    color: inherit;
+}
+
 /*
 #sidebar-wrapper {
     z-index: 1000;
@@ -84,6 +89,3 @@ body {
         margin-right: 0;
     }
 }*/
-=======
-}
->>>>>>> 4f0f00f0fd24c5da14418126fd8865e4564739af

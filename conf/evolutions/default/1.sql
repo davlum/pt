@@ -94,6 +94,7 @@ create table sqlconnection (
   connection_user               varchar(255),
   connection_password           varchar(255),
   connection_dbname             varchar(255),
+  constraint uq_sqlconnection_connection_name unique (connection_name),
   constraint pk_sqlconnection primary key (id)
 );
 
@@ -108,10 +109,11 @@ create table sqlsource (
 );
 
 create table table_metadata (
-  table_id                      bigserial not null,
+  id                            bigserial not null,
   schema_name                   varchar(255),
   table_name                    varchar(255),
-  constraint pk_table_metadata primary key (table_id)
+  sqlconnection_id              bigint,
+  constraint pk_table_metadata primary key (id)
 );
 
 create table user_list (
@@ -168,6 +170,9 @@ create index ix_pivot_value_pivot_value_type_id on pivot_value (pivot_value_type
 alter table sqlsource add constraint fk_sqlsource_sqlconnection_id foreign key (sqlconnection_id) references sqlconnection (id) on delete restrict on update restrict;
 create index ix_sqlsource_sqlconnection_id on sqlsource (sqlconnection_id);
 
+alter table table_metadata add constraint fk_table_metadata_sqlconnection_id foreign key (sqlconnection_id) references sqlconnection (id) on delete restrict on update restrict;
+create index ix_table_metadata_sqlconnection_id on table_metadata (sqlconnection_id);
+
 
 # --- !Downs
 
@@ -212,6 +217,9 @@ drop index if exists ix_pivot_value_pivot_value_type_id;
 
 alter table if exists sqlsource drop constraint if exists fk_sqlsource_sqlconnection_id;
 drop index if exists ix_sqlsource_sqlconnection_id;
+
+alter table if exists table_metadata drop constraint if exists fk_table_metadata_sqlconnection_id;
+drop index if exists ix_table_metadata_sqlconnection_id;
 
 drop table if exists csvconnection cascade;
 
