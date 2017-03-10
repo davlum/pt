@@ -46,7 +46,8 @@
                     }
                 </div>
                 <div id="add-new-csv" class="tab-pane fade @if(addCsv){in active}">
-                    @form(action = controllers.routes.ConnectionController.addCSVConnection(), 'class -> "form-horizontal") {
+                    @form(action = controllers.routes.ConnectionController.addCSVConnection()
+                        , 'enctype -> "multipart/form-data", 'class -> "form-horizontal") {
                         @CSRF.formField
                         @views.html.connections.csvConnectionFieldset(csvForm, "Add New CSV Connection", false)
                     }

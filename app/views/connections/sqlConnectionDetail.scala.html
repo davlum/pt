@@ -28,7 +28,8 @@
     }
     <div>
         <div id="add-new-sql">
-            @form(action = controllers.routes.ConnectionController.updateSQLConnection(sqlForm.get().getId), 'class -> "form-horizontal") {
+            @form(action = controllers.routes.ConnectionController.updateSQLConnection(sqlForm.get().getId), 'class -> "form-horizontal"
+                , 'enctype -> "multipart/form-data") {
                 @CSRF.formField
                 @views.html.connections.sqlConnectionFieldset(sqlForm, "Edit SQL Connection", true)
             }

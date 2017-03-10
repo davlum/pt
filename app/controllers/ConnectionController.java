@@ -259,7 +259,7 @@ public class ConnectionController extends AuthController {
         return o;
     }
     private String handleUpload(Long id){
-        /*Http.MultipartFormData<File> body = request().body().asMultipartFormData();
+        Http.MultipartFormData<File> body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart<File> document = body.getFile("csvFile");
         String fileSystemRoot = Configuration.root().getString("file.system.root");
         String fullPath = fileSystemRoot + "/CSV/" + id + "/";
@@ -280,7 +280,10 @@ public class ConnectionController extends AuthController {
             if(file.renameTo(new File(fullPath + nameOnly + extOnly))) {
                 return fullPath + nameOnly + extOnly;
             }
-        }*/
+        } else {
+            CSVConnection conn = CSVConnection.find.where().eq("id", id).findUnique();
+            if (conn != null) return conn.getConnectionPath();
+        }
 
         return null;
     }
