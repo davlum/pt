@@ -7,6 +7,7 @@ import play.mvc.*;
 import utils.SidebarElement;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,8 @@ public class SourceController extends AuthController {
 
         return ok(views.html.sources.index.render(
                 getCurrentUser(),
-                getSidebarElements(),
+                getSQLSidebarElements(),
+                getCSVSidebarElements(),
                 formFactory.form(SQLSource.class),false));
     }
 
@@ -39,7 +41,12 @@ public class SourceController extends AuthController {
         Form<SQLSource> sourceForm = formFactory.form(SQLSource.class).bindFromRequest();
         if (sourceForm.hasErrors()) {
             flash("error", "Error: Could not add connection. Please check the information you entered.");
-            return ok(views.html.sources.index.render(getCurrentUser(), getSidebarElements(), sourceForm, false));
+            return ok(views.html.sources.index.render(
+                    getCurrentUser(),
+                    getSQLSidebarElements(),
+                    getCSVSidebarElements(),
+                    sourceForm,
+                    false));
         } else {
             SQLSource source = sourceForm.get();
             source.save();
@@ -55,12 +62,17 @@ public class SourceController extends AuthController {
         return ok("Not implemented yet");
     }
 
-    private List<SidebarElement> getSidebarElements() {
+    private List<SidebarElement> getSQLSidebarElements() {
         return SQLSource.find.all()
                 .stream().map(s -> new SidebarElement(
                         controllers.routes.SourceController.getSQLSource(s.getId()).url(),
                         s.getSourceName(),
                         s.getSourceDescription()))
                 .collect(Collectors.toList());
+    }
+
+    private List<SidebarElement> getCSVSidebarElements() {
+        List<SidebarElement> elements = new ArrayList<>();
+        return elements;
     }
 }

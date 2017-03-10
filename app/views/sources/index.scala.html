@@ -2,12 +2,14 @@
 
 @import models.users.User
 
-@import views.html.components._
 @import utils.SidebarElement
+@import views.html.sources.sidebarContent
 @import helper._
+@import views.html.components._
 
 @(user: User,
         sqlSidebarSources: java.util.List[SidebarElement],
+        csvSidebarSources: java.util.List[SidebarElement],
         sqlSourceForm: play.data.Form[SQLSource],
         addCsv : Boolean)
 
@@ -15,16 +17,16 @@
 <p>sidebar</p>
 }
 
-@main(user)(sidebar(p)) {
+@main(user)(sidebar(sidebarContent(sqlSidebarSources, csvSidebarSources))) {
 
     <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-2 main">
         <div>
             <ul class="nav nav-tabs nav-justified">
                 <li @if(!addCsv){class="active"}>
-                    <a data-toggle="tab" href="#add-new-sql">Add New SQL Connection</a>
+                    <a data-toggle="tab" href="#add-new-sql">Add New SQL Source</a>
                 </li>
                 <li @if(addCsv){class="active"}>
-                    <a data-toggle="tab" href="#add-new-csv">Add New CSV Connection</a>
+                    <a data-toggle="tab" href="#add-new-csv">Add New CSV Source</a>
                 </li>
             </ul>
             <div class="tab-content">
@@ -41,5 +43,4 @@
         </div>
 
     </div>
-
 }
