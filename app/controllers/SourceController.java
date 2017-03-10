@@ -1,6 +1,5 @@
 package controllers;
 
-import controllers.*;
 import models.sources.SQLSource;
 import play.data.Form;
 import play.data.FormFactory;

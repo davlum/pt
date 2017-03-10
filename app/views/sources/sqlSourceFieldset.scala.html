@@ -2,7 +2,7 @@
 
 @(formTitle: String = "")
 
-<script src="/assets/javascripts/sqlSourceFieldset.js"></script>
+<script src="@routes.Assets.versioned("javascripts/sqlSourceFieldset.js")"></script>
 <fieldset>
     <div id="legend" class="mrgT10">
         <legend>@Html(formTitle)</legend>
@@ -15,11 +15,11 @@
 
     <div class="form-group">
         <label for="sourceDescription">Description</label>
-        <input type="textarea" class="form-control" id="sourceDescription" name="sourceName" width="100%">
+        <input type="textarea" class="form-control" id="sourceDescription" name="sourceDescription" width="100%">
     </div>
 
     <div class="form-group">
-        <label for="connId">SQL Connection</label>
+        <label for="connection">SQL Connection</label>
         <select class="form-control" id="connection" name="connection" style="width:100%">
             @for(p <- SQLConnection.find.all) {
                 <option value="@p.getId">@p.getConnectionName</option>
