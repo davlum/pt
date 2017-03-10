@@ -5,12 +5,10 @@
 
 create table csvconnection (
   id                            bigserial not null,
-  connection_name               varchar(255),
+  connect_name                  varchar(255),
   connection_path               varchar(255),
-  connection_description        varchar(255),
-  delimiter                     varchar(255),
-  quote_character               varchar(255),
-  header                        boolean,
+  connect_description           varchar(255),
+  constraint uq_csvconnection_connect_name unique (connect_name),
   constraint pk_csvconnection primary key (id)
 );
 

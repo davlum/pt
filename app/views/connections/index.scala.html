@@ -9,9 +9,9 @@
 @import helper._
 
 
-@(user: User, sqlForm: play.data.Form[SQLConnection], csvFrom: play.data.Form[CSVConnection], sidebarCSV: java.util.List[SidebarElement], sidebarSQL: java.util.List[SidebarElement])
-
-
+@(user: User, sqlForm: play.data.Form[SQLConnection],
+        csvForm: play.data.Form[CSVConnection], sidebarCSV: java.util.List[SidebarElement],
+        sidebarSQL: java.util.List[SidebarElement], addCsv : Boolean)
 
 @main(user)(sidebar(sidebarContent(sidebarSQL, sidebarCSV))){
     <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-2 main">
@@ -31,24 +31,24 @@
         }
         <div>
             <ul class="nav nav-tabs nav-justified">
-                <li class="active">
+                <li @if(!addCsv){class="active"}>
                     <a data-toggle="tab" href="#add-new-sql">Add New SQL Connection</a>
                 </li>
-                <li>
+                <li @if(addCsv){class="active"}>
                     <a data-toggle="tab" href="#add-new-csv">Add New CSV Connection</a>
                 </li>
             </ul>
             <div class="tab-content">
-                <div id="add-new-sql" class="tab-pane fade in active">
+                <div id="add-new-sql" class="tab-pane fade @if(!addCsv){in active}">
                     @form(action = controllers.routes.ConnectionController.addSQLConnection(), 'class -> "form-horizontal") {
-                    @CSRF.formField
-                    @views.html.connections.sqlConnectionFieldset(sqlForm, "Add New SQL Connection", false)
+                        @CSRF.formField
+                        @views.html.connections.sqlConnectionFieldset(sqlForm, "Add New SQL Connection", false)
                     }
                 </div>
-                <div id="add-new-csv" class="tab-pane fade">
+                <div id="add-new-csv" class="tab-pane fade @if(addCsv){in active}">
                     @form(action = controllers.routes.ConnectionController.addCSVConnection(), 'class -> "form-horizontal") {
-                    @CSRF.formField
-                    @views.html.connections.csvConnectionFieldset("Add New CSV Connection")
+                        @CSRF.formField
+                        @views.html.connections.csvConnectionFieldset(csvForm, "Add New CSV Connection", false)
                     }
                 </div>
             </div>

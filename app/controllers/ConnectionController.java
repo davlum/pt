@@ -3,9 +3,8 @@ package controllers;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.connections.*;
-import org.jooq.Table;
-import org.jooq.tools.json.JSONArray;
-import org.jooq.tools.json.JSONObject;
+
+import play.Configuration;
 import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -14,6 +13,10 @@ import utils.SidebarElement;
 import views.html.connections.*;
 
 import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,15 +42,25 @@ public class ConnectionController extends AuthController {
                 formFactory.form(SQLConnection.class),
                 formFactory.form(CSVConnection.class),
                 getCSVSidebarElements(),
-                getSQLSidebarElement()));
+                getSQLSidebarElement(),
+                false));
+    }
+
+    public Result indexCSV() {
+        return ok(index.render(getCurrentUser(),
+                formFactory.form(SQLConnection.class),
+                formFactory.form(CSVConnection.class),
+                getCSVSidebarElements(),
+                getSQLSidebarElement(),
+                true));
     }
 
     private List<SidebarElement> getCSVSidebarElements() {
         return CSVConnection.find.all()
                 .stream().map(s -> new SidebarElement(
                         controllers.routes.ConnectionController.getCSVConnection(s.getId()).url(),
-                        s.getConnectionName(),
-                        s.getConnectionDescription()))
+                        s.getConnectName(),
+                        s.getConnectDescription()))
                 .collect(Collectors.toList());
     }
 
@@ -60,25 +73,18 @@ public class ConnectionController extends AuthController {
                 .collect(Collectors.toList());
     }
 
-    public Result addCSVConnection() {
-        Form<CSVConnection> connectionForm = formFactory.form(CSVConnection.class);
-        CSVConnection connection = connectionForm.get();
-        connection.save();
-        return redirect(controllers.routes.ConnectionController.index());
-    }
-
     public Result addSQLConnection() {
         Form<SQLConnection> connectionForm = formFactory.form(SQLConnection.class).bindFromRequest();
         if (connectionForm.hasErrors()) {
             flash("error", "Error: Could not add connection. Please check the information you entered.");
             return ok(index.render(getCurrentUser(), connectionForm, formFactory.form(CSVConnection.class),
-                    getCSVSidebarElements(), getSQLSidebarElement()));
+                    getCSVSidebarElements(), getSQLSidebarElement(), false));
         } else {
             SQLConnection connection = connectionForm.get();
             if (SQLConnection.find.where().eq("connectionName", connection.getConnectionName()).findCount() > 0){
                 flash("error", "Error: Please select a unique connection name!");
                 return ok(index.render(getCurrentUser(), connectionForm, formFactory.form(CSVConnection.class),
-                        getCSVSidebarElements(), getSQLSidebarElement()));
+                        getCSVSidebarElements(), getSQLSidebarElement(), false));
             }
             try (Connection conn = connection.connect()){
                 connection.setTableMetadataList(reflectTables(conn));
@@ -86,6 +92,27 @@ public class ConnectionController extends AuthController {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            flash("success", "New Connection Added");
+            return redirect(controllers.routes.ConnectionController.index());
+        }
+    }
+
+    public Result addCSVConnection() {
+        Form<CSVConnection> connectionForm = formFactory.form(CSVConnection.class).bindFromRequest();
+        if (connectionForm.hasErrors()) {
+            flash("error", "Error: Could not add connection. Please check the information you entered.");
+            return ok(index.render(getCurrentUser(), formFactory.form(SQLConnection.class), connectionForm,
+                    getCSVSidebarElements(), getSQLSidebarElement(), true));
+        } else {
+            CSVConnection connection = connectionForm.get();
+            if (CSVConnection.find.where().eq("connectName", connection.getConnectName()).findCount() > 0){
+                flash("error", "Error: Please select a unique connection name!");
+                return ok(index.render(getCurrentUser(), formFactory.form(SQLConnection.class), connectionForm,
+                        getCSVSidebarElements(), getSQLSidebarElement(), true));
+            }
+            connection.save();
+            connection.setConnectionPath(handleUpload(connection.getId()));
+            connection.update();
             flash("success", "New Connection Added");
             return redirect(controllers.routes.ConnectionController.index());
         }
@@ -105,17 +132,23 @@ public class ConnectionController extends AuthController {
     }
 
     public Result getCSVConnection(Long id) {
-        return ok(csvConnectionDetail.render(getCurrentUser(),
-                formFactory.form(CSVConnection.class).fill(CSVConnection.find.byId(id)),
-                getCSVSidebarElements(),
-                getSQLSidebarElement()));
+        CSVConnection connection = CSVConnection.find.byId(id);
+        if(connection != null) {
+            return ok(csvConnectionDetail.render(getCurrentUser(),
+                    formFactory.form(CSVConnection.class).fill(connection),
+                    getCSVSidebarElements(),
+                    getSQLSidebarElement()));
+        } else {
+            flash("error", "Connection Does Not Exist");
+            return redirect(controllers.routes.ConnectionController.index());
+        }
     }
 
     public Result updateSQLConnection(Long id) {
         Form<SQLConnection> connectionForm = formFactory.form(SQLConnection.class).bindFromRequest();
         if (connectionForm.hasErrors()) {
             flash("error", "Error: Could not update the connection. Please check the information you entered.");
-            return redirect(controllers.routes.ConnectionController.getCSVConnection(id));
+            return redirect(controllers.routes.ConnectionController.getSQLConnection(id));
         } else {
             SQLConnection connection = connectionForm.get();
 
@@ -127,7 +160,7 @@ public class ConnectionController extends AuthController {
                 } else {
                     List<TableMetadata> list = conn.getTableMetadataList();
                     conn.updateSQLConnection(connection, list);
-                    System.out.println(conn.getConnectionName());
+
                     flash("success", "Connection Updated!");
                 }
             }
@@ -136,7 +169,26 @@ public class ConnectionController extends AuthController {
     }
 
     public Result updateCSVConnection(Long id) {
-        return ok();
+        Form<CSVConnection> connectionForm = formFactory.form(CSVConnection.class).bindFromRequest();
+        if (connectionForm.hasErrors()) {
+            flash("error", "Error: Could not add connection. Please check the information you entered.");
+            return redirect(controllers.routes.ConnectionController.getSQLConnection(id));
+        } else {
+            CSVConnection connection = connectionForm.get();
+
+            CSVConnection conn = CSVConnection.find.byId(id);
+            if(conn != null) {
+                if (CSVConnection.find.where().eq("connectName", connection.getConnectName())
+                        .ne("id", id).findCount() > 0){
+                    flash("error", "Error: Please select a unique connection name!");
+                } else {
+                    connection.setConnectionPath(handleUpload(id));
+                    conn.updateCSVConnection(connection);
+                    flash("success", "Connection Updated!");
+                }
+            }
+            return redirect(controllers.routes.ConnectionController.getCSVConnection(id));
+        }
     }
 
     public Result deleteSQLConnection(Long id) {
@@ -151,7 +203,14 @@ public class ConnectionController extends AuthController {
     }
 
     public Result deleteCSVConnection(Long id) {
-        return ok();
+        CSVConnection connection = CSVConnection.find.byId(id);
+        if(connection != null) {
+            connection.delete();
+            flash("success", "Connection successfully deleted!");
+        } else {
+            flash("error", "Connection Does Not Exist");
+        }
+        return redirect(controllers.routes.ConnectionController.index());
     }
 
     private List<TableMetadata> reflectTables(Connection conn)
@@ -198,5 +257,31 @@ public class ConnectionController extends AuthController {
         o.put("schemaName", table.getSchemaName());
         o.put("connectionId", table.getSqlConnection().getId());
         return o;
+    }
+    private String handleUpload(Long id){
+        /*Http.MultipartFormData<File> body = request().body().asMultipartFormData();
+        Http.MultipartFormData.FilePart<File> document = body.getFile("csvFile");
+        String fileSystemRoot = Configuration.root().getString("file.system.root");
+        String fullPath = fileSystemRoot + "/CSV/" + id + "/";
+        if (!Files.isDirectory(Paths.get(fullPath))) {
+            try {
+                Files.createDirectories(Paths.get(fullPath));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (document != null) {
+            File file = document.getFile();
+
+            int startExtension = document.getFilename().lastIndexOf(".");
+            String nameOnly = startExtension > 0 ? document.getFilename().substring(0, startExtension) : document.getFilename();
+            String extOnly = startExtension > 0 ? document.getFilename().substring(startExtension) : "";
+
+            if(file.renameTo(new File(fullPath + nameOnly + extOnly))) {
+                return fullPath + nameOnly + extOnly;
+            }
+        }*/
+
+        return null;
     }
 }

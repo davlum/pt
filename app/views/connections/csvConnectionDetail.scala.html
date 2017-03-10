@@ -7,29 +7,30 @@
 @import helper._
 
 
-@(user: User, csvForm: Form[CSVConnection], sidebarCSV: List[SidebarElement], sidebarSQL: List[SidebarElement])
+@(user: User, csvForm: Form[CSVConnection], sidebarCSV: java.util.List[SidebarElement], sidebarSQL: java.util.List[SidebarElement])
 
 @main(user)(sidebar(sidebarContent(sidebarSQL, sidebarCSV))){
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     @if(flash.containsKey("success")) {
-    <div class="well">
-        <div id="success-message" class="text-success">
-            @flash.get("New Connection Added.")
+        <div class="well">
+            <div id="success-message" class="text-success">
+            @Controller.flash.get("success")
+            </div>
         </div>
-    </div>
     }
     @if(flash.containsKey("error")) {
-    <div class="well">
-        <div id="error-message" class="text-danger">
-            @flash.get("Error: Could not Add Connection.")
+        <div class="well">
+            <div id="error-message" class="text-danger">
+            @Controller.flash.get("error")
+            </div>
         </div>
-    </div>
     }
     <div>
         <div id="add-new-sql">
-            @form(action = controllers.routes.ConnectionController.addCSVConnection(), 'enctype -> "multipart/form-data", 'class -> "form-horizontal") {
-            @CSRF.formField
-            @views.html.connections.csvConnectionFieldset("Edit CSV Connection")
+            @form(action = controllers.routes.ConnectionController.updateCSVConnection(csvForm.get().getId),
+                'enctype -> "multipart/form-data", 'class -> "form-horizontal") {
+                @CSRF.formField
+                @views.html.connections.csvConnectionFieldset(csvForm, "Edit CSV Connection", true)
             }
         </div>
     </div>

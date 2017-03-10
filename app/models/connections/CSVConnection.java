@@ -1,6 +1,7 @@
 package models.connections;
 
 import javax.persistence.*;
+
 import com.avaje.ebean.Model;
 
 @Entity
@@ -10,60 +11,56 @@ public class CSVConnection extends Model {
     @GeneratedValue
     private Long id;
 
-    private String connectionName;
+    @Column(unique=true)
+    private String connectName;
 
     private String connectionPath;
 
-    private String connectionDescription;
+    private String connectDescription;
 
-    private String delimiter;
+    public CSVConnection(String connectionName, String connectionDescription) {
+        this.connectName = connectionName;
+        this.connectDescription = connectionDescription;
+    }
 
-    private String quoteCharacter;
+    public void updateCSVConnection(CSVConnection conn)
+    {
+        this.setConnectName(conn.getConnectName());
+        this.setConnectDescription(conn.getConnectDescription());
+        this.update();
+    }
 
-    private Boolean header;
+    public static Model.Finder<Long, CSVConnection> find = new Model.Finder<>(CSVConnection.class);
 
     public Long getId() {
         return id;
     }
 
-    public String getConnectionName() {
-        return connectionName;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getConnectName() {
+        return connectName;
+    }
+
+    public void setConnectName(String connectName) {
+        this.connectName = connectName;
     }
 
     public String getConnectionPath() {
         return connectionPath;
     }
 
-    public String getConnectionDescription() {
-        return connectionDescription;
-    }
-
-    public String getDelimiter() {
-        return delimiter;
-    }
-
-    public String getQuoteCharacter() {
-        return quoteCharacter;
-    }
-
-
-    public CSVConnection(String connectionPath, String connectionName, String delimiter, String quoteCharacter, String connectionDescription) {
+    public void setConnectionPath(String connectionPath) {
         this.connectionPath = connectionPath;
-        this.connectionName = connectionName;
-        this.delimiter = delimiter;
-        this.quoteCharacter = quoteCharacter;
-        this.header = false;
-        this.connectionDescription = connectionDescription;
     }
 
-    public CSVConnection(String connectionPath, String connectionName, String delimiter, String quoteCharacter, String connectionDescription, Boolean header) {
-        this.connectionPath = connectionPath;
-        this.connectionName = connectionName;
-        this.delimiter = delimiter;
-        this.quoteCharacter = quoteCharacter;
-        this.connectionDescription = connectionDescription;
-        this.header = header;
+    public String getConnectDescription() {
+        return connectDescription;
     }
 
-    public static Model.Finder<Long, CSVConnection> find = new Model.Finder<>(CSVConnection.class);
+    public void setConnectDescription(String connectDescription) {
+        this.connectDescription = connectDescription;
+    }
 }
