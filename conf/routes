@@ -23,6 +23,7 @@ GET                 /connections/delete-csv/:id                 controllers.Conn
 #POST                /connections/csv/:id/save                   controllers.ConnectionController.saveCSVConnection(id:Long)
 #POST                /connections/sql/:id/del                    controllers.ConnectionController.saveSQLConnection(id:Long)
 #POST                /connections/csv/:id/del                    controllers.ConnectionController.saveCSVConnection(id:Long)
+GET                 /connections/sql/:id/tables                 controllers.ConnectionController.getJsonReflectedTables(id:Long)
 
 GET                 /pivot-table                                controllers.PivotTableController.index
 
@@ -51,4 +52,3 @@ POST                /sources/sql/:id/del                        controllers.Sour
 
 # Map static resources from the /public folder to the /assets URL path
 GET                 /assets/*file                               controllers.Assets.versioned(path="/public", file: Asset)
-

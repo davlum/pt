@@ -15,6 +15,9 @@ public class SQLConnection extends Model {
     @GeneratedValue
     private Long id;
 
+    @OneToMany(mappedBy = "sqlConnection")
+    public List<TableMetadata> tables;
+
     @Constraints.Required
     private String connectionDriver;
 

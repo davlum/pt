@@ -1,8 +1,14 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.connections.*;
+import org.jooq.Table;
+import org.jooq.tools.json.JSONArray;
+import org.jooq.tools.json.JSONObject;
 import play.data.Form;
 import play.data.FormFactory;
+import play.libs.Json;
 import play.mvc.*;
 import utils.SidebarElement;
 import views.html.connections.*;
@@ -13,7 +19,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -164,5 +172,31 @@ public class ConnectionController extends AuthController {
         conn.close();
 
         return tableMetadataList;
+    }
+
+    public Result getJsonReflectedTables(Long connectionId) {
+        List<TableMetadata> tables = TableMetadata
+                .find
+                .where().eq("sqlConnection.id", connectionId)
+                .findList();
+
+        ObjectNode jsonTables = Json.newObject();
+        ArrayNode jsonArray = Json.newArray();
+        for (TableMetadata t: tables) {
+            ObjectNode o = getJsonTable(t);
+            jsonArray.add(o);
+        }
+        jsonTables.set("tables", jsonArray);
+
+        return ok(jsonTables);
+    }
+
+    private ObjectNode getJsonTable(TableMetadata table) {
+        ObjectNode o = Json.newObject();
+        o.put("tableId", table.getId());
+        o.put("tableName", table.getTableName());
+        o.put("schemaName", table.getSchemaName());
+        o.put("connectionId", table.getSqlConnection().getId());
+        return o;
     }
 }

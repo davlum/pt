@@ -40,6 +40,10 @@ public class TableMetadata extends Model {
         return schemaName;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getTableName() {
         return tableName;
     }
@@ -58,4 +62,7 @@ public class TableMetadata extends Model {
     }
     public static Model.Finder<Long, TableMetadata> find = new Model.Finder<>(TableMetadata.class);
 
+    public List<TableMetadata> getTablesByConnectionId(Long id) {
+        return find.where().eq("sqlconnection_id", id).findList();
+    }
 }
