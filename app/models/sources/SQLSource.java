@@ -25,9 +25,6 @@ public class SQLSource extends Model {
     @JoinColumn(name = "sqlconnection_id")
     private SQLConnection connection;
 
-    @Transient
-    private Long connId;
-
     private String factTable;
 
     private List<String> dimensionTables;

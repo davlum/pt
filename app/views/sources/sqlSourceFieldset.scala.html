@@ -20,7 +20,7 @@
 
     <div class="form-group">
         <label for="connId">SQL Connection</label>
-        <select class="form-control" id="connId" name="connId" style="width:100%">
+        <select class="form-control" id="connection" name="connection" style="width:100%">
             @for(p <- SQLConnection.find.all) {
                 <option value="@p.getId">@p.getConnectionName</option>
             }

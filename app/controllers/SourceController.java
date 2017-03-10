@@ -1,6 +1,8 @@
 package controllers;
 
+import controllers.*;
 import models.sources.SQLSource;
+import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.*;
 import utils.SidebarElement;
@@ -35,7 +37,15 @@ public class SourceController extends AuthController {
     }
 
     public Result addSQLSource() {
-        return ok("Not implemented yet");
+        Form<SQLSource> sourceForm = formFactory.form(SQLSource.class).bindFromRequest();
+        if (sourceForm.hasErrors()) {
+            flash("error", "Error: Could not add connection. Please check the information you entered.");
+            return ok(views.html.sources.index.render(getCurrentUser(), getSidebarElements(), sourceForm));
+        } else {
+            SQLSource source = sourceForm.get();
+            source.save();
+            return redirect(controllers.routes.SourceController.index());
+        }
     }
 
     public Result saveSQLSource(Long id) {
