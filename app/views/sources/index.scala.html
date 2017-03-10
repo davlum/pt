@@ -6,20 +6,40 @@
 @import utils.SidebarElement
 @import helper._
 
-@(user: User, sidebarSources: java.util.List[SidebarElement], sqlSourceForm: play.data.Form[SQLSource])
+@(user: User,
+        sqlSidebarSources: java.util.List[SidebarElement],
+        sqlSourceForm: play.data.Form[SQLSource],
+        addCsv : Boolean)
 
 @p = {
 <p>sidebar</p>
 }
 
 @main(user)(sidebar(p)) {
+
     <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-2 main">
-        <div class="containter">
-        @form(action = controllers.routes.SourceController.addSQLSource()) {
-            @CSRF.formField
-            @views.html.sources.sqlSourceFieldset("Add New SQL Source")
-        }
+        <div>
+            <ul class="nav nav-tabs nav-justified">
+                <li @if(!addCsv){class="active"}>
+                    <a data-toggle="tab" href="#add-new-sql">Add New SQL Connection</a>
+                </li>
+                <li @if(addCsv){class="active"}>
+                    <a data-toggle="tab" href="#add-new-csv">Add New CSV Connection</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div id="add-new-sql" class="tab-pane fade @if(!addCsv){in active}">
+                @form(action = controllers.routes.SourceController.addSQLSource()) {
+                    @CSRF.formField
+                    @views.html.sources.sqlSourceFieldset("Add New SQL Source")
+                }
+                </div>
+                <div id="add-new-csv" class="tab-pane fade @if(addCsv){in active}">
+                    <p>Hello World</p>
+                </div>
+            </div>
         </div>
+
     </div>
 
 }

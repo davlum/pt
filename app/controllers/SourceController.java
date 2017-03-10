@@ -26,7 +26,7 @@ public class SourceController extends AuthController {
         return ok(views.html.sources.index.render(
                 getCurrentUser(),
                 getSidebarElements(),
-                formFactory.form(SQLSource.class)));
+                formFactory.form(SQLSource.class),false));
     }
 
 
@@ -39,7 +39,7 @@ public class SourceController extends AuthController {
         Form<SQLSource> sourceForm = formFactory.form(SQLSource.class).bindFromRequest();
         if (sourceForm.hasErrors()) {
             flash("error", "Error: Could not add connection. Please check the information you entered.");
-            return ok(views.html.sources.index.render(getCurrentUser(), getSidebarElements(), sourceForm));
+            return ok(views.html.sources.index.render(getCurrentUser(), getSidebarElements(), sourceForm, false));
         } else {
             SQLSource source = sourceForm.get();
             source.save();
