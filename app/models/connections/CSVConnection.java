@@ -27,6 +27,9 @@ public class CSVConnection extends Model {
     {
         this.setConnectName(conn.getConnectName());
         this.setConnectDescription(conn.getConnectDescription());
+        if (conn.getConnectionPath() != null) {
+            this.setConnectionPath(conn.getConnectionPath());
+        }
         this.update();
     }
 
