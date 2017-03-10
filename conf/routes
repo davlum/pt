@@ -11,6 +11,8 @@ GET                 /forgot-password                            controllers.Logi
 POST                /forgot-password                            controllers.LoginController.forgotSubmit
 
 GET                 /connections                                controllers.ConnectionController.index
+GET                 /connections/add-sql                        controllers.ConnectionController.index
+GET                 /connections/add-csv                        controllers.ConnectionController.indexCSV
 POST                /connections/add-sql                        controllers.ConnectionController.addSQLConnection()
 POST                /connections/add-csv                        controllers.ConnectionController.addCSVConnection()
 GET                 /connections/sql/:id                        controllers.ConnectionController.getSQLConnection(id:Long)

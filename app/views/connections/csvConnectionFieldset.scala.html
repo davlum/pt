@@ -1,36 +1,47 @@
-@(formTitle: String)
+@import helper._
+@import models.connections.CSVConnection
+
+@(csvConnectionForm: play.data.Form[CSVConnection], formTitle: String = "", deleteButton : Boolean)
 
 <fieldset>
     <!-- Header -->
     <div id="legend" class="mrgT10">
         <legend>@formTitle</legend>
     </div>
-    <div class="form-group">
-        <label for="connectionName">Connection Name</label>
-        <input type="text" class="form-control" id="connectionName" name="connectionName">
-    </div>
-    <div class="form-group">
-        <label for="connectionDescription">Connection Description</label>
-        <input type="text" class="form-control" id="connectionDescription" name="connectionDescription">
-    </div>
-    <div class="form-group">
-        <label for="delimiter">Delimiter</label>
-        <input type="text" class="form-control" id="delimiter" name="delimiter">
-    </div>
-    <div class="form-group">
-        <label for="quoteCharacter">Quote Character</label>
-        <input type="text" class="form-control" id="quoteCharacter" name="quoteCharacter">
-    </div>
-    <div class="form-group">
-        <label for="csvFile">File input</label>
-        <input type="file" class="form-control-file" id="csvFile" name=csvFile>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    @inputText(csvConnectionForm("connectName"),
+        '_showConstraints->false,
+        '_label->"Connection Name",
+        'placeholder->"my-first-connection",
+        'style-> "width:100%",
+        'class-> "form-control",
+        'required -> true,
+        'help->"Enter a name for this connection")
+    @textarea(csvConnectionForm("connectDescription"),
+        '_showConstraints->false,
+        '_label->"Connection Description",
+        'placeholder->"Analyze All the Data",
+        'rows->3, 'style-> "width:100%; resize:none;",
+        'class-> "form-control",
+        'required -> true,
+        'help->"Enter the connection description")
 
-    <div class="form-group pull-right">
-        <div class="col-sm-offset-2 col-sm-10">
-            <button id="submit" type="submit" value="Submit" class="btn btn-primary">Submit</button>
-            <button id="cancel" class="btn cancel">Cancel</button>
-        </div>
+    @inputFile(csvConnectionForm("csvFile"),
+        '_showConstraints->false,
+        '_label->"File Input",
+        'rows->3, 'style-> "width:100%; resize:none;",
+        'class-> "form-control",
+        'required -> true,
+        'help->"Enter the connection description"
+    )
+
+    <div class="pull-right">
+    @if(deleteButton){
+        <button id="submit" type="submit" value="Submit" class="btn btn-success">Update</button>
+        <a href="@controllers.routes.ConnectionController.deleteCSVConnection(csvConnectionForm.get.getId)" class="no-style">
+            <button type="button" class="btn btn-danger">Delete</button>
+        </a>
+    } else {
+        <button id="submit" type="submit" value="Submit" class="btn btn-primary">Submit</button>
+    }
     </div>
 </fieldset>

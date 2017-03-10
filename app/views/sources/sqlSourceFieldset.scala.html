@@ -19,11 +19,12 @@
         '_default -> "Describe this source")
 
     @select(sourceForm("connId"),
-        options = SQLConnection.find.all.map(s => s.getId.toString -> s.getConnectionName)
-        '_label -> "SQL Connection", '_default -> "--- Choose Connection ---")
+        options = SQLConnection.find.all.map(s => s.getId.toString -> s.getConnectionName),
+        '_label -> "SQL Connection",
+        '_default -> "--- Choose Connection ---")
 
     @select(sourceForm("factTable"),
-        options = TableMetadata.find.f
+        options = TableMetadata.find.all.map(s => s.getId.toString -> s.getSchemaName)
     )
 
 

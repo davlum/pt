@@ -4,8 +4,6 @@ import com.avaje.ebean.Model;
 import com.avaje.ebean.annotation.JsonIgnore;
 import play.data.validation.Constraints;
 
-import java.util.List;
-
 import javax.persistence.*;
 
 
@@ -26,6 +24,14 @@ public class TableMetadata extends Model {
     @JoinColumn(name = "sqlconnection_id")
     @JsonIgnore
     private SQLConnection sqlConnection;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public void setSchemaName(String schemaName) {
         this.schemaName = schemaName;
