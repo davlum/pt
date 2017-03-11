@@ -3,6 +3,10 @@ package models.connections;
 import javax.persistence.*;
 
 import com.avaje.ebean.Model;
+import models.sources.CSVSourceLink;
+import play.data.validation.Constraints;
+
+import java.util.List;
 
 @Entity
 public class CSVConnection extends Model {
@@ -11,12 +15,17 @@ public class CSVConnection extends Model {
     @GeneratedValue
     private Long id;
 
+    @Constraints.Required
     @Column(unique=true)
     private String connectName;
 
     private String connectionPath;
 
+    @Constraints.Required
     private String connectDescription;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<CSVSourceLink> sourceLinks;
 
     public CSVConnection(String connectionName, String connectionDescription) {
         this.connectName = connectionName;
@@ -65,5 +74,13 @@ public class CSVConnection extends Model {
 
     public void setConnectDescription(String connectDescription) {
         this.connectDescription = connectDescription;
+    }
+
+    public List<CSVSourceLink> getSourceLinks() {
+        return sourceLinks;
+    }
+
+    public void setSourceLinks(List<CSVSourceLink> sourceLinks) {
+        this.sourceLinks = sourceLinks;
     }
 }

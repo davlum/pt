@@ -31,6 +31,8 @@ public class SQLSource extends Model {
 
     private String fromClause;
 
+    public static Model.Finder<Long, SQLSource> find = new Model.Finder<>(SQLSource.class);
+
     public SQLSource(Long connectionId, String name, String fact, String fromClause)
     {
         connection = SQLConnection.find.byId(connectionId);
@@ -166,6 +168,4 @@ public class SQLSource extends Model {
         conn.close();
         return r;
     }
-
-    public static Model.Finder<Long, SQLSource> find = new Model.Finder<>(SQLSource.class);
 }

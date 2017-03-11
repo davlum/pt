@@ -1,25 +1,35 @@
-@import models.sources.SQLSource
-
-@import models.users.User
-
-@import utils.SidebarElement
-@import views.html.sources.sidebarContent
 @import helper._
 @import views.html.components._
+@import models.sources.SQLSource
+@import models.sources.CSVSource
+@import models.users.User
+@import utils.SidebarElement
+@import views.html.sources.sidebarContent
 
 @(user: User,
-        sqlSidebarSources: java.util.List[SidebarElement],
-        csvSidebarSources: java.util.List[SidebarElement],
-        sqlSourceForm: play.data.Form[SQLSource],
-        addCsv : Boolean)
-
-@p = {
-<p>sidebar</p>
-}
+    sqlSourceForm: play.data.Form[SQLSource],
+    csvSourceForm: play.data.Form[CSVSource],
+    sqlSidebarSources: java.util.List[SidebarElement],
+    csvSidebarSources: java.util.List[SidebarElement],
+    addCsv : Boolean)
 
 @main(user)(sidebar(sidebarContent(sqlSidebarSources, csvSidebarSources))) {
 
     <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-2 main">
+        @if(flash.containsKey("success")) {
+            <div class="well">
+                <div id="success-message" class="text-success">
+                @Controller.flash.get("success")
+                </div>
+            </div>
+        }
+        @if(flash.containsKey("error")) {
+            <div class="well">
+                <div id="error-message" class="text-danger">
+                @Controller.flash.get("error")
+                </div>
+            </div>
+        }
         <div>
             <ul class="nav nav-tabs nav-justified">
                 <li @if(!addCsv){class="active"}>
@@ -31,13 +41,16 @@
             </ul>
             <div class="tab-content">
                 <div id="add-new-sql" class="tab-pane fade @if(!addCsv){in active}">
-                @form(action = controllers.routes.SourceController.addSQLSource()) {
+                @form(action = controllers.routes.SourceController.addSQLSource(), 'class -> "form-horizontal") {
                     @CSRF.formField
                     @views.html.sources.sqlSourceFieldset("Add New SQL Source")
                 }
                 </div>
                 <div id="add-new-csv" class="tab-pane fade @if(addCsv){in active}">
-                    <p>Hello World</p>
+                @form(action = controllers.routes.SourceController.addCSVSource(), 'class -> "form-horizontal") {
+                    @CSRF.formField
+                    @views.html.sources.csvSourceFieldset(csvSourceForm, "Add New CSV Source", false)
+                }
                 </div>
             </div>
         </div>

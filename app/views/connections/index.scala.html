@@ -1,3 +1,5 @@
+@import helper._
+
 @import models.connections.CSVConnection
 @import models.connections.SQLConnection
 @import models.users.User
@@ -6,7 +8,6 @@
 @import views.html.components.sidebar
 @import views.html.connections.sidebarContent
 @import utils.SidebarElement
-@import helper._
 
 
 @(user: User, sqlForm: play.data.Form[SQLConnection],

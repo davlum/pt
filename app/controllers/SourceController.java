@@ -1,5 +1,6 @@
 package controllers;
 
+import models.sources.CSVSource;
 import models.sources.SQLSource;
 import play.data.Form;
 import play.data.FormFactory;
@@ -7,13 +8,9 @@ import play.mvc.*;
 import utils.SidebarElement;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by hal on 2017-02-22.
- */
 public class SourceController extends AuthController {
     private final FormFactory formFactory;
 
@@ -23,43 +20,23 @@ public class SourceController extends AuthController {
     }
 
     public Result index() {
-
         return ok(views.html.sources.index.render(
                 getCurrentUser(),
+                formFactory.form(SQLSource.class),
+                formFactory.form(CSVSource.class),
                 getSQLSidebarElements(),
                 getCSVSidebarElements(),
-                formFactory.form(SQLSource.class),false));
+                false));
     }
 
-
-    public Result getSQLSource(Long id) {
-
-        return ok();
-    }
-
-    public Result addSQLSource() {
-        Form<SQLSource> sourceForm = formFactory.form(SQLSource.class).bindFromRequest();
-        if (sourceForm.hasErrors()) {
-            flash("error", "Error: Could not add connection. Please check the information you entered.");
-            return ok(views.html.sources.index.render(
-                    getCurrentUser(),
-                    getSQLSidebarElements(),
-                    getCSVSidebarElements(),
-                    sourceForm,
-                    false));
-        } else {
-            SQLSource source = sourceForm.get();
-            source.save();
-            return redirect(controllers.routes.SourceController.index());
-        }
-    }
-
-    public Result saveSQLSource(Long id) {
-        return ok("Not implemented yet");
-    }
-
-    public Result del(Long id) {
-        return ok("Not implemented yet");
+    public Result indexCSV() {
+        return ok(views.html.sources.index.render(
+                getCurrentUser(),
+                formFactory.form(SQLSource.class),
+                formFactory.form(CSVSource.class),
+                getSQLSidebarElements(),
+                getCSVSidebarElements(),
+                true));
     }
 
     private List<SidebarElement> getSQLSidebarElements() {
@@ -72,7 +49,58 @@ public class SourceController extends AuthController {
     }
 
     private List<SidebarElement> getCSVSidebarElements() {
-        List<SidebarElement> elements = new ArrayList<>();
-        return elements;
+        return CSVSource.find.all()
+                .stream().map(s -> new SidebarElement(
+                        controllers.routes.SourceController.getCSVSource(s.getId()).url(),
+                        s.getSourceName(),
+                        s.getSourceDescription()))
+                .collect(Collectors.toList());
+    }
+
+    public Result addSQLSource() {
+        Form<SQLSource> sourceForm = formFactory.form(SQLSource.class).bindFromRequest();
+        if (sourceForm.hasErrors()) {
+            flash("error", "Error: Could not add connection. Please check the information you entered.");
+            return ok(views.html.sources.index.render(
+                    getCurrentUser(),
+                    sourceForm,
+                    formFactory.form(CSVSource.class),
+                    getSQLSidebarElements(),
+                    getCSVSidebarElements(),
+                    false));
+        } else {
+            SQLSource source = sourceForm.get();
+            source.save();
+            return redirect(controllers.routes.SourceController.index());
+        }
+    }
+
+    public Result addCSVSource() {
+        return ok();
+    }
+
+
+    public Result getSQLSource(Long id) {
+        return ok();
+    }
+
+    public Result getCSVSource(Long id) {
+        return ok();
+    }
+
+    public Result updateSQLSource(Long id) {
+        return ok();
+    }
+
+    public Result updateCSVSource(Long id) {
+        return ok();
+    }
+
+    public Result deleteSQLSource(Long id) {
+        return ok();
+    }
+
+    public Result deleteCSVSource(Long id) {
+        return ok();
     }
 }

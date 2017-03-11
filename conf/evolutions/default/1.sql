@@ -12,6 +12,27 @@ create table csvconnection (
   constraint pk_csvconnection primary key (id)
 );
 
+create table csvsource (
+  id                            bigserial not null,
+  source_name                   varchar(255),
+  source_description            varchar(255),
+  constraint pk_csvsource primary key (id)
+);
+
+create table csvsource_link (
+  id                            bigserial not null,
+  fact_field                    varchar(255),
+  dimension_field               varchar(255),
+  csvconnection_id              bigint,
+  constraint pk_csvsource_link primary key (id)
+);
+
+create table csvsource_link_csvsource (
+  csvsource_link_id             bigint not null,
+  csvsource_id                  bigint not null,
+  constraint pk_csvsource_link_csvsource primary key (csvsource_link_id,csvsource_id)
+);
+
 create table field (
   id                            bigserial not null,
   field_name                    varchar(255),
@@ -126,6 +147,15 @@ create table user_list (
   constraint pk_user_list primary key (id)
 );
 
+alter table csvsource_link add constraint fk_csvsource_link_csvconnection_id foreign key (csvconnection_id) references csvconnection (id) on delete restrict on update restrict;
+create index ix_csvsource_link_csvconnection_id on csvsource_link (csvconnection_id);
+
+alter table csvsource_link_csvsource add constraint fk_csvsource_link_csvsource_csvsource_link foreign key (csvsource_link_id) references csvsource_link (id) on delete restrict on update restrict;
+create index ix_csvsource_link_csvsource_csvsource_link on csvsource_link_csvsource (csvsource_link_id);
+
+alter table csvsource_link_csvsource add constraint fk_csvsource_link_csvsource_csvsource foreign key (csvsource_id) references csvsource (id) on delete restrict on update restrict;
+create index ix_csvsource_link_csvsource_csvsource on csvsource_link_csvsource (csvsource_id);
+
 alter table field add constraint fk_field_pivot_table_id foreign key (pivot_table_id) references pivot_table (id) on delete restrict on update restrict;
 create index ix_field_pivot_table_id on field (pivot_table_id);
 
@@ -174,6 +204,15 @@ create index ix_table_metadata_sqlconnection_id on table_metadata (sqlconnection
 
 # --- !Downs
 
+alter table if exists csvsource_link drop constraint if exists fk_csvsource_link_csvconnection_id;
+drop index if exists ix_csvsource_link_csvconnection_id;
+
+alter table if exists csvsource_link_csvsource drop constraint if exists fk_csvsource_link_csvsource_csvsource_link;
+drop index if exists ix_csvsource_link_csvsource_csvsource_link;
+
+alter table if exists csvsource_link_csvsource drop constraint if exists fk_csvsource_link_csvsource_csvsource;
+drop index if exists ix_csvsource_link_csvsource_csvsource;
+
 alter table if exists field drop constraint if exists fk_field_pivot_table_id;
 drop index if exists ix_field_pivot_table_id;
 
@@ -220,6 +259,12 @@ alter table if exists table_metadata drop constraint if exists fk_table_metadata
 drop index if exists ix_table_metadata_sqlconnection_id;
 
 drop table if exists csvconnection cascade;
+
+drop table if exists csvsource cascade;
+
+drop table if exists csvsource_link cascade;
+
+drop table if exists csvsource_link_csvsource cascade;
 
 drop table if exists field cascade;
 
