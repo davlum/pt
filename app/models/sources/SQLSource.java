@@ -4,6 +4,7 @@ import com.avaje.ebean.Model;
 import models.connections.SQLConnection;
 import models.pivottable.Field;
 import models.pivottable.FieldType;
+import models.pivottable.PivotTable;
 
 import javax.persistence.*;
 import java.sql.*;
@@ -31,6 +32,9 @@ public class SQLSource extends Model {
 
     private String fromClause;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<PivotTable> pivotTable;
+
     public static Model.Finder<Long, SQLSource> find = new Model.Finder<>(SQLSource.class);
 
     public SQLSource(Long connectionId, String name, String fact, String fromClause)
@@ -45,30 +49,6 @@ public class SQLSource extends Model {
     public void addDimensionTable(String dimensionTable)
     {
         dimensionTables.add(dimensionTable);
-    }
-
-    public String getSourceDescription() {
-        return sourceDescription;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getSourceName() {
-        return sourceName;
-    }
-
-    public String getFactTable() {
-        return factTable;
-    }
-
-    public List<String> getDimensionTables() {
-        return dimensionTables;
-    }
-
-    public String getFromClause() {
-        return fromClause;
     }
 
     public static FieldType mapDatabaseFieldType(String dbType)
@@ -167,5 +147,70 @@ public class SQLSource extends Model {
         ResultSet r =  s.executeQuery(stmt);
         conn.close();
         return r;
+    }
+
+
+    public String getSourceDescription() {
+        return sourceDescription;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public String getFactTable() {
+        return factTable;
+    }
+
+    public List<String> getDimensionTables() {
+        return dimensionTables;
+    }
+
+    public String getFromClause() {
+        return fromClause;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
+
+    public void setSourceDescription(String sourceDescription) {
+        this.sourceDescription = sourceDescription;
+    }
+
+    public SQLConnection getConnection() {
+        return connection;
+    }
+
+    public void setConnection(SQLConnection connection) {
+        this.connection = connection;
+    }
+
+    public void setFactTable(String factTable) {
+        this.factTable = factTable;
+    }
+
+    public void setDimensionTables(List<String> dimensionTables) {
+        this.dimensionTables = dimensionTables;
+    }
+
+    public void setFromClause(String fromClause) {
+        this.fromClause = fromClause;
+    }
+
+    public List<PivotTable> getPivotTable() {
+        return pivotTable;
+    }
+
+    public void setPivotTable(List<PivotTable> pivotTable) {
+        this.pivotTable = pivotTable;
     }
 }

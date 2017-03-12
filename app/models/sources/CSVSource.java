@@ -1,7 +1,9 @@
 package models.sources;
 
 import com.avaje.ebean.Model;
+import com.avaje.ebean.annotation.JsonIgnore;
 import models.connections.CSVConnection;
+import models.pivottable.PivotTable;
 import play.data.validation.Constraints;
 
 import javax.persistence.*;
@@ -21,12 +23,25 @@ public class CSVSource extends Model {
     private String sourceDescription;
 
     @Constraints.Required
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "csvconnection_id")
+    @JsonIgnore
     private CSVConnection factTable;
 
     @ManyToMany(mappedBy = "sourceList")
     private List<CSVSourceLink> sourceLinkList;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<PivotTable> pivotTable;
+
     public static Model.Finder<Long, CSVSource> find = new Model.Finder<>(CSVSource.class);
+
+    public void csvUpdateSource(CSVSource source){
+        this.setSourceName(source.getSourceName());
+        this.setSourceDescription(source.getSourceDescription());
+        this.setFactTable(source.getFactTable());
+        this.update();
+    }
 
     public Long getId() {
         return id;
@@ -66,5 +81,13 @@ public class CSVSource extends Model {
 
     public void setSourceLinkList(List<CSVSourceLink> sourceLinkList) {
         this.sourceLinkList = sourceLinkList;
+    }
+
+    public List<PivotTable> getPivotTable() {
+        return pivotTable;
+    }
+
+    public void setPivotTable(List<PivotTable> pivotTable) {
+        this.pivotTable = pivotTable;
     }
 }

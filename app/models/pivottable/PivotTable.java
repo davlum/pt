@@ -1,6 +1,10 @@
 package models.pivottable;
 
 import com.avaje.ebean.Model;
+import com.avaje.ebean.annotation.JsonIgnore;
+import models.sources.CSVSource;
+import models.sources.SQLSource;
+import play.data.validation.Constraints;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,6 +16,24 @@ public class PivotTable extends Model {
     @Id
     @GeneratedValue
     private Long id;
+
+    @Column(unique = true)
+    @Constraints.Required
+    private String name;
+
+    @Column(unique = true)
+    @Constraints.Required
+    private String description;
+
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "sqlsource_id")
+    @JsonIgnore
+    private SQLSource sqlSource;
+
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "csvsource_id")
+    @JsonIgnore
+    private CSVSource csvSource;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Field> fieldList;
@@ -156,5 +178,37 @@ public class PivotTable extends Model {
 
     public void setPivotPageList(List<PivotPage> pivotPageList) {
         this.pivotPageList = pivotPageList;
+    }
+
+    public SQLSource getSqlSource() {
+        return sqlSource;
+    }
+
+    public void setSqlSource(SQLSource sqlSource) {
+        this.sqlSource = sqlSource;
+    }
+
+    public CSVSource getCsvSource() {
+        return csvSource;
+    }
+
+    public void setCsvSource(CSVSource csvSource) {
+        this.csvSource = csvSource;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

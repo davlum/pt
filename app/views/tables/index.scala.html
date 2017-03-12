@@ -1,0 +1,58 @@
+@import helper._
+@import views.html.components._
+@import models.users.User
+@import utils.SidebarElement
+@import utils.forms.CSVTableForm
+@import utils.forms.SQLTableForm
+@import views.html.tables.sidebarContent
+
+@(user: User,
+        sqlTableForm: play.data.Form[SQLTableForm],
+        csvTableForm: play.data.Form[CSVTableForm],
+        sidebarTables: java.util.List[SidebarElement],
+        addCsv : Boolean)
+
+@main(user)(sidebar(sidebarContent(sidebarTables))) {
+
+  <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-2 main">
+    @if(flash.containsKey("success")) {
+      <div class="well">
+        <div id="success-message" class="text-success">
+        @Controller.flash.get("success")
+        </div>
+      </div>
+    }
+    @if(flash.containsKey("error")) {
+      <div class="well">
+        <div id="error-message" class="text-danger">
+        @Controller.flash.get("error")
+        </div>
+      </div>
+    }
+    <div>
+      <ul class="nav nav-tabs nav-justified">
+        <li @if(!addCsv){class="active"}>
+          <a data-toggle="tab" href="#add-new-sql">Add New SQL Pivot Table</a>
+        </li>
+        <li @if(addCsv){class="active"}>
+          <a data-toggle="tab" href="#add-new-csv">Add New CSV Pivot Table</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div id="add-new-sql" class="tab-pane fade @if(!addCsv){in active}">
+        @form(action = controllers.routes.PivotTable.addSQLTable(), 'class -> "form-horizontal") {
+          @CSRF.formField
+          @views.html.tables.sqlTableFieldset(sqlTableForm, "Add New SQL Pivot Table")
+        }
+        </div>
+        <div id="add-new-csv" class="tab-pane fade @if(addCsv){in active}">
+        @form(action = controllers.routes.PivotTable.addCSVTable(), 'class -> "form-horizontal") {
+          @CSRF.formField
+          @views.html.tables.csvTableFieldset(csvTableForm, "Add New CSV Pivot Table")
+        }
+        </div>
+      </div>
+    </div>
+
+  </div>
+}

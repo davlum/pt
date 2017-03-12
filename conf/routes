@@ -35,6 +35,14 @@ POST                /sources/update-csv/:id                     controllers.Sour
 GET                 /sources/delete-sql/:id                     controllers.SourceController.deleteSQLSource(id:Long)
 GET                 /sources/delete-csv/:id                     controllers.SourceController.deleteCSVSource(id:Long)
 
+GET                 /pivot-tables                               controllers.PivotTable.index
+GET                 /pivot-tables/add-sql                       controllers.PivotTable.index
+GET                 /pivot-tables/add-csv                       controllers.PivotTable.indexCSV
+POST                /pivot-tables/add-sql                       controllers.PivotTable.addSQLTable()
+POST                /pivot-tables/add-csv                       controllers.PivotTable.addCSVTable()
+GET                 /pivot-tables/:id                           controllers.PivotTable.getTable(id:Long)
+GET                 /pivot-tables/:id/delete                    controllers.PivotTable.deleteTable(id:Long)
+
 
 GET                 /pivot-table                                controllers.PivotTableController.index
 

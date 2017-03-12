@@ -38,12 +38,15 @@
           </button>
           <a class="navbar-brand" href="#">X-Tab</a>
           <ul class="nav navbar-nav" >
-              <li class ="@if(Controller.request.path.startsWith("/sources")){active}" >
-                <a href="@controllers.routes.SourceController.index">Sources</a>
-              </li>
-              <li class ="@if(Controller.request.path.startsWith("/connections")){active}" >
-                <a href="@controllers.routes.ConnectionController.index">Connections</a>
-              </li>
+            <li class ="@if(Controller.request.path.startsWith("/connections")){active}" >
+              <a href="@controllers.routes.ConnectionController.index">Connections</a>
+            </li>
+            <li class ="@if(Controller.request.path.startsWith("/sources")){active}" >
+              <a href="@controllers.routes.SourceController.index">Sources</a>
+            </li>
+            <li class ="@if(Controller.request.path.startsWith("/pivot-tables")){active}" >
+              <a href="@controllers.routes.PivotTable.index">Pivot Tables</a>
+            </li>
           </ul>
         </div>
         <div id="navbar" class="navbar-collapse collapse">

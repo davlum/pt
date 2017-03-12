@@ -27,7 +27,7 @@
     'help->"Enter the connection description")
 
   @select(
-    field = csvSourceForm("factTable"),
+    field = csvSourceForm("factTable.id"),
     options = CSVConnection.find.all.map(conn => conn.getId.toString -> conn.getConnectName),
     '_showConstraints->false,
     '_label->"Fact Table",

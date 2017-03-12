@@ -6,6 +6,7 @@ import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.*;
 import utils.SidebarElement;
+import views.html.sources.*;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -76,7 +77,23 @@ public class SourceController extends AuthController {
     }
 
     public Result addCSVSource() {
-        return ok();
+        Form<CSVSource> sourceForm = formFactory.form(CSVSource.class).bindFromRequest();
+        if (sourceForm.hasErrors()) {
+            flash("error", "Error: Could not add source. Please check the information you entered.");
+            System.out.println(sourceForm.data());
+            return ok(views.html.sources.index.render(getCurrentUser(), formFactory.form(SQLSource.class),
+                    sourceForm, getSQLSidebarElements(), getCSVSidebarElements(), true));
+        } else {
+            CSVSource source = sourceForm.get();
+            if (CSVSource.find.where().eq("sourceName", source.getSourceName()).findCount() > 0){
+                flash("error", "Error: Please select a unique source name!");
+                return ok(views.html.sources.index.render(getCurrentUser(), formFactory.form(SQLSource.class),
+                        sourceForm, getSQLSidebarElements(), getCSVSidebarElements(), true));
+            }
+            source.save();
+            flash("success", "New Source Added");
+            return redirect(controllers.routes.SourceController.index());
+        }
     }
 
 
@@ -85,7 +102,16 @@ public class SourceController extends AuthController {
     }
 
     public Result getCSVSource(Long id) {
-        return ok();
+        CSVSource source = CSVSource.find.byId(id);
+        if(source != null) {
+            return ok(csvSourceDetail.render(getCurrentUser(),
+                    formFactory.form(CSVSource.class).fill(source),
+                    getCSVSidebarElements(),
+                    getSQLSidebarElements()));
+        } else {
+            flash("error", "Connection Does Not Exist");
+            return redirect(controllers.routes.ConnectionController.index());
+        }
     }
 
     public Result updateSQLSource(Long id) {
@@ -93,7 +119,24 @@ public class SourceController extends AuthController {
     }
 
     public Result updateCSVSource(Long id) {
-        return ok();
+        Form<CSVSource> sourceForm = formFactory.form(CSVSource.class).bindFromRequest();
+        if (sourceForm.hasErrors()) {
+            flash("error", "Error: Could not update. Please check the information you entered.");
+            return redirect(controllers.routes.SourceController.getCSVSource(id));
+        } else {
+            CSVSource source = sourceForm.get();
+
+            CSVSource s = CSVSource.find.byId(id);
+            if(s != null) {
+                if (CSVSource.find.where().eq("sourceName", source.getSourceName()).ne("id", id).findCount() > 0){
+                    flash("error", "Error: Please select a unique source name!");
+                } else {
+                    s.csvUpdateSource(source);
+                    flash("success", "Source Updated!");
+                }
+            }
+            return redirect(controllers.routes.SourceController.getCSVSource(id));
+        }
     }
 
     public Result deleteSQLSource(Long id) {
@@ -101,6 +144,13 @@ public class SourceController extends AuthController {
     }
 
     public Result deleteCSVSource(Long id) {
-        return ok();
+        CSVSource source = CSVSource.find.byId(id);
+        if(source != null) {
+            source.delete();
+            flash("success", "Source successfully deleted!");
+        } else {
+            flash("error", "Source Does Not Exist.");
+        }
+        return redirect(controllers.routes.SourceController.index());
     }
 }
