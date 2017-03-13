@@ -43,7 +43,7 @@
                 <div id="add-new-sql" class="tab-pane fade @if(!addCsv){in active}">
                 @form(action = controllers.routes.SourceController.addSQLSource(), 'class -> "form-horizontal") {
                     @CSRF.formField
-                    @views.html.sources.sqlSourceFieldset("Add New SQL Source")
+                    @views.html.sources.sqlSourceFieldset(sqlSourceForm, "Add New SQL Source", false)
                 }
                 </div>
                 <div id="add-new-csv" class="tab-pane fade @if(addCsv){in active}">
