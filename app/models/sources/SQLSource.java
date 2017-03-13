@@ -50,7 +50,21 @@ public class SQLSource extends Model {
         this.connection = SQLConnection.find.byId(id);
     }
 
+    public String getFromClause() {
+        return fromClause;
+    }
+
+    public String getSourceName() {
+
+        return sourceName;
+    }
+
+    public String getSourceDescription() {
+        return sourceDescription;
+    }
+
     public SQLConnection getConnection() {
+
         return connection;
     }
 
