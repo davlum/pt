@@ -4,6 +4,7 @@ import com.avaje.ebean.Model;
 import models.connections.SQLConnection;
 import models.pivottable.Field;
 import models.pivottable.FieldType;
+import play.data.validation.Constraints;
 
 import javax.persistence.*;
 import java.sql.*;
@@ -17,6 +18,7 @@ public class SQLSource extends Model {
     @GeneratedValue
     private Long id;
 
+    @Constraints.Required
     private String sourceName;
 
     private String sourceDescription;
@@ -25,26 +27,48 @@ public class SQLSource extends Model {
     @JoinColumn(name = "sqlconnection_id")
     private SQLConnection connection;
 
+    @Transient
+    private Long connectionId;
+
+    @Constraints.Required
     private String factTable;
 
-    private List<String> dimensionTables;
-
+    @Constraints.Required
     private String fromClause;
 
     public static Model.Finder<Long, SQLSource> find = new Model.Finder<>(SQLSource.class);
 
-    public SQLSource(Long connectionId, String name, String fact, String fromClause)
-    {
-        connection = SQLConnection.find.byId(connectionId);
-        sourceName = name;
-        factTable = fact;
-        this.fromClause = fromClause;
-        this.dimensionTables = new ArrayList<>();
+    public Long getConnectionId() {
+        return connection.getId();
     }
 
-    public void addDimensionTable(String dimensionTable)
+    public void setConnectionId(Long id)
     {
-        dimensionTables.add(dimensionTable);
+        this.connection = SQLConnection.find.byId(id);
+    }
+
+    public SQLConnection getConnection() {
+        return connection;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
+
+    public void setSourceDescription(String sourceDescription) {
+        this.sourceDescription = sourceDescription;
+    }
+
+    public void setConnection(SQLConnection connection) {
+        this.connection = connection;
+    }
+
+    public void setFactTable(String factTable) {
+        this.factTable = factTable;
+    }
+
+    public void setFromClause(String fromClause) {
+        this.fromClause = fromClause;
     }
 
     public String getSourceDescription() {
@@ -61,10 +85,6 @@ public class SQLSource extends Model {
 
     public String getFactTable() {
         return factTable;
-    }
-
-    public List<String> getDimensionTables() {
-        return dimensionTables;
     }
 
     public String getFromClause() {
@@ -103,47 +123,7 @@ public class SQLSource extends Model {
                 throw new IllegalArgumentException("Field Type not Supported");
         }
     }
-    public List<Field> fetchAvailableColumns() throws SQLException {
 
-        Connection conn = connection.connect();
-        String metadata_stmt = "SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_name = ";
-        ArrayList<Field> fields = new ArrayList<>();
-        String stmt_fact = metadata_stmt + "'" + factTable + "'";
-        Statement stmt = conn.createStatement();
-        ResultSet resultSet = stmt.executeQuery(stmt_fact);
-
-        while (resultSet.next()) {
-            String t = resultSet.getString("table_name");
-            String c = resultSet.getString("column_name");
-            String d = resultSet.getString("data_type");
-            try {
-                FieldType fieldType = mapDatabaseFieldType(d);
-                Field f = new Field(c, fieldType, t);
-                fields.add(f);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (String dimensionTable: dimensionTables) {
-            String stmt_dimension = metadata_stmt + "'" + dimensionTable + "'";
-            resultSet = stmt.executeQuery(stmt_dimension);
-            while (resultSet.next()) {
-                String t = resultSet.getString("table_name");
-                String c = resultSet.getString("column_name");
-                String d = resultSet.getString("data_type");
-                try {
-                    FieldType fieldType = mapDatabaseFieldType(d);
-                    Field f = new Field(c, fieldType, t);
-                    fields.add(f);
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        conn.close();
-        return fields;
-    }
 
     public ResultSet executeQuery(List<Field> dimensions,
                         List<AggregateExpression> aggregates)
@@ -168,4 +148,14 @@ public class SQLSource extends Model {
         conn.close();
         return r;
     }
+
+    public void updateSQLSource(SQLSource src)
+    {
+        this.setSourceName(src.getSourceName());
+        this.setSourceDescription(src.getSourceDescription());
+        this.setConnectionId(src.getConnectionId());
+        this.setFromClause(src.getFromClause());
+        this.update();
+    }
+
 }

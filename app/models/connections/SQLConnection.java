@@ -1,6 +1,7 @@
 package models.connections;
 
 import com.avaje.ebean.Model;
+import models.sources.SQLSource;
 import play.data.validation.Constraints;
 
 import javax.persistence.*;
@@ -42,6 +43,9 @@ public class SQLConnection extends Model {
 
     @Constraints.Required
     private String connectionDBName;
+
+    @OneToMany(mappedBy = "connection")
+    private List<SQLSource> sources;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<TableMetadata> tableMetadataList;

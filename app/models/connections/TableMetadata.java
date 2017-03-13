@@ -2,7 +2,9 @@ package models.connections;
 
 import com.avaje.ebean.Model;
 import com.avaje.ebean.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.data.validation.Constraints;
+import play.libs.Json;
 
 import javax.persistence.*;
 import java.util.List;
@@ -68,5 +70,14 @@ public class TableMetadata extends Model {
 
     public List<TableMetadata> getTablesByConnectionId(Long id) {
         return find.where().eq("sqlconnection_id", id).findList();
+    }
+
+    public ObjectNode getJson() {
+        ObjectNode o = Json.newObject();
+        o.put("tableId", this.id);
+        o.put("tableName", this.tableName);
+        o.put("schemaName", this.schemaName);
+        o.put("connectionId", this.sqlConnection.getId());
+        return o;
     }
 }

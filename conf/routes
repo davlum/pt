@@ -22,6 +22,7 @@ POST                /connections/update-csv/:id                 controllers.Conn
 GET                 /connections/delete-sql/:id                 controllers.ConnectionController.deleteSQLConnection(id:Long)
 GET                 /connections/delete-csv/:id                 controllers.ConnectionController.deleteCSVConnection(id:Long)
 GET                 /connections/sql/:id/tables                 controllers.ConnectionController.getJsonReflectedTables(id:Long)
+GET                 /connections/sql/table/:id/columns          controllers.ConnectionController.getJsonReflectedColumns(id:Long)
 
 GET                 /sources                                    controllers.SourceController.index
 GET                 /sources/add-sql                            controllers.SourceController.index

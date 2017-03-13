@@ -1,11 +1,13 @@
 package models.connections;
 
 import com.avaje.ebean.Model;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.data.validation.Constraints;
+import play.libs.Json;
 
 import javax.persistence.*;
 
-
+@Entity
 public class ColumnMetadata extends Model {
     @Id
     @GeneratedValue
@@ -20,6 +22,12 @@ public class ColumnMetadata extends Model {
         this.columnName = columnName;
         this.columnType = columnType;
         this.columnAlias = columnAlias;
+    }
+    public ColumnMetadata(TableMetadata tableMetadata, String columnName, String columnType) {
+        this.tableMetadata = tableMetadata;
+        this.columnName = columnName;
+        this.columnType = columnType;
+        this.columnAlias = columnName;
     }
 
     public void setTableMetadata(TableMetadata tableMetadata) {
@@ -66,7 +74,18 @@ public class ColumnMetadata extends Model {
     @Constraints.Required
     private String columnType;
 
-    @Constraints.Required
     private String columnAlias;
     public static Model.Finder<Long, ColumnMetadata> find = new Model.Finder<>(ColumnMetadata.class);
+
+    public ObjectNode getJson() {
+        ObjectNode o = Json.newObject();
+        o.put("columnId", this.columnId);
+        o.put("columnType", this.columnType);
+        o.put("columnName", this.columnName);
+        o.put("columnAlias", this.columnAlias);
+        o.put("tableName", this.tableMetadata.getTableName());
+        o.put("schemaName", this.tableMetadata.getSchemaName());
+        o.put("tableId", this.tableMetadata.getId());
+        return o;
+    }
 }
