@@ -4,8 +4,8 @@ import com.avaje.ebean.Model;
 import models.connections.SQLConnection;
 import models.pivottable.Field;
 import models.pivottable.FieldType;
+import models.pivottable.PivotTable;
 import play.data.validation.Constraints;
-
 import javax.persistence.*;
 import java.sql.*;
 import java.util.ArrayList;
@@ -35,6 +35,9 @@ public class SQLSource extends Model {
 
     @Constraints.Required
     private String fromClause;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<PivotTable> pivotTable;
 
     public static Model.Finder<Long, SQLSource> find = new Model.Finder<>(SQLSource.class);
 
@@ -71,26 +74,6 @@ public class SQLSource extends Model {
         this.fromClause = fromClause;
     }
 
-    public String getSourceDescription() {
-        return sourceDescription;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getSourceName() {
-        return sourceName;
-    }
-
-    public String getFactTable() {
-        return factTable;
-    }
-
-    public String getFromClause() {
-        return fromClause;
-    }
-
     public static FieldType mapDatabaseFieldType(String dbType)
     {
         switch (dbType) {
@@ -98,7 +81,7 @@ public class SQLSource extends Model {
             case "smallint":
             case "int":
             case "integer":
-                return FieldType.Integer;
+                return FieldType.Long;
 
             case "boolean":
                 return FieldType.Boolean;
@@ -118,7 +101,7 @@ public class SQLSource extends Model {
             case "double precicion":
             case "numeric":
             case "real":
-                return FieldType.Number;
+                return FieldType.Double;
             default:
                 throw new IllegalArgumentException("Field Type not Supported");
         }
@@ -149,6 +132,19 @@ public class SQLSource extends Model {
         return r;
     }
 
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<PivotTable> getPivotTable() {
+        return pivotTable;
+    }
+
+    public void setPivotTable(List<PivotTable> pivotTable) {
+        this.pivotTable = pivotTable;
+    }
+
     public void updateSQLSource(SQLSource src)
     {
         this.setSourceName(src.getSourceName());
@@ -157,5 +153,4 @@ public class SQLSource extends Model {
         this.setFromClause(src.getFromClause());
         this.update();
     }
-
 }

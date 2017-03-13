@@ -36,18 +36,26 @@ POST                /sources/update-csv/:id                     controllers.Sour
 GET                 /sources/delete-sql/:id                     controllers.SourceController.deleteSQLSource(id:Long)
 GET                 /sources/delete-csv/:id                     controllers.SourceController.deleteCSVSource(id:Long)
 
+GET                 /pivot-tables                               controllers.PivotTableController.index
+GET                 /pivot-tables/add-sql                       controllers.PivotTableController.index
+GET                 /pivot-tables/add-csv                       controllers.PivotTableController.indexCSV
+POST                /pivot-tables/add-sql                       controllers.PivotTableController.addSQLTable()
+POST                /pivot-tables/add-csv                       controllers.PivotTableController.addCSVTable()
+GET                 /pivot-tables/:id                           controllers.PivotTableController.getTable(id:Long)
+GET                 /pivot-tables/:id/results                   controllers.PivotTableController.displayPivotTable(id:Long)
+GET                 /pivot-tables/:id/delete                    controllers.PivotTableController.deleteTable(id:Long)
+POST                /pivot-tables/:id/add-page                  controllers.PivotTableController.addPage(id:Long)
+GET                 /pivot-tables/:id/delete-page/:pageID       controllers.PivotTableController.deletePage(id:Long, pageID:Long)
+POST                /pivot-tables/:id/add-row                   controllers.PivotTableController.addRow(id:Long)
+GET                 /pivot-tables/:id/delete-row/:rowID         controllers.PivotTableController.deleteRow(id:Long, rowID:Long)
+POST                /pivot-tables/:id/add-column                controllers.PivotTableController.addColumn(id:Long)
+GET                 /pivot-tables/:id/delete-column/:colID      controllers.PivotTableController.deleteColumn(id:Long, colID:Long)
+POST                /pivot-tables/:id/add-value                 controllers.PivotTableController.addValue(id:Long)
+GET                 /pivot-tables/:id/delete-value/:valID       controllers.PivotTableController.deleteValue(id:Long, valID:Long)
+POST                /pivot-tables/:id/add-filter                controllers.PivotTableController.addFilter(id:Long)
+GET                 /pivot-tables/:id/delete-filter/:filterID   controllers.PivotTableController.deleteFilter(id:Long, filterID:Long)
 
-GET                 /pivot-table                                controllers.PivotTableController.index
-
-GET                 /pivot                                      controllers.PivotTableController.index
-POST                /pivot/add-row                              controllers.PivotTableController.addRow()
-GET                 /pivot/delete-row/:id                       controllers.PivotTableController.deleteRow(id:Long)
-
-POST                /pivot/add-column                           controllers.PivotTableController.addColumn()
-GET                 /pivot/delete-column/:id                    controllers.PivotTableController.deleteColumn(id:Long)
-
-POST                /pivot/add-value                            controllers.PivotTableController.addValue()
-GET                 /pivot/delete-value/:id                     controllers.PivotTableController.deleteValue(id:Long)
+GET /test   controllers.PivotTable.index
 
 GET                 /users                                      controllers.UsersController.users
 #GET                 /users/add                                  controllers.UsersController.add

@@ -13,7 +13,7 @@
           @for(column <- pivotTable.getPivotColumnList){
               <div class="padB10">
                   @column.getField.getFieldName
-                  <a class="red" href="@routes.PivotTableController.deleteColumn(column.getId)">
+                  <a class="red" href="@routes.PivotTableController.deleteColumn(pivotTable.getId, column.getId)">
                       <i class="fa fa-times danger mrgT3 pull-right"></i>
                   </a>
               </div>

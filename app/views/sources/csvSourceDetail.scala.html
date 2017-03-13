@@ -1,0 +1,38 @@
+@import models.sources.CSVSource
+@import models.users.User
+
+@import views.html.components._
+@import views.html.sources.sidebarContent
+@import views.html.sources.csvSourceFieldset
+@import utils.SidebarElement
+@import helper._
+
+
+@(user: User, csvForm: play.data.Form[CSVSource], sidebarCSV: java.util.List[SidebarElement], sidebarSQL: java.util.List[SidebarElement])
+
+@main(user)(sidebar(sidebarContent(sidebarSQL, sidebarCSV))){
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    @if(flash.containsKey("success")) {
+      <div class="well">
+        <div id="success-message" class="text-success">
+        @Controller.flash.get("success")
+        </div>
+      </div>
+    }
+    @if(flash.containsKey("error")) {
+      <div class="well">
+        <div id="error-message" class="text-danger">
+        @Controller.flash.get("error")
+        </div>
+      </div>
+    }
+    <div>
+      <div id="add-new-sql">
+      @form(action = controllers.routes.SourceController.updateCSVSource(csvForm.get().getId), 'class -> "form-horizontal") {
+        @CSRF.formField
+        @csvSourceFieldset(csvForm, "Edit CSV Source", true)
+      }
+      </div>
+    </div>
+  </div>
+}

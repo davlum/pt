@@ -42,7 +42,9 @@ public class PivotTableHandler {
             while (i < pivotTable.getPivotColumnList().size()) {
                 tableHtml.append("<tr>");
                 String currentField = pivotTable.getPivotColumnList().get(i).getField().getFieldName();
-                pivotTable.getPivotRowList().forEach(row -> tableHtml.append("<th></th>"));
+                if(pivotTable.getPivotRowList().size() > 0) {
+                    pivotTable.getPivotRowList().forEach(row -> tableHtml.append("<th></th>"));
+                } else tableHtml.append("<th></th>");
                 StringBuilder repeatPattern = new StringBuilder();
                 pivotTableData.stream().map(line -> line.get(currentField)).distinct().sorted()
                         .forEach(value -> repeatPattern.append("<th colspan=\"").append(colspanPerLevel.get(i) *
@@ -94,9 +96,11 @@ public class PivotTableHandler {
         StringBuilder returnVal = new StringBuilder();
         StringBuilder repeatPattern = new StringBuilder();
         returnVal.append("<tr>");
-        for (PivotRow ignored : pivotTable.getPivotRowList()){
-            returnVal.append("<th></th>");
-        }
+        if(pivotTable.getPivotRowList().size() > 0) {
+            for (PivotRow ignored : pivotTable.getPivotRowList()) {
+                returnVal.append("<th></th>");
+            }
+        } else returnVal.append("<th></th>");
         if (pivotTable.getValuesList().size() > 0){
             pivotTable.getValuesList().forEach(val -> repeatPattern.append("<th>").append(val.displayTitle()).append("</th>"));
         } else {
@@ -135,7 +139,7 @@ public class PivotTableHandler {
                 }
             }
         } else {
-            returnVal.append("<tr>").append(loopCols(restrictedData, 0)).append("</tr>");
+            returnVal.append("<tr><td></td>").append(loopCols(restrictedData, 0)).append(printValues(restrictedData)).append("</tr>");
         }
 
         return returnVal.toString();
@@ -184,4 +188,19 @@ public class PivotTableHandler {
         return null;
     }
 
+    public List<Map<String, String>> getPivotTableData() {
+        return pivotTableData;
+    }
+
+    public void setPivotTableData(List<Map<String, String>> pivotTableData) {
+        this.pivotTableData = pivotTableData;
+    }
+
+    public PivotTable getPivotTable() {
+        return pivotTable;
+    }
+
+    public void setPivotTable(PivotTable pivotTable) {
+        this.pivotTable = pivotTable;
+    }
 }

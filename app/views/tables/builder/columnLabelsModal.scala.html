@@ -15,14 +15,19 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title">Column Labels</h4>
       </div>
-      @helper.form(controllers.routes.PivotTableController.addColumn(), 'enctype -> "multipart/form-data", 'class -> "columnForm",  'id -> "columnForm"){
+      @helper.form(controllers.routes.PivotTableController.addColumn(pivotTable.getId), 'enctype -> "multipart/form-data", 'class -> "columnForm",  'id -> "columnForm"){
         @CSRF.formField
         <div class="modal-body">
             @if(pivotTable != null) {
                 @select(
                 field = columnForm("fieldID"),
                 options = pivotTable.availableFields.map(field => field.getId.toString -> field.getFieldName),
-                '_default -> "Please Select a Field"
+                '_label -> "Field",
+                '_default -> "Please Select a Field",
+                '_showConstraints->false,
+                'rows->3, 'style-> "width:100%; resize:none;",
+                'class-> "form-control",
+                'required -> true
                 )
             }
 

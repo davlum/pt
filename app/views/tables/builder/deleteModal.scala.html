@@ -1,0 +1,27 @@
+@import models.pivottable.PivotTable
+
+@(pivotTable : PivotTable)
+
+<!-- Modal -->
+<div id="deleteModal" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+
+      <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Delete Pivot Table</h4>
+      </div>
+        <div class="modal-body">
+          Are you sure you want to delete this pivot table? You will not be able to recover any information after this action.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <a href="@controllers.routes.PivotTableController.deleteTable(pivotTable.getId)" class="no-style">
+            <button type="button" class="btn btn-danger">Delete</button>
+          </a>
+        </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,26 @@
+@import models.pivottable.PivotTable
+
+@(pivotTable : PivotTable)
+
+<div class="panel panel-default">
+  <div class="panel-heading">Page Labels
+    @if(pivotTable.getPivotPageList.size == 0) {
+      <a data-toggle="modal" data-target="#pageLabelsModal">
+        <i class="fa fa-plus mrgT3 addSign pull-right"></i>
+      </a>
+    }
+  </div>
+  <div class="panel-body">
+    @if(pivotTable != null) {
+      @for(row <- pivotTable.getPivotPageList){
+        <div class="padB10">
+          @row.getField.getFieldName
+        <a class="red" href="@routes.PivotTableController.deletePage(pivotTable.getId, row.getId)">
+          <i class="fa fa-times danger mrgT3 pull-right"></i>
+        </a>
+        </div>
+      }
+    }
+
+  </div>
+</div>

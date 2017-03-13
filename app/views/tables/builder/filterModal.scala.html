@@ -15,7 +15,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title">Row Labels</h4>
             </div>
-            @helper.form(controllers.routes.PivotTableController.addRow(), 'enctype -> "multipart/form-data", 'class -> "rowForm",  'id -> "rowForm"){
+            @helper.form(controllers.routes.PivotTableController.addRow(pivotTable.getId), 'enctype -> "multipart/form-data", 'class -> "rowForm",  'id -> "rowForm"){
                 @CSRF.formField
                 <div class="modal-body">
                 @select(

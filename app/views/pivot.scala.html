@@ -1,5 +1,5 @@
 @import models.pivottable.PivotTable
-@import views.html.builder._
+@import views.html.tables.builder._
 @import utils.forms.ValueForm
 @import utils.forms.FieldForm
 @import utils.pivotTableHandler.PivotTableHandler
@@ -39,24 +39,37 @@
                     <div>
                         <div class="row">
                             <div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="panel panel-default">
-                                        <div class="panel-heading">Report Filter</div>
+                                        <div class="panel-heading">Page Labels</div>
                                         <div class="panel-body">Panel Content</div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                @columnLabels(pivotTable)
+                                <div class="col-md-4">
+                                    @rowLabels(pivotTable)
+                                </div>
+                                <div class="col-md-4">
+                                    @columnLabels(pivotTable)
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div>
-                                <div class="col-md-6">
-                                @rowLabels(pivotTable)
-                                </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                 @values(pivotTable)
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">Report Filter</div>
+                                        <div class="panel-body">Panel Content</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="panel-heading">Actions</div>
+                                    <div class="panel-body">
+                                        <button id="displayResults" type="button" class="btn btn-success">Display Table</button>
+                                        <button id="deleteTable" type="button" class="btn btn-danger">Delete Table</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -4,18 +4,16 @@
 
 <div class="panel panel-default">
   <div class="panel-heading">Row Labels
-    @if(pivotTable != null && pivotTable.getPivotRowList.size() < 2){
       <a data-toggle="modal" data-target="#rowLabelsModal">
         <i class="fa fa-plus mrgT3 addSign pull-right"></i>
       </a>
-    }
   </div>
   <div class="panel-body">
       @if(pivotTable != null) {
           @for(row <- pivotTable.getPivotRowList){
           <div class="padB10">
               @row.getField.getFieldName
-              <a class="red" href="@routes.PivotTableController.deleteRow(row.getId)">
+              <a class="red" href="@routes.PivotTableController.deleteRow(pivotTable.getId, row.getId)">
                   <i class="fa fa-times danger mrgT3 pull-right"></i>
               </a>
           </div>
