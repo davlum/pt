@@ -1,3 +1,44 @@
+@import helper._
 @import utils.forms.CSVTableForm
+@import models.sources.CSVSource
 
-@(csvSourceForm: play.data.Form[CSVTableForm], formTitle: String = "")
+@(csvTableForm: play.data.Form[CSVTableForm], formTitle: String = "")
+
+<fieldset>
+        <!-- Header -->
+    <div id="legend" class="mrgT10">
+        <legend>@formTitle</legend>
+    </div>
+
+    @inputText(csvTableForm("csvTableName"),
+        '_showConstraints->false,
+        '_label->"Table Name",
+        'placeholder->"my-table-name",
+        'style-> "width:100%",
+        'class-> "form-control",
+        'required -> true,
+        'help->"Enter a name for this pivot table")
+
+    @textarea(csvTableForm("csvTableDescription"),
+        '_showConstraints->false,
+        '_label->"Table Description",
+        'placeholder->"Provide a description",
+        'rows->3, 'style-> "width:100%; resize:none;",
+        'class-> "form-control",
+        'required -> true,
+        'help->"Enter the table description")
+
+    @select(
+        field = csvTableForm("csvSourceID"),
+        options = CSVSource.find.all.map(source => source.getId.toString -> source.getSourceName),
+        '_showConstraints->false,
+        '_label->"Source",
+        '_default->"Please select a source",
+        'rows->3, 'style-> "width:100%; resize:none;",
+        'class-> "form-control",
+        'required -> true)
+
+    <div class="pull-right">
+        <button id="submit" type="submit" value="Submit" class="btn btn-primary">Submit</button>
+    </div>
+</fieldset>

@@ -5,9 +5,10 @@ import com.avaje.ebean.annotation.JsonIgnore;
 import models.sources.CSVSource;
 import models.sources.SQLSource;
 import play.data.validation.Constraints;
+import utils.forms.CSVTableForm;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -21,7 +22,6 @@ public class PivotTable extends Model {
     @Constraints.Required
     private String name;
 
-    @Column(unique = true)
     @Constraints.Required
     private String description;
 
@@ -57,6 +57,47 @@ public class PivotTable extends Model {
 
     public static PivotTable pivotTable(){
         return find.byId(1L);
+    }
+
+    public PivotTable(CSVTableForm tableForm){
+        CSVSource source = CSVSource.find.byId(tableForm.getCsvSourceID());
+        this.setCsvSource(source);
+        this.setName(tableForm.getCsvTableName());
+        this.setDescription(tableForm.getCsvTableDescription());
+
+        this.fieldList = new ArrayList<>();
+
+        if (source != null) {
+            List<Map<String, String>> maps = source.getMapList();
+            if (maps.size() > 0){
+                maps.get(0).keySet().forEach(key -> {
+                    Field field = new Field();
+                    field.setFieldName(key);
+                    field.setFieldType(FieldType.decide(maps.stream().map(l -> l.get(key)).collect(Collectors.toList())));
+                    fieldList.add(field);
+                });
+            }
+        }
+
+        this.save();
+    }
+
+    public List<Map<String, String>> mapList(){
+        if (csvSource != null) return csvSource.getMapList();
+        return new ArrayList<>();
+    }
+
+    public void addPage(long fieldID){
+        PivotPage page = new PivotPage();
+        page.setField(Field.find.where().eq("id", fieldID).findUnique());
+        pivotPageList.add(page);
+        this.update();
+    }
+
+    public void deletePage(long pageID){
+        this.pivotPageList = pivotPageList.stream()
+                .filter(row -> !row.getId().equals(pageID)).collect(Collectors.toList());
+        this.update();
     }
 
     public void addRow(long fieldID){
@@ -101,7 +142,8 @@ public class PivotTable extends Model {
 
     public List<Field> availableFields(){
         return fieldList.stream().filter(field ->
-                !pivotRowList.stream().map(PivotRow::getField).collect(Collectors.toList()).contains(field)
+                !pivotPageList.stream().map(PivotPage::getField).collect(Collectors.toList()).contains(field)
+                && !pivotRowList.stream().map(PivotRow::getField).collect(Collectors.toList()).contains(field)
                 && !pivotColumnList.stream().map(PivotColumn::getField).collect(Collectors.toList()).contains(field)
                 && !valuesList.stream().map(PivotValue::getField).collect(Collectors.toList()).contains(field)
         ).collect(Collectors.toList());

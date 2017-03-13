@@ -7,7 +7,13 @@ import models.sources.CSVSource;
 import models.sources.CSVSourceLink;
 import play.data.validation.Constraints;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 public class CSVConnection extends Model {
@@ -44,6 +50,39 @@ public class CSVConnection extends Model {
             this.setConnectionPath(conn.getConnectionPath());
         }
         this.update();
+    }
+
+    public List<Map<String, String>> getMapList(){
+        try {
+            File file = new File(getConnectionPath());
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line;
+            String[] keys = new String[]{};
+            List<Map<String, String>> allValues = new ArrayList<>();
+            boolean firstLine = true;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (firstLine) {
+                    keys = line.split(",");
+                    firstLine = false;
+                } else {
+                    int i = 0;
+                    Map<String, String> map = new HashMap<>();
+                    for (String s : line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)")) {
+                        map.put(keys[i], s);
+                        i++;
+                    }
+                    allValues.add(map);
+                }
+            }
+            fileReader.close();
+
+            return allValues;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static Model.Finder<Long, CSVConnection> find = new Model.Finder<>(CSVConnection.class);

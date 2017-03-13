@@ -58,7 +58,7 @@ public class SQLSource extends Model {
             case "smallint":
             case "int":
             case "integer":
-                return FieldType.Integer;
+                return FieldType.Long;
 
             case "boolean":
                 return FieldType.Boolean;
@@ -78,7 +78,7 @@ public class SQLSource extends Model {
             case "double precicion":
             case "numeric":
             case "real":
-                return FieldType.Number;
+                return FieldType.Double;
             default:
                 throw new IllegalArgumentException("Field Type not Supported");
         }

@@ -40,7 +40,7 @@ create table field (
   field_type                    varchar(8),
   table_name                    varchar(255),
   pivot_table_id                bigint,
-  constraint ck_field_field_type check ( field_type in ('String','Boolean','Integer','Number','Date','Time','DateTime','Double')),
+  constraint ck_field_field_type check ( field_type in ('String','Boolean','Long','Date','Time','DateTime','Double')),
   constraint pk_field primary key (id)
 );
 
@@ -91,7 +91,6 @@ create table pivot_table (
   sqlsource_id                  bigint,
   csvsource_id                  bigint,
   constraint uq_pivot_table_name unique (name),
-  constraint uq_pivot_table_description unique (description),
   constraint pk_pivot_table primary key (id)
 );
 

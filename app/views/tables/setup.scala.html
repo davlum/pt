@@ -1,0 +1,56 @@
+@import models.pivottable.PivotTable
+@import views.html.tables.builder._
+@import utils.forms.ValueForm
+@import utils.forms.FieldForm
+
+@(pivotTable: PivotTable, pageForm : play.data.Form[FieldForm], rowForm : play.data.Form[FieldForm],
+        columnForm : play.data.Form[FieldForm], valueForm : play.data.Form[ValueForm])
+
+<h3>Pivot Table Builder</h3>
+<div>
+  <div class="row">
+    <div>
+      <div class="col-md-4">
+        @pageLabels(pivotTable)
+      </div>
+      <div class="col-md-4">
+        @rowLabels(pivotTable)
+      </div>
+      <div class="col-md-4">
+      @columnLabels(pivotTable)
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div>
+      <div class="col-md-4">
+      @values(pivotTable)
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-heading">Report Filter</div>
+          <div class="panel-body">Panel Content</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-heading">Actions</div>
+          <div class="panel-body">
+            <div class="center">
+              <button id="displayResults" type="button" class="btn btn-success mrgB10">Display Table</button>
+              <button id="deleteTable" type="button" class="btn btn-danger mrgB10" data-toggle="modal" data-target="#deleteModal">
+                Delete Table
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@pageLabelsModal(pivotTable, pageForm)
+@rowLabelsModal(pivotTable, rowForm)
+@columnLabelsModal(pivotTable, columnForm)
+@valuesModal(pivotTable, valueForm)
+@deleteModal(pivotTable)

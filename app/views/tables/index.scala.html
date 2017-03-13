@@ -40,13 +40,13 @@
       </ul>
       <div class="tab-content">
         <div id="add-new-sql" class="tab-pane fade @if(!addCsv){in active}">
-        @form(action = controllers.routes.PivotTable.addSQLTable(), 'class -> "form-horizontal") {
+        @form(action = controllers.routes.PivotTableController.addSQLTable(), 'class -> "form-horizontal") {
           @CSRF.formField
           @views.html.tables.sqlTableFieldset(sqlTableForm, "Add New SQL Pivot Table")
         }
         </div>
         <div id="add-new-csv" class="tab-pane fade @if(addCsv){in active}">
-        @form(action = controllers.routes.PivotTable.addCSVTable(), 'class -> "form-horizontal") {
+        @form(action = controllers.routes.PivotTableController.addCSVTable(), 'class -> "form-horizontal") {
           @CSRF.formField
           @views.html.tables.csvTableFieldset(csvTableForm, "Add New CSV Pivot Table")
         }

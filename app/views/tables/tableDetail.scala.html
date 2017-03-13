@@ -1,0 +1,65 @@
+@import helper._
+@import views.html.components._
+@import models.users.User
+@import utils.SidebarElement
+@import utils.pivotTableHandler.PivotTableHandler
+@import views.html.tables.sidebarContent
+@import utils.forms.FieldForm
+@import utils.forms.ValueForm
+
+@(user: User,
+        pivotTableHandler : PivotTableHandler,
+        sidebarTables: java.util.List[SidebarElement],
+        pageForm : play.data.Form[FieldForm],
+        rowForm : play.data.Form[FieldForm],
+        columnForm : play.data.Form[FieldForm],
+        valueForm : play.data.Form[ValueForm],
+        display : Boolean)
+
+@main(user)(sidebar(sidebarContent(sidebarTables))) {
+
+  <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-2 main">
+    @if(flash.containsKey("success")) {
+      <div class="well">
+        <div id="success-message" class="text-success">
+        @Controller.flash.get("success")
+        </div>
+      </div>
+    }
+    @if(flash.containsKey("error")) {
+      <div class="well">
+        <div id="error-message" class="text-danger">
+        @Controller.flash.get("error")
+        </div>
+      </div>
+    }
+    <div class="overflow-auto">
+      <ul class="nav nav-tabs nav-justified">
+        <li @if(!display){class="active"}>
+          <a href="@controllers.routes.PivotTableController.getTable(pivotTableHandler.getPivotTable.getId)">Setup</a>
+        </li>
+        <li @if(display){class="active"}>
+          <a href="@controllers.routes.PivotTableController.displayPivotTable(pivotTableHandler.getPivotTable.getId)">
+            Display Pivot Table
+          </a>
+        </li>
+      </ul>
+      <div class="tab-content">
+      @if(!display) {
+        <div id="setup" class="tab-pane fade in active">
+        @views.html.tables.setup(pivotTableHandler.getPivotTable, pageForm, rowForm, columnForm, valueForm)
+        </div>
+      }
+        @if(display) {
+          <div id="display" class="tab-pane fade in active">
+            <h3>Results</h3>
+            <table class="table">
+              @Html(pivotTableHandler.tableHtml())
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+}

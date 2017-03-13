@@ -8,6 +8,7 @@ import play.data.validation.Constraints;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 public class CSVSource extends Model {
@@ -41,6 +42,10 @@ public class CSVSource extends Model {
         this.setSourceDescription(source.getSourceDescription());
         this.setFactTable(source.getFactTable());
         this.update();
+    }
+
+    public List<Map<String, String>> getMapList(){
+        return factTable.getMapList();
     }
 
     public Long getId() {

@@ -1,14 +1,19 @@
 package controllers;
 
+import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Result;
-import utils.SidebarElement;
-import utils.forms.CSVTableForm;
-import utils.forms.SQLTableForm;
+import utils.forms.FieldForm;
+import utils.forms.ValueForm;
+import utils.pivotTableHandler.PivotTableHandler;
+import views.html.pivot;
 
 import javax.inject.Inject;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class PivotTable extends AuthController {
 
@@ -19,39 +24,37 @@ public class PivotTable extends AuthController {
         this.formFactory = formFactory;
     }
 
-    public Result index(){
-        return ok(views.html.tables.index.render(getCurrentUser(), formFactory.form(SQLTableForm.class),
-                formFactory.form(CSVTableForm.class), getSidebarElements(), false));
-    }
 
-    public Result indexCSV(){
-        return ok(views.html.tables.index.render(getCurrentUser(), formFactory.form(SQLTableForm.class),
-                formFactory.form(CSVTableForm.class), getSidebarElements(), true));
-    }
+    public Result index() {
+        Form<FieldForm> rowForm = formFactory.form(FieldForm.class);
+        Form<FieldForm> columnForm = formFactory.form(FieldForm.class);
+        Form<ValueForm> valueForm = formFactory.form(ValueForm.class);
+        List<Map<String, String>> list = new ArrayList<>();
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:postgresql://ec2-52-90-93-63.compute-1.amazonaws.com/bixi_pivot",
+                    "bixi_select", "select_bixi");
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM trips LIMIT 10;");
+            ResultSetMetaData meta = resultSet.getMetaData();
+            while (resultSet.next()) {
+                Map<String, String> map = new HashMap<>();
+                for (int i = 1; i <= meta.getColumnCount(); i++) {
+                    String key = meta.getColumnName(i);
+                    map.put(key, resultSet.getString(key));
+                }
+                list.add(map);
+            }
+            resultSet.close();
+            statement.close();
+            connection.close();
 
+            //list.forEach(System.out::println);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
 
-    private List<SidebarElement> getSidebarElements() {
-        return models.pivottable.PivotTable.find.all()
-                .stream().map(s -> new SidebarElement(
-                        controllers.routes.PivotTable.getTable(s.getId()).url(),
-                        s.getName(),
-                        s.getDescription()))
-                .collect(Collectors.toList());
-    }
+        PivotTableHandler handler = new PivotTableHandler(list, models.pivottable.PivotTable.pivotTable());
 
-    public Result addSQLTable(){
-        return ok();
-    }
-
-    public Result addCSVTable(){
-        return ok();
-    }
-
-    public Result getTable(Long id){
-        return ok();
-    }
-
-    public Result deleteTable(Long id){
-        return ok();
+        return ok(pivot.render(handler, models.pivottable.PivotTable.pivotTable(), rowForm, columnForm, valueForm));
     }
 }

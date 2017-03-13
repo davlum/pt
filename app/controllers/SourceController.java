@@ -80,7 +80,6 @@ public class SourceController extends AuthController {
         Form<CSVSource> sourceForm = formFactory.form(CSVSource.class).bindFromRequest();
         if (sourceForm.hasErrors()) {
             flash("error", "Error: Could not add source. Please check the information you entered.");
-            System.out.println(sourceForm.data());
             return ok(views.html.sources.index.render(getCurrentUser(), formFactory.form(SQLSource.class),
                     sourceForm, getSQLSidebarElements(), getCSVSidebarElements(), true));
         } else {
