@@ -1,19 +1,17 @@
 package utils;
 
-public class SidebarElement {
+public final class SidebarElement {
     public String link;
     public String name;
     public String hover;
 
-    public SidebarElement(String link, String name, String hover) {
+    private SidebarElement(String link, String name, String hover) {
         this.link = link;
         this.name = name;
         this.hover = hover;
     }
 
-    public SidebarElement(String link, String name) {
-        this.link = link;
-        this.name = name;
-        this.hover = "";
+    public static SidebarElement newInstance(String alink, String aname, String ahover) {
+        return new SidebarElement(alink, aname, ahover);
     }
 }

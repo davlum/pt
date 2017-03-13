@@ -55,7 +55,7 @@ public class ConnectionController extends AuthController {
 
     private List<SidebarElement> getCSVSidebarElements() {
         return CSVConnection.find.all()
-                .stream().map(s -> new SidebarElement(
+                .stream().map(s -> SidebarElement.newInstance(
                         controllers.routes.ConnectionController.getCSVConnection(s.getId()).url(),
                         s.getConnectName(),
                         s.getConnectDescription()))
@@ -64,7 +64,7 @@ public class ConnectionController extends AuthController {
 
     private List<SidebarElement> getSQLSidebarElement() {
         return SQLConnection.find.all()
-                .stream().map(s -> new SidebarElement(
+                .stream().map(s -> SidebarElement.newInstance(
                         controllers.routes.ConnectionController.getSQLConnection(s.getId()).url(),
                         s.getConnectionName(),
                         s.getConnectionDescription()))
@@ -231,31 +231,61 @@ public class ConnectionController extends AuthController {
         return tableMetadataList;
     }
 
+    private List<ColumnMetadata> reflectColumns(TableMetadata tbl, Connection conn)
+        throws SQLException
+    {
+        String query = "SELECT column_name, data_type "
+                + "FROM information_schema.columns "
+                + "WHERE table_name = '" + tbl.getTableName() + "'"
+                + "AND table_schema = '" + tbl.getSchemaName() + "'";
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        List<ColumnMetadata> columnMetadataList = new ArrayList<>();
+        while (rs.next()) {
+            columnMetadataList.add(
+                    new ColumnMetadata(
+                            tbl,
+                            rs.getString("column_name"),
+                            rs.getString("data_type"))
+            );
+        }
+        return columnMetadataList;
+    }
+
+    public Result getJsonReflectedColumns(Long tableId) {
+        List<ObjectNode> columns = ColumnMetadata
+                .find
+                .where().eq("tableMetadata.id", tableId)
+                .findList()
+                .stream()
+                .map(ColumnMetadata::getJson).collect(Collectors.toList());
+
+        ObjectNode jsonColumns = Json.newObject();
+        ArrayNode jsonArray = Json.newArray();
+        for (ObjectNode c: columns) {
+            jsonArray.add(c);
+        }
+        jsonColumns.set("columns", jsonArray);
+
+        return ok(jsonColumns);
+    }
+
     public Result getJsonReflectedTables(Long connectionId) {
-        List<TableMetadata> tables = TableMetadata
+        List<ObjectNode> tables = TableMetadata
                 .find
                 .where().eq("sqlConnection.id", connectionId)
-                .findList();
+                .findList().stream().map(TableMetadata::getJson).collect(Collectors.toList());
 
         ObjectNode jsonTables = Json.newObject();
         ArrayNode jsonArray = Json.newArray();
-        for (TableMetadata t: tables) {
-            ObjectNode o = getJsonTable(t);
-            jsonArray.add(o);
+        for (ObjectNode t: tables) {
+            jsonArray.add(t);
         }
         jsonTables.set("tables", jsonArray);
 
         return ok(jsonTables);
     }
 
-    private ObjectNode getJsonTable(TableMetadata table) {
-        ObjectNode o = Json.newObject();
-        o.put("tableId", table.getId());
-        o.put("tableName", table.getTableName());
-        o.put("schemaName", table.getSchemaName());
-        o.put("connectionId", table.getSqlConnection().getId());
-        return o;
-    }
     private String handleUpload(Long id){
         Http.MultipartFormData<File> body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart<File> document = body.getFile("csvFile");
@@ -282,7 +312,6 @@ public class ConnectionController extends AuthController {
             CSVConnection conn = CSVConnection.find.where().eq("id", id).findUnique();
             if (conn != null) return conn.getConnectionPath();
         }
-
         return null;
     }
 }

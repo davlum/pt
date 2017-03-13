@@ -1,0 +1,41 @@
+@import helper._
+@import models.sources.SQLSource
+@import models.users.User
+
+@import views.html.components.main
+@import views.html.components.sidebar
+@import views.html.sources.sidebarContent
+@import utils.SidebarElement
+
+@(user: User, sqlForm: play.data.Form[SQLSource],
+        sidebarSQL: java.util.List[SidebarElement],
+        sidebarCSV: java.util.List[SidebarElement])
+
+
+@main(user)(sidebar(sidebarContent(sidebarSQL, sidebarCSV))) {
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    @if(flash.containsKey("success")) {
+      <div class="well">
+        <div id="success-message" class="text-success">
+        @Controller.flash.get("success")
+        </div>
+      </div>
+    }
+    @if(flash.containsKey("error")) {
+      <div class="well">
+        <div id="error-message" class="text-danger">
+        @Controller.flash.get("error")
+        </div>
+      </div>
+    }
+    <div>
+      <div id="edit-sql">
+      @form(action = controllers.routes.SourceController.updateSQLSource(sqlForm.get().getId), 'class -> "form-horizontal"
+        , 'enctype -> "multipart/form-data") {
+        @CSRF.formField
+        @views.html.sources.sqlSourceFieldset(sqlForm, "Edit SQL Source", true)
+      }
+      </div>
+    </div>
+  </div>
+}

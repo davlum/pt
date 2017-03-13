@@ -33,6 +33,15 @@ create table csvsource_link_csvsource (
   constraint pk_csvsource_link_csvsource primary key (csvsource_link_id,csvsource_id)
 );
 
+create table column_metadata (
+  column_id                     bigserial not null,
+  tablemetadata_id              bigint,
+  column_name                   varchar(255),
+  column_type                   varchar(255),
+  column_alias                  varchar(255),
+  constraint pk_column_metadata primary key (column_id)
+);
+
 create table field (
   id                            bigserial not null,
   field_name                    varchar(255),
@@ -156,6 +165,9 @@ create index ix_csvsource_link_csvsource_csvsource_link on csvsource_link_csvsou
 alter table csvsource_link_csvsource add constraint fk_csvsource_link_csvsource_csvsource foreign key (csvsource_id) references csvsource (id) on delete restrict on update restrict;
 create index ix_csvsource_link_csvsource_csvsource on csvsource_link_csvsource (csvsource_id);
 
+alter table column_metadata add constraint fk_column_metadata_tablemetadata_id foreign key (tablemetadata_id) references table_metadata (id) on delete restrict on update restrict;
+create index ix_column_metadata_tablemetadata_id on column_metadata (tablemetadata_id);
+
 alter table field add constraint fk_field_pivot_table_id foreign key (pivot_table_id) references pivot_table (id) on delete restrict on update restrict;
 create index ix_field_pivot_table_id on field (pivot_table_id);
 
@@ -213,6 +225,9 @@ drop index if exists ix_csvsource_link_csvsource_csvsource_link;
 alter table if exists csvsource_link_csvsource drop constraint if exists fk_csvsource_link_csvsource_csvsource;
 drop index if exists ix_csvsource_link_csvsource_csvsource;
 
+alter table if exists column_metadata drop constraint if exists fk_column_metadata_tablemetadata_id;
+drop index if exists ix_column_metadata_tablemetadata_id;
+
 alter table if exists field drop constraint if exists fk_field_pivot_table_id;
 drop index if exists ix_field_pivot_table_id;
 
@@ -265,6 +280,8 @@ drop table if exists csvsource cascade;
 drop table if exists csvsource_link cascade;
 
 drop table if exists csvsource_link_csvsource cascade;
+
+drop table if exists column_metadata cascade;
 
 drop table if exists field cascade;
 
