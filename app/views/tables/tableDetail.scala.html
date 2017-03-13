@@ -53,6 +53,18 @@
         @if(display) {
           <div id="display" class="tab-pane fade in active">
             <h3>Results</h3>
+            <h6>Rows</h6>
+            <ul>
+              @for(row <- pivotTableHandler.getPivotTable.getPivotRowList){
+                <li>@row.getField.getFieldName</li>
+              }
+            </ul>
+            <h6>Columns</h6>
+            <ul>
+            @for(col <- pivotTableHandler.getPivotTable.getPivotColumnList){
+              <li>@col.getField.getFieldName</li>
+            }
+            </ul>
             <table class="table">
               @Html(pivotTableHandler.tableHtml())
             </table>

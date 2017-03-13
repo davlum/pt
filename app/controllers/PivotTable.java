@@ -6,7 +6,7 @@ import play.mvc.Result;
 import utils.forms.FieldForm;
 import utils.forms.ValueForm;
 import utils.pivotTableHandler.PivotTableHandler;
-import views.html.pivot;
+import views.html.*;
 
 import javax.inject.Inject;
 import java.sql.*;

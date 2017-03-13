@@ -22,7 +22,12 @@
                 @select(
                 field = columnForm("fieldID"),
                 options = pivotTable.availableFields.map(field => field.getId.toString -> field.getFieldName),
-                '_default -> "Please Select a Field"
+                '_label -> "Field",
+                '_default -> "Please Select a Field",
+                '_showConstraints->false,
+                'rows->3, 'style-> "width:100%; resize:none;",
+                'class-> "form-control",
+                'required -> true
                 )
             }
 

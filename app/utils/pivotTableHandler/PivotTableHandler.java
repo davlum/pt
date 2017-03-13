@@ -139,7 +139,7 @@ public class PivotTableHandler {
                 }
             }
         } else {
-            returnVal.append("<tr><td></td>").append(loopCols(restrictedData, 0)).append("</tr>");
+            returnVal.append("<tr><td></td>").append(loopCols(restrictedData, 0)).append(printValues(restrictedData)).append("</tr>");
         }
 
         return returnVal.toString();

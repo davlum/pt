@@ -37,7 +37,9 @@
           <div class="panel-heading">Actions</div>
           <div class="panel-body">
             <div class="center">
-              <button id="displayResults" type="button" class="btn btn-success mrgB10">Display Table</button>
+              <a href="@controllers.routes.PivotTableController.displayPivotTable(pivotTable.getId)" class="no-style">
+                <button type="button" class="btn btn-success mrgB10">Display Table</button>
+              </a>
               <button id="deleteTable" type="button" class="btn btn-danger mrgB10" data-toggle="modal" data-target="#deleteModal">
                 Delete Table
               </button>
