@@ -82,7 +82,7 @@
             </div>
             <div class="hidden" id="tableID">@pivotTableHandler.getPivotTable.getId</div>
             <ul class="nav nav-tabs">
-                @for((page, index) <- pivotTableHandler.pages().zipWithIndex) {
+                @for((page, index) <- pivotTableHandler.pages().sortWith(_ < _).zipWithIndex) {
                   <li @if(index == 0){class="active"}><a data-toggle="tab" href="#@page">@page</a></li>
                 }
             </ul>
