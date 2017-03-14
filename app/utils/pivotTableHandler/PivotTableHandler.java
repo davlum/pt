@@ -194,7 +194,8 @@ public class PivotTableHandler {
                     .collect(Collectors.toList())) {
                 workData = new ArrayList<>(restrictedData);
                 workData = workData.stream().filter(l ->
-                        value != null ? l.get(currentField).equals(value) : l.get(currentField) == null).collect(Collectors.toList());
+                        value != null ? (l.get(currentField) != null && l.get(currentField).equals(value)) : l.get(currentField) == null)
+                        .collect(Collectors.toList());
                 if (level == 0) returnVal.append("<tr>");
                 returnVal.append("<th rowspan=\"").append(rowspanPerLevel.get(level)).append("\">").append(value).append("</th>");
                 if (level == pivotTable.getPivotRowList().size() - 1) {

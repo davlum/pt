@@ -47,7 +47,7 @@ public class PivotTableController extends AuthController {
 
     private List<SidebarElement> getSidebarElements() {
         return PivotTable.find.all()
-                .stream().map(s -> SidebarElement.newInstance(
+                .stream().map(s -> new SidebarElement(
                         controllers.routes.PivotTableController.getTable(s.getId()).url(),
                         s.getName(),
                         s.getDescription()))
@@ -55,7 +55,23 @@ public class PivotTableController extends AuthController {
     }
 
     public Result addSQLTable(){
-        return ok();
+        Form<SQLTableForm> tableForm = formFactory.form(SQLTableForm.class).bindFromRequest();
+        if (tableForm.hasErrors()) {
+            flash("error", "Error: Could not add table. Please check the information you entered.");
+            return ok(views.html.tables.index.render(getCurrentUser(),
+                    tableForm, formFactory.form(CSVTableForm.class), getSidebarElements(), false));
+        } else {
+            SQLTableForm table = tableForm.get();
+            if (PivotTable.find.where().eq("name", table.getSqlTableName()).findCount() > 0){
+                flash("error", "Error: Please select a unique table name!");
+                return ok(views.html.tables.index.render(getCurrentUser(),
+                        tableForm, formFactory.form(CSVTableForm.class), getSidebarElements(), false));
+            }
+
+            PivotTable pt = new PivotTable(table);
+            flash("success", "New Table Added");
+            return redirect(controllers.routes.PivotTableController.getTable(pt.getId()));
+        }
     }
 
     public Result addCSVTable(){
@@ -63,7 +79,7 @@ public class PivotTableController extends AuthController {
         if (tableForm.hasErrors()) {
             flash("error", "Error: Could not add table. Please check the information you entered.");
             return ok(views.html.tables.index.render(getCurrentUser(), formFactory.form(SQLTableForm.class),
-                    tableForm, getSidebarElements(), false));
+                    tableForm, getSidebarElements(), true));
         } else {
             CSVTableForm table = tableForm.get();
             if (PivotTable.find.where().eq("name", table.getCsvTableName()).findCount() > 0){

@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
-    $( "#connectionId").on("focusout", function () {
-        var val = $(" #connectionId").val();
+    $( "#sqlconnection_id").on("focusout", function () {
+        var val = $(" #sqlconnection_id").val();
         $.get("/connections/sql/" + val + "/tables", function(data) {
 
             var tables = data["tables"];

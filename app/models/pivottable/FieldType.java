@@ -6,6 +6,7 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public enum FieldType {
@@ -29,7 +30,7 @@ public enum FieldType {
     }
 
     public static FieldType decide(List<String> list){
-        Map<FieldType, List<FieldType>> types = list.stream().map(s -> {
+        Map<FieldType, List<FieldType>> types = list.stream().filter(Objects::nonNull).map(s -> {
             try {
                 java.lang.Long.parseLong(s);
                 return Long;

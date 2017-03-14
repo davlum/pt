@@ -1,5 +1,6 @@
 package controllers;
 
+import models.connections.SQLConnection;
 import models.sources.CSVSource;
 import models.sources.SQLSource;
 import play.data.Form;
@@ -61,9 +62,7 @@ public class SourceController extends AuthController {
     public Result addSQLSource() {
         Form<SQLSource> sourceForm = formFactory.form(SQLSource.class).bindFromRequest();
         if (sourceForm.hasErrors()) {
-            flash("error", "Error: Could not add connection. " +
-                    "Please check the information you entered." +
-                    sourceForm.errors());
+            flash("error", "Error: Could not add connection. Please check the information you entered.");
             return ok(views.html.sources.index.render(
                     getCurrentUser(),
                     sourceForm,
@@ -73,7 +72,14 @@ public class SourceController extends AuthController {
                     false));
         } else {
             SQLSource source = sourceForm.get();
+            if (SQLSource.find.where().eq("sourceName", source.getSourceName()).findCount() > 0){
+                flash("error", "Error: Please select a unique source name!");
+                return ok(views.html.sources.index.render(getCurrentUser(), sourceForm,
+                        formFactory.form(CSVSource.class), getSQLSidebarElements(), getCSVSidebarElements(), false));
+            }
+            source.setConnection(SQLConnection.find.byId(Long.parseLong(sourceForm.data().get("sqlconnection_id"))));
             source.save();
+            flash("success", "New Source Added");
             return redirect(controllers.routes.SourceController.index());
         }
     }
@@ -127,8 +133,7 @@ public class SourceController extends AuthController {
     public Result updateSQLSource(Long id) {
         Form<SQLSource> connectionForm = formFactory.form(SQLSource.class).bindFromRequest();
         if (connectionForm.hasErrors()) {
-            flash("error", "Error: Could not update the sql source. " +
-                    "Please check the information you entered.");
+            flash("error", "Error: Could not update the sql source. Please check the information you entered.");
             return redirect(controllers.routes.ConnectionController.getSQLConnection(id));
         } else {
             SQLSource source = connectionForm.get();

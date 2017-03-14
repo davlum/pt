@@ -1,3 +1,4 @@
+@import helper._
 @import models.connections.SQLConnection
 
 @import models.sources.SQLSource
@@ -9,72 +10,79 @@
         <legend>@Html(formTitle)</legend>
     </div>
 
-    <div class="form-group">
-        <label for="sourceName">Source Name</label>
-        <input type="text"
-        class="form-control"
-        id="sourceName"
-        name="sourceName"
-        width="100%"
-        required="true"
-        value="@sqlSourceForm("sourceName").value()">
-    </div>
+    @inputText(sqlSourceForm("sourceName"),
+        '_showConstraints->false,
+        '_label->"Source Name",
+        'placeholder->"my-source-name",
+        'style-> "width:100%",
+        'class-> "form-control",
+        'required -> true,
+        'help->"Enter a name for this source")
 
-    <div class="form-group">
-        <label for="sourceDescription">Description</label>
-        <input
-        type="textarea"
-        class="form-control input"
-        id="sourceDescription"
-        name="sourceDescription"
-        width="100%"
-        value="@sqlSourceForm("sourceDescription").value()">
-    </div>
+    @textarea(sqlSourceForm("sourceDescription"),
+        '_showConstraints->false,
+        '_label->"Source Description",
+        'placeholder->"Provide a description",
+        'rows->3, 'style-> "width:100%; resize:none;",
+        'class-> "form-control",
+        'required -> true,
+        'help->"Enter the connection description")
 
-    <div class="form-group">
-        <label for="connectionId">SQL Connection</label>
-        <select
-        class="form-control input"
-        id="connectionId"
-        name="connectionId"
-        style="width:100%"
-        required="true">
-            <option value="">-- Chose Connection--</option>
-            @for(p <- SQLConnection.find.all) {
-                @if(p.getId.toString == sqlSourceForm("connectionId").value()) {
-                    <option value="@p.getId.toString" selected>@p.getConnectionName</option>
-                } else {
-                    <option value="@p.getId.toString">@p.getConnectionName</option>
+    <dl class=" " id="sqlconnection_id_field">
+
+        <dt><label for="sqlconnection_id">SQL Connection</label></dt>
+        <dd>
+            <select
+            class="form-control input"
+            id="sqlconnection_id"
+            name="sqlconnection_id"
+            style="width:100%"
+            required="true">
+                <option value="">-- Choose Connection--</option>
+                @for(p <- SQLConnection.find.all) {
+                    @if(p.getId.toString == sqlSourceForm("connection.id").value()) {
+                        <option value="@p.getId.toString" selected>@p.getConnectionName</option>
+                    } else {
+                        <option value="@p.getId.toString">@p.getConnectionName</option>
+                    }
                 }
-            }
-        </select>
-    </div>
+            </select>
+        </dd>
 
-    <div class="form-group">
-        <label for="factTable">Fact Table</label>
+    </dl>
+
+    <dl class=" " id="factTable_field">
+
+        <dt><label for="factTable">Fact Table</label></dt>
+        <dd>
         <select
         class="form-control"
         id="factTable"
         name="factTable"
-        style="width:100%">
-        @if(sqlSourceForm("factTable").value() != "") {
+        style="width:100%"
+        required="true">
+        @if(sqlSourceForm("factTable").value() == "") {
+            <option value="">-- Choose Fact Table --</option>
+        }
+        @if(sqlSourceForm("factTable").value() != null && sqlSourceForm("factTable").value() != "") {
             <option value="@sqlSourceForm("factTable").value" selected>@sqlSourceForm("factTable").value<option>
         }
         </select>
-    </div>
+        </dd>
 
-    <div class="form-group">
+    </dl>
+
+    <div class="form-group hidden">
         <label for="fromClause">From Clause</label>
         <textarea
         class="form-control input"
         id="fromClause"
-        name="fromClause"
-        required="true">
+        name="fromClause">
         @sqlSourceForm("fromClause").value()
         </textarea>
     </div>
 
-    <div class="pull-left">
+    <div class="pull-left hidden">
         <button type="button" class="btn btn-primary">Pivot</button>
     </div>
     <div class="pull-right">

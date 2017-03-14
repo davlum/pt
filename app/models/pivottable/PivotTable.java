@@ -6,6 +6,7 @@ import models.sources.CSVSource;
 import models.sources.SQLSource;
 import play.data.validation.Constraints;
 import utils.forms.CSVTableForm;
+import utils.forms.SQLTableForm;
 
 import javax.persistence.*;
 import java.util.*;
@@ -82,9 +83,18 @@ public class PivotTable extends Model {
         this.save();
     }
 
+    public PivotTable(SQLTableForm tableForm){
+        SQLSource source = SQLSource.find.byId(tableForm.getSqlSourceID());
+        this.setSqlSource(source);
+        this.setName(tableForm.getSqlTableName());
+        this.setDescription(tableForm.getSqlTableDescription());
+        if(source != null) this.setFieldList(source.getFieldList());
+        this.save();
+    }
+
     public List<Map<String, String>> mapList(){
         if (csvSource != null) return csvSource.getMapList();
-        return new ArrayList<>();
+        return sqlSource.getMapList();
     }
 
     public void addPage(long fieldID){

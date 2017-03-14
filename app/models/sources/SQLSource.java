@@ -9,7 +9,9 @@ import play.data.validation.Constraints;
 import javax.persistence.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Entity
@@ -27,13 +29,9 @@ public class SQLSource extends Model {
     @JoinColumn(name = "sqlconnection_id")
     private SQLConnection connection;
 
-    @Transient
-    private Long connectionId;
-
     @Constraints.Required
     private String factTable;
 
-    @Constraints.Required
     private String fromClause;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -48,6 +46,8 @@ public class SQLSource extends Model {
             case "smallint":
             case "int":
             case "integer":
+            case "serial":
+            case "bigserial":
                 return FieldType.Long;
 
             case "boolean":
@@ -61,6 +61,7 @@ public class SQLSource extends Model {
                 return FieldType.DateTime;
 
             case "text":
+            case "varchar":
             case "character":
             case "character varying":
                 return FieldType.String;
@@ -68,10 +69,67 @@ public class SQLSource extends Model {
             case "double precicion":
             case "numeric":
             case "real":
+            case "decimal":
                 return FieldType.Double;
             default:
-                throw new IllegalArgumentException("Field Type not Supported");
+                return FieldType.String;
         }
+    }
+
+    public List<Map<String, String>> getMapList(){
+        List<Map<String, String>> list = new ArrayList<>();
+        try {
+            Connection connection = DriverManager.getConnection(getConnection().getUrl(),
+                    getConnection().getConnectionUser(), getConnection().getConnectionPassword());
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM "+factTable+";");
+            ResultSetMetaData meta = resultSet.getMetaData();
+            while (resultSet.next()) {
+                Map<String, String> map = new HashMap<>();
+                for (int i = 1; i <= meta.getColumnCount(); i++) {
+                    String key = meta.getColumnName(i);
+                    map.put(key, resultSet.getString(key));
+                }
+                list.add(map);
+            }
+            resultSet.close();
+            statement.close();
+            connection.close();
+
+            //list.forEach(System.out::println);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public List<Field> getFieldList(){
+        List<Field> list = new ArrayList<>();
+        try {
+            Connection connection = DriverManager.getConnection(getConnection().getUrl(),
+                    getConnection().getConnectionUser(), getConnection().getConnectionPassword());
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM "+factTable+" LIMIT 1;");
+            ResultSetMetaData meta = resultSet.getMetaData();
+            for (int i = 1; i <= meta.getColumnCount(); i++) {
+                String key = meta.getColumnName(i);
+                FieldType type = mapDatabaseFieldType(meta.getColumnTypeName(i));
+                Field field = new Field();
+                field.setFieldName(key);
+                field.setFieldType(type);
+                list.add(field);
+            }
+            resultSet.close();
+            statement.close();
+            connection.close();
+
+            //list.forEach(System.out::println);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return list;
     }
 
 
@@ -103,13 +161,9 @@ public class SQLSource extends Model {
     {
         this.setSourceName(src.getSourceName());
         this.setSourceDescription(src.getSourceDescription());
-        this.setConnectionId(src.getConnectionId());
+        this.setConnection(src.getConnection());
         this.setFromClause(src.getFromClause());
         this.update();
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public Long getId() {
@@ -142,14 +196,6 @@ public class SQLSource extends Model {
 
     public void setConnection(SQLConnection connection) {
         this.connection = connection;
-    }
-
-    public Long getConnectionId() {
-        return connectionId;
-    }
-
-    public void setConnectionId(Long connectionId) {
-        this.connectionId = connectionId;
     }
 
     public String getFactTable() {
