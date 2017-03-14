@@ -1,6 +1,7 @@
 package models.sources;
 
 import com.avaje.ebean.Model;
+import com.avaje.ebean.annotation.JsonIgnore;
 import models.connections.SQLConnection;
 import models.pivottable.Field;
 import models.pivottable.FieldType;
@@ -26,8 +27,9 @@ public class SQLSource extends Model {
 
     private String sourceDescription;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "sqlconnection_id")
+    @JsonIgnore
     private SQLConnection connection;
 
     @Constraints.Required

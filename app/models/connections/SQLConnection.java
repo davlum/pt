@@ -44,7 +44,7 @@ public class SQLConnection extends Model {
     @Constraints.Required
     private String connectionDBName;
 
-    @OneToMany(mappedBy = "connection")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<SQLSource> sources;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
