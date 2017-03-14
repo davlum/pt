@@ -114,7 +114,7 @@ public class SourceController extends AuthController {
     public Result getCSVSource(Long id) {
         CSVSource source = CSVSource.find.byId(id);
         if(source != null) {
-            return ok(csvSourceDetail.render(getCurrentUser(),
+            return ok(views.html.sources.csvSourceDetail.render(getCurrentUser(),
                     formFactory.form(CSVSource.class).fill(source),
                     getCSVSidebarElements(),
                     getSQLSidebarElements()));

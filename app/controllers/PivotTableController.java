@@ -47,7 +47,7 @@ public class PivotTableController extends AuthController {
 
     private List<SidebarElement> getSidebarElements() {
         return PivotTable.find.all()
-                .stream().map(s -> new SidebarElement(
+                .stream().map(s -> SidebarElement.newInstance(
                         controllers.routes.PivotTableController.getTable(s.getId()).url(),
                         s.getName(),
                         s.getDescription()))
