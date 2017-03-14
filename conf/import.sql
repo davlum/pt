@@ -8,14 +8,6 @@ INSERT INTO pivot_table VALUES(nextval('pivot_table_id_seq'::regclass));
 
 /****  FIELDS *******/
 
-/*INSERT INTO field VALUES(nextval('field_id_seq'::regclass), 'Date', 'Date');
-INSERT INTO field VALUES(nextval('field_id_seq'::regclass), 'Client Name', 'String');
-INSERT INTO field VALUES(nextval('field_id_seq'::regclass), 'Company Name', 'String');
-INSERT INTO field VALUES(nextval('field_id_seq'::regclass), 'Company Nb Employees', 'Integer');
-INSERT INTO field VALUES(nextval('field_id_seq'::regclass), 'Product Name', 'String');
-INSERT INTO field VALUES(nextval('field_id_seq'::regclass), 'Quantity', 'Integer');
-INSERT INTO field VALUES(nextval('field_id_seq'::regclass), 'Product Unit Price', 'Double');*/
-
 INSERT INTO field VALUES(nextval('field_id_seq'::regclass), 'end_date', 'Date');
 INSERT INTO field VALUES(nextval('field_id_seq'::regclass), 'end_station', 'Integer');
 INSERT INTO field VALUES(nextval('field_id_seq'::regclass), 'duration_ms', 'Integer');

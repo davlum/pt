@@ -55,7 +55,7 @@ public class ConnectionController extends AuthController {
 
     private List<SidebarElement> getCSVSidebarElements() {
         return CSVConnection.find.all()
-                .stream().map(s -> SidebarElement.newInstance(
+                .stream().map(s -> new SidebarElement(
                         controllers.routes.ConnectionController.getCSVConnection(s.getId()).url(),
                         s.getConnectName(),
                         s.getConnectDescription()))
@@ -64,7 +64,7 @@ public class ConnectionController extends AuthController {
 
     private List<SidebarElement> getSQLSidebarElement() {
         return SQLConnection.find.all()
-                .stream().map(s -> SidebarElement.newInstance(
+                .stream().map(s -> new SidebarElement(
                         controllers.routes.ConnectionController.getSQLConnection(s.getId()).url(),
                         s.getConnectionName(),
                         s.getConnectionDescription()))

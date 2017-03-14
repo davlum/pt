@@ -1,5 +1,8 @@
 package controllers;
 
+import models.pivottable.*;
+import models.pivottable.PivotTable;
+import play.data.DynamicForm;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.*;
@@ -13,9 +16,10 @@ import utils.pivotTableHandler.PivotTableHandler;
 import views.html.tables.*;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import models.pivottable.PivotTable;
 
 public class PivotTableController extends AuthController {
 
@@ -68,9 +72,9 @@ public class PivotTableController extends AuthController {
                         tableForm, getSidebarElements(), true));
             }
 
-            new PivotTable(table);
-            flash("success", "New Source Added");
-            return redirect(controllers.routes.PivotTableController.indexCSV());
+            PivotTable pt = new PivotTable(table);
+            flash("success", "New Table Added");
+            return redirect(controllers.routes.PivotTableController.getTable(pt.getId()));
         }
     }
 
@@ -79,6 +83,7 @@ public class PivotTableController extends AuthController {
         Form<FieldForm> rowForm = formFactory.form(FieldForm.class);
         Form<FieldForm> columnForm = formFactory.form(FieldForm.class);
         Form<ValueForm> valueForm = formFactory.form(ValueForm.class);
+        DynamicForm filterForm = formFactory.form();
 
         PivotTable table = PivotTable.find.byId(id);
         if(table != null) {
@@ -89,6 +94,7 @@ public class PivotTableController extends AuthController {
                     rowForm,
                     columnForm,
                     valueForm,
+                    filterForm,
                     false));
         } else {
             flash("error", "Table Does Not Exist");
@@ -170,10 +176,16 @@ public class PivotTableController extends AuthController {
     public Result addValue(Long id){
         Form<ValueForm> valueForm = formFactory.form(ValueForm.class).bindFromRequest();
         if (!valueForm.hasErrors()) {
-            PivotTable table = PivotTable.find.byId(id);
-            if (table != null) {
-                table.addValue(valueForm.get().getFieldID(),
-                        valueForm.get().getValueTypeID());
+            Field field = Field.find.byId(valueForm.get().getFieldID());
+            PivotValueType type = PivotValueType.find.byId(valueForm.get().getValueTypeID());
+            if(field != null && FieldType.onlyCount(field.getFieldType())
+                    && type != null && !type.getValueType().equals("count")){
+                flash("error", "Chosen value type does not apply to the chosen field!");
+            } else {
+                PivotTable table = PivotTable.find.byId(id);
+                if (table != null && field != null && type != null) {
+                    table.addValue(field.getId(), type.getId());
+                }
             }
         }
 
@@ -189,11 +201,33 @@ public class PivotTableController extends AuthController {
     }
 
     public Result addFilter(Long id){
-       return ok();
+        Map<String, String> filterData = formFactory.form().bindFromRequest().data();
+        filterData.remove("csrfToken");
+        String fieldID = filterData.get("fieldID");
+        filterData.remove("fieldID");
+
+        if (fieldID != null && filterData.keySet().size() > 0) {
+            PivotTable table = PivotTable.find.byId(id);
+            List<FilterValidValue> list = new ArrayList<>();
+            filterData.keySet().forEach(val -> {
+                FilterValidValue validValue = new FilterValidValue();
+                validValue.setSpecificValue(val);
+                list.add(validValue);
+            });
+            if (table != null) table.addFilter(Long.parseLong(fieldID), list);
+        } else {
+            flash("error", "Could not apply the requested filter");
+        }
+
+        return goTable(id);
     }
 
-    public Result deleteFilter(Long id, Long columnID){
-        return ok();
+    public Result deleteFilter(Long id, Long filterID){
+        PivotTable table = PivotTable.find.byId(id);
+        if (table != null) {
+            table.deleteFilter(filterID);
+        }
+        return goTable(id);
     }
 
     public Result displayPivotTable(Long id){
@@ -201,6 +235,7 @@ public class PivotTableController extends AuthController {
         Form<FieldForm> rowForm = formFactory.form(FieldForm.class);
         Form<FieldForm> columnForm = formFactory.form(FieldForm.class);
         Form<ValueForm> valueForm = formFactory.form(ValueForm.class);
+        DynamicForm filterForm = formFactory.form();
 
         PivotTable table = PivotTable.find.byId(id);
         if(table != null) {
@@ -211,11 +246,43 @@ public class PivotTableController extends AuthController {
                     rowForm,
                     columnForm,
                     valueForm,
+                    filterForm,
                     true));
         } else {
             flash("error", "Table Does Not Exist");
             return redirect(controllers.routes.PivotTableController.index());
         }
+    }
+
+    public Result contents(Long id){
+        PivotTable table = PivotTable.find.byId(id);
+        if(table != null) {
+            PivotTableHandler handler = new PivotTableHandler(table.mapList(), table);
+            String contents = handler.tableHtml();
+            if (contents.length() <= 1e6){
+                return ok(contents);
+            } else {
+                return ok("<h4>Table too large. Cannot be displayed.</h4>");
+            }
+        }
+
+        return ok("<h4>An error has occurred.</h4>");
+    }
+
+    public Result fieldOptions(Long fieldID){
+        Field field = Field.find.byId(fieldID);
+        StringBuilder sb = new StringBuilder();
+        if(field != null) {
+            for(String val : field.getPivotTable().mapList().stream().map(l -> l.get(field.getFieldName())).distinct()
+                    .sorted(PivotTableHandler.comparator(field.getFieldType())).collect(Collectors.toList())){
+                sb.append("<div class=\"checkbox\">")
+                        .append("<label><input type=\"checkbox\" name=\"").append(val).append("\" value=\"").append(val).append("\">")
+                        .append(val).append("</label>").append("</div>");
+            }
+        }
+
+        return ok(sb.toString());
+
     }
 
 }

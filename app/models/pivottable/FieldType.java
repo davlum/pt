@@ -1,6 +1,8 @@
 package models.pivottable;
 
-import java.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,16 @@ public enum FieldType {
 
     FieldType(final String displayName){
         this.displayName = displayName;
+    }
+
+    public static boolean onlyCount(FieldType fieldType){
+        switch (fieldType) {
+            case Long:
+            case Double:
+                return false;
+            default:
+                return true;
+        }
     }
 
     public static FieldType decide(List<String> list){
@@ -30,18 +42,18 @@ public enum FieldType {
                         return Boolean;
                     } else {
                         try {
-                            DateTimeFormatter df1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                            df1.parse(s);
+                            DateTimeFormatter df1 = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                            df1.parseDateTime(s);
                             return DateTime;
                         } catch (Exception e4){
                             try {
-                                DateTimeFormatter df2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                                df2.parse(s);
+                                DateTimeFormatter df2 = DateTimeFormat.forPattern("yyyy-MM-dd");
+                                df2.parseDateTime(s);
                                 return Date;
                             } catch (Exception e5){
                                 try {
-                                    DateTimeFormatter df3 = DateTimeFormatter.ofPattern("HH:mm:ss");
-                                    df3.parse(s);
+                                    DateTimeFormatter df3 = DateTimeFormat.forPattern("HH:mm:ss");
+                                    df3.parseDateTime(s);
                                     return Time;
                                 } catch (Exception e6){
                                     return String;

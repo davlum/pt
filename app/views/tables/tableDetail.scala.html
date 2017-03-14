@@ -14,6 +14,7 @@
         rowForm : play.data.Form[FieldForm],
         columnForm : play.data.Form[FieldForm],
         valueForm : play.data.Form[ValueForm],
+        filterForm : DynamicForm,
         display : Boolean)
 
 @main(user)(sidebar(sidebarContent(sidebarTables))) {
@@ -47,31 +48,51 @@
       <div class="tab-content">
       @if(!display) {
         <div id="setup" class="tab-pane fade in active">
-        @views.html.tables.setup(pivotTableHandler.getPivotTable, pageForm, rowForm, columnForm, valueForm)
+        @views.html.tables.setup(pivotTableHandler.getPivotTable, pageForm, rowForm, columnForm, valueForm, filterForm)
         </div>
       }
         @if(display) {
           <div id="display" class="tab-pane fade in active">
             <h3>Results</h3>
-            <h6>Rows</h6>
-            <ul>
-              @for(row <- pivotTableHandler.getPivotTable.getPivotRowList){
-                <li>@row.getField.getFieldName</li>
-              }
+            <div class="row">
+              <div class="col-md-4">
+                <h6>Pages</h6>
+                <ul>
+                @for(page <- pivotTableHandler.getPivotTable.getPivotPageList){
+                  <li>@page.getField.getFieldName</li>
+                }
+                </ul>
+              </div>
+              <div class="col-md-4">
+                <h6>Rows</h6>
+                <ul>
+                @for(row <- pivotTableHandler.getPivotTable.getPivotRowList){
+                  <li>@row.getField.getFieldName</li>
+                }
+                </ul>
+              </div>
+              <div class="col-md-4">
+                <h6>Columns</h6>
+                <ul>
+                @for(col <- pivotTableHandler.getPivotTable.getPivotColumnList){
+                  <li>@col.getField.getFieldName</li>
+                }
+                </ul>
+              </div>
+            </div>
+            <div class="hidden" id="tableID">@pivotTableHandler.getPivotTable.getId</div>
+            <ul class="nav nav-tabs">
+                @for((page, index) <- pivotTableHandler.pages().zipWithIndex) {
+                  <li @if(index == 0){class="active"}><a data-toggle="tab" href="#@page">@page</a></li>
+                }
             </ul>
-            <h6>Columns</h6>
-            <ul>
-            @for(col <- pivotTableHandler.getPivotTable.getPivotColumnList){
-              <li>@col.getField.getFieldName</li>
-            }
-            </ul>
-            <table class="table">
-              @Html(pivotTableHandler.tableHtml())
-            </table>
+
           </div>
         }
       </div>
     </div>
 
   </div>
+
+  @if(display){<script src="@routes.Assets.versioned("javascripts/pivotTable.js")"></script>}
 }

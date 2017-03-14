@@ -1,28 +1,33 @@
 @import helper._
 @import models.pivottable.PivotTable
-@import utils.forms.FilterForm
 
-
-@(pivotTable : PivotTable, filterForm : play.data.Form[FilterForm])
+@(pivotTable : PivotTable, filterForm : DynamicForm)
 
 <!-- Modal -->
-<div id="rowLabelsModal" class="modal fade" role="dialog" aria-hidden="true">
+<div id="filtersModal" class="modal fade" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
 
             <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Row Labels</h4>
+                <h4 class="modal-title">Filters</h4>
             </div>
-            @helper.form(controllers.routes.PivotTableController.addRow(pivotTable.getId), 'enctype -> "multipart/form-data", 'class -> "rowForm",  'id -> "rowForm"){
+            @helper.form(controllers.routes.PivotTableController.addFilter(pivotTable.getId), 'enctype -> "multipart/form-data", 'class -> "filterForm",  'id -> "filterForm"){
                 @CSRF.formField
                 <div class="modal-body">
-                @select(
-                    field = filterForm("fieldID"),
-                    options = pivotTable.availableFields.map(field => field.getId.toString -> field.getFieldName),
-                    '_default -> "Please Select a Field"
-                )
+                    @select(
+                        field = filterForm("fieldID"),
+                        options = pivotTable.getFieldList.map(field => field.getId.toString -> field.getFieldName),
+                        '_label -> "Field",
+                        '_default -> "Please Select a Field",
+                        '_showConstraints->false,
+                        'rows->3, 'style-> "width:100%; resize:none;",
+                        'class-> "form-control",
+                        'required -> true
+                    )
+
+                    <div id="filterOptions"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

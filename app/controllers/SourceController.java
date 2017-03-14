@@ -1,7 +1,5 @@
 package controllers;
 
-
-import controllers.*;
 import models.sources.CSVSource;
 import models.sources.SQLSource;
 import play.data.Form;
@@ -44,7 +42,7 @@ public class SourceController extends AuthController {
 
     private List<SidebarElement> getSQLSidebarElements() {
         return SQLSource.find.all()
-                .stream().map(s -> SidebarElement.newInstance(
+                .stream().map(s -> new SidebarElement(
                         controllers.routes.SourceController.getSQLSource(s.getId()).url(),
                         s.getSourceName(),
                         s.getSourceDescription()))
@@ -53,7 +51,7 @@ public class SourceController extends AuthController {
 
     private List<SidebarElement> getCSVSidebarElements() {
         return CSVSource.find.all()
-                .stream().map(s -> SidebarElement.newInstance(
+                .stream().map(s -> new SidebarElement(
                         controllers.routes.SourceController.getCSVSource(s.getId()).url(),
                         s.getSourceName(),
                         s.getSourceDescription()))
@@ -147,10 +145,6 @@ public class SourceController extends AuthController {
             }
             return redirect(controllers.routes.SourceController.getSQLSource(id));
         }
-    }
-
-    public Result getCSVSource(Long id) {
-        return ok();
     }
 
     public Result updateCSVSource(Long id) {

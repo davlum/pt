@@ -140,6 +140,20 @@ public class PivotTable extends Model {
         this.update();
     }
 
+    public void addFilter(long fieldID, List<FilterValidValue> list){
+        Filter filter = new Filter();
+        filter.setField(Field.find.where().eq("id", fieldID).findUnique());
+        filter.setFilterValidValues(list);
+        filtersList.add(filter);
+        this.update();
+    }
+
+    public void deleteFilter(long filterID){
+        this.filtersList = filtersList.stream()
+                .filter(filter -> !filter.getId().equals(filterID)).collect(Collectors.toList());
+        this.update();
+    }
+
     public List<Field> availableFields(){
         return fieldList.stream().filter(field ->
                 !pivotPageList.stream().map(PivotPage::getField).collect(Collectors.toList()).contains(field)

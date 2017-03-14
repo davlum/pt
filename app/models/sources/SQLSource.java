@@ -41,53 +41,6 @@ public class SQLSource extends Model {
 
     public static Model.Finder<Long, SQLSource> find = new Model.Finder<>(SQLSource.class);
 
-    public Long getConnectionId() {
-        return connection.getId();
-    }
-
-    public void setConnectionId(Long id)
-    {
-        this.connection = SQLConnection.find.byId(id);
-    }
-
-    public String getFromClause() {
-        return fromClause;
-    }
-
-    public String getSourceName() {
-
-        return sourceName;
-    }
-
-    public String getSourceDescription() {
-        return sourceDescription;
-    }
-
-    public SQLConnection getConnection() {
-
-        return connection;
-    }
-
-    public void setSourceName(String sourceName) {
-        this.sourceName = sourceName;
-    }
-
-    public void setSourceDescription(String sourceDescription) {
-        this.sourceDescription = sourceDescription;
-    }
-
-    public void setConnection(SQLConnection connection) {
-        this.connection = connection;
-    }
-
-    public void setFactTable(String factTable) {
-        this.factTable = factTable;
-    }
-
-    public void setFromClause(String fromClause) {
-        this.fromClause = fromClause;
-    }
-
     public static FieldType mapDatabaseFieldType(String dbType)
     {
         switch (dbType) {
@@ -146,9 +99,69 @@ public class SQLSource extends Model {
         return r;
     }
 
+    public void updateSQLSource(SQLSource src)
+    {
+        this.setSourceName(src.getSourceName());
+        this.setSourceDescription(src.getSourceDescription());
+        this.setConnectionId(src.getConnectionId());
+        this.setFromClause(src.getFromClause());
+        this.update();
+    }
+
+    public Long getId() {
+        return id;
+    }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
+
+    public String getSourceDescription() {
+        return sourceDescription;
+    }
+
+    public void setSourceDescription(String sourceDescription) {
+        this.sourceDescription = sourceDescription;
+    }
+
+    public SQLConnection getConnection() {
+        return connection;
+    }
+
+    public void setConnection(SQLConnection connection) {
+        this.connection = connection;
+    }
+
+    public Long getConnectionId() {
+        return connectionId;
+    }
+
+    public void setConnectionId(Long connectionId) {
+        this.connectionId = connectionId;
+    }
+
+    public String getFactTable() {
+        return factTable;
+    }
+
+    public void setFactTable(String factTable) {
+        this.factTable = factTable;
+    }
+
+    public String getFromClause() {
+        return fromClause;
+    }
+
+    public void setFromClause(String fromClause) {
+        this.fromClause = fromClause;
     }
 
     public List<PivotTable> getPivotTable() {
@@ -157,14 +170,5 @@ public class SQLSource extends Model {
 
     public void setPivotTable(List<PivotTable> pivotTable) {
         this.pivotTable = pivotTable;
-    }
-
-    public void updateSQLSource(SQLSource src)
-    {
-        this.setSourceName(src.getSourceName());
-        this.setSourceDescription(src.getSourceDescription());
-        this.setConnectionId(src.getConnectionId());
-        this.setFromClause(src.getFromClause());
-        this.update();
     }
 }

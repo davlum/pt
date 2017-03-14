@@ -4,7 +4,7 @@
 @import utils.forms.FieldForm
 
 @(pivotTable: PivotTable, pageForm : play.data.Form[FieldForm], rowForm : play.data.Form[FieldForm],
-        columnForm : play.data.Form[FieldForm], valueForm : play.data.Form[ValueForm])
+        columnForm : play.data.Form[FieldForm], valueForm : play.data.Form[ValueForm], filterForm : DynamicForm)
 
 <h3>Pivot Table Builder</h3>
 <div>
@@ -27,10 +27,7 @@
       @values(pivotTable)
       </div>
       <div class="col-md-4">
-        <div class="panel panel-default">
-          <div class="panel-heading">Report Filter</div>
-          <div class="panel-body">Panel Content</div>
-        </div>
+      @filter(pivotTable)
       </div>
       <div class="col-md-4">
         <div class="panel panel-default">
@@ -55,4 +52,8 @@
 @rowLabelsModal(pivotTable, rowForm)
 @columnLabelsModal(pivotTable, columnForm)
 @valuesModal(pivotTable, valueForm)
+@filterModal(pivotTable, filterForm)
+@for(filter <- pivotTable.getFiltersList) {
+  @filterDetailsModal(pivotTable, filter)
+}
 @deleteModal(pivotTable)
