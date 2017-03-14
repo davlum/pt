@@ -1,8 +1,11 @@
 package utils.pivotTableHandler;
 
 import models.pivottable.*;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.joda.time.format.DateTimeFormat;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -247,12 +250,25 @@ public class PivotTableHandler {
     }
 
     private String valueAsRequested(List<Map<String, String>> restrictedData, PivotValue pivotValue){
+        final DecimalFormat decimalFormatter = new DecimalFormat("###0.00#");
         switch (pivotValue.getPivotValueType().getValueType()){
             case "count":
                 return Long.toString(restrictedData.size());
             case "sum":
-                return Long.toString(restrictedData.stream().mapToLong(l ->
+                return Long.toString(restrictedData.stream().filter(Objects::nonNull).mapToLong(l ->
                         Long.parseLong(l.get(pivotValue.getField().getFieldName()))).sum());
+            case "mean":
+                SummaryStatistics statistics = new SummaryStatistics();
+                restrictedData.stream().filter(Objects::nonNull)
+                        .map(s -> Double.parseDouble(s.get(pivotValue.getField().getFieldName())))
+                        .forEach(statistics::addValue);
+                double average = statistics.getMean();
+                return decimalFormatter.format(average);
+            case "std_dev":
+                StandardDeviation stdDev = new StandardDeviation(false);
+                double standardDeviation = stdDev.evaluate(restrictedData.stream().filter(Objects::nonNull)
+                        .mapToDouble(s -> Double.parseDouble(s.get(s.get(pivotValue.getField().getFieldName())))).toArray());
+                return decimalFormatter.format(standardDeviation);
         }
         return null;
     }

@@ -8,6 +8,7 @@ import models.pivottable.PivotTable;
 import play.data.validation.Constraints;
 import javax.persistence.*;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +40,7 @@ public class SQLSource extends Model {
 
     public static Model.Finder<Long, SQLSource> find = new Model.Finder<>(SQLSource.class);
 
-    public static FieldType mapDatabaseFieldType(String dbType)
+    private static FieldType mapDatabaseFieldType(String dbType)
     {
         switch (dbType) {
             case "bigint":
@@ -76,19 +77,30 @@ public class SQLSource extends Model {
         }
     }
 
-    public List<Map<String, String>> getMapList(){
+    public List<Map<String, String>> getMapList(List<Field> fields){
         List<Map<String, String>> list = new ArrayList<>();
         try {
             Connection connection = DriverManager.getConnection(getConnection().getUrl(),
                     getConnection().getConnectionUser(), getConnection().getConnectionPassword());
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM "+factTable+";");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM "+factTable+" LIMIT 10000;");
             ResultSetMetaData meta = resultSet.getMetaData();
             while (resultSet.next()) {
                 Map<String, String> map = new HashMap<>();
                 for (int i = 1; i <= meta.getColumnCount(); i++) {
                     String key = meta.getColumnName(i);
-                    map.put(key, resultSet.getString(key));
+                    Field field = fields.stream().filter(f -> f.getFieldName().equals(key)).findFirst().orElse(null);
+                    if (field != null && field.getFieldType().equals(FieldType.Date)){
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        Date val = resultSet.getDate(key);
+                        map.put(key, val != null? format.format(val) : "null");
+                    } else if(field != null && field.getFieldType().equals(FieldType.Date)){
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        Date val = resultSet.getDate(key);
+                        map.put(key, val != null? format.format(val) : "null");
+                    } else {
+                        map.put(key, resultSet.getString(key));
+                    }
                 }
                 list.add(map);
             }

@@ -89,6 +89,8 @@ public class ConnectionController extends AuthController {
                 connection.save();
             } catch (SQLException e) {
                 e.printStackTrace();
+                flash("error", "Error: Could not connect to the database.");
+                return redirect(controllers.routes.ConnectionController.index());
             }
             flash("success", "New Connection Added");
             return redirect(controllers.routes.ConnectionController.index());

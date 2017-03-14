@@ -94,7 +94,7 @@ public class PivotTable extends Model {
 
     public List<Map<String, String>> mapList(){
         if (csvSource != null) return csvSource.getMapList();
-        return sqlSource.getMapList();
+        return sqlSource.getMapList(getFieldList());
     }
 
     public void addPage(long fieldID){
