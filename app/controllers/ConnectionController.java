@@ -115,6 +115,10 @@ public class ConnectionController extends AuthController {
             try (Connection conn = connection.connect()){
                 connection.setTableMetadataList(reflectTables(conn));
                 connection.save();
+                for (TableMetadata table: connection.getTableMetadataList()) {
+                    table.setColumnMetadataList(reflectColumns(table, conn));
+                    table.save();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
                 flash("error", "Error: Could not connect to the database.");
@@ -311,7 +315,7 @@ public class ConnectionController extends AuthController {
      * @throws SQLException
      */
     private List<ColumnMetadata> reflectColumns(TableMetadata tbl, Connection conn)
-        throws SQLException
+            throws SQLException
     {
         String query = "SELECT column_name, data_type "
                 + "FROM information_schema.columns "
@@ -331,36 +335,6 @@ public class ConnectionController extends AuthController {
         return columnMetadataList;
     }
 
-    /**
-     * Gets the data about the columns from the csv file
-     * and puts it in an Array List.
-     * @param tableId CSV Id
-     * @return HTTP 400 status
-     */
-    public Result getJsonReflectedColumns(Long tableId) {
-        List<ObjectNode> columns = ColumnMetadata
-                .find
-                .where().eq("tableMetadata.id", tableId)
-                .findList()
-                .stream()
-                .map(ColumnMetadata::getJson).collect(Collectors.toList());
-
-        ObjectNode jsonColumns = Json.newObject();
-        ArrayNode jsonArray = Json.newArray();
-        for (ObjectNode c: columns) {
-            jsonArray.add(c);
-        }
-        jsonColumns.set("columns", jsonArray);
-
-        return ok(jsonColumns);
-    }
-
-    /**
-     * Gets the data about the tables from the csv file
-     * and puts it in an Array List.
-     * @param connectionId CSV Id
-     * @return HTTP 400 status
-     */
     public Result getJsonReflectedTables(Long connectionId) {
         List<ObjectNode> tables = TableMetadata
                 .find

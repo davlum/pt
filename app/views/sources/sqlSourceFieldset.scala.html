@@ -51,26 +51,6 @@
 
     </dl>
 
-    <dl class=" " id="factTable_field">
-
-        <dt><label for="factTable">Fact Table</label></dt>
-        <dd>
-        <select
-        class="form-control"
-        id="factTable"
-        name="factTable"
-        style="width:100%"
-        required="true">
-        @if(sqlSourceForm("factTable").value() == "") {
-            <option value="">-- Choose Fact Table --</option>
-        }
-        @if(sqlSourceForm("factTable").value() != null && sqlSourceForm("factTable").value() != "") {
-            <option value="@sqlSourceForm("factTable").value" selected>@sqlSourceForm("factTable").value<option>
-        }
-        </select>
-        </dd>
-
-    </dl>
 
     <div class="form-group hidden">
         <label for="fromClause">From Clause</label>
@@ -82,7 +62,22 @@
         </textarea>
     </div>
 
-    <div class="pull-left hidden">
+    <div class="form-inline">
+        <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+            <div class="input-group-addon">FROM</div>
+            <select class="form-control input-sm" id="from-clause-fromtable" required="true"></select>
+        </div>
+        <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+            <div class="input-group-addon">AS</div>
+            <input type="text" class="form-control input-sm" id="from-clause-fromtable-alias" required="true">
+        </div>
+        <button type="button" id="add-join" class="btn btn-sm btn-info">Add Join</button>
+    </div>
+    <div id="joins"></div>
+
+
+    <hr>
+    <div class="pull-left">
         <button type="button" class="btn btn-primary">Pivot</button>
     </div>
     <div class="pull-right">

@@ -25,6 +25,18 @@ public class TableMetadata extends Model {
     @Constraints.Required
     private String tableName;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ColumnMetadata> columnMetadataList;
+
+    public void setColumnMetadataList(List<ColumnMetadata> columnMetadataList) {
+        this.columnMetadataList = columnMetadataList;
+    }
+
+    public List<ColumnMetadata> getColumnMetadataList() {
+
+        return columnMetadataList;
+    }
+
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "sqlconnection_id")
     @JsonIgnore
@@ -51,7 +63,6 @@ public class TableMetadata extends Model {
         return schemaName;
     }
 
-
     public String getTableName() {
         return tableName;
     }
@@ -70,16 +81,16 @@ public class TableMetadata extends Model {
     }
     public static Model.Finder<Long, TableMetadata> find = new Model.Finder<>(TableMetadata.class);
 
-    public List<TableMetadata> getTablesByConnectionId(Long id) {
-        return find.where().eq("sqlconnection_id", id).findList();
-    }
 
     public ObjectNode getJson() {
         ObjectNode o = Json.newObject();
         o.put("tableId", this.id);
         o.put("tableName", this.tableName);
         o.put("schemaName", this.schemaName);
+        o.put("qualifiedName", this.schemaName + "." + this.tableName);
         o.put("connectionId", this.sqlConnection.getId());
         return o;
     }
+
+
 }
