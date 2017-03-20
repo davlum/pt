@@ -6,6 +6,9 @@ import com.avaje.ebean.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * An object representing a filter of the pivot table.
+ */
 @Entity
 public class Filter extends Model {
 

@@ -5,6 +5,10 @@ import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Security;
 
+/**
+ * Class that gets the previously authenticated
+ * Session of a user.
+ */
 public class Secured extends Security.Authenticator {
 
     @Override

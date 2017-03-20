@@ -5,6 +5,9 @@ import com.avaje.ebean.Model;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * The possible types a pivot value can inhabit.
+ */
 @Entity
 public class PivotValueType extends Model {
 

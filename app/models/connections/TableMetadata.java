@@ -9,7 +9,10 @@ import play.libs.Json;
 import javax.persistence.*;
 import java.util.List;
 
-
+/**
+ * Persistent class for the table metadata
+ * Is stored in the database.
+ */
 @Entity
 public class TableMetadata extends Model {
 

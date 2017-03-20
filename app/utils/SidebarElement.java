@@ -1,5 +1,8 @@
 package utils;
 
+/**
+ * Class representing the sidebar elements.
+ */
 public final class SidebarElement {
     public String link;
     public String name;

@@ -3,6 +3,9 @@ package tools;
 import exceptions.UserException;
 import org.mindrot.jbcrypt.BCrypt;
 
+/**
+ * Class to hash user Passwords.
+ */
 public class Hash {
 
     public static String createPassword(String clearString) throws UserException {

@@ -7,6 +7,9 @@ import models.connections.CSVConnection;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * Class representing the link to a specific CSV file.
+ */
 @Entity
 public class CSVSourceLink extends Model {
 

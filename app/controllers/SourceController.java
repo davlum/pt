@@ -13,14 +13,27 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class for controlling the sources of the pivot Tables, whether
+ * that is a database or CSV connection. Although the methods names
+ * here indicate SQL, a variety of database connections are available.
+ */
 public class SourceController extends AuthController {
     private final FormFactory formFactory;
 
+    /**
+     * Constructor for the class
+     * @param formFactory
+     */
     @Inject
     public SourceController(FormFactory formFactory) {
         this.formFactory = formFactory;
     }
 
+    /**
+     * Method to update page with new database information
+     * @return Http status
+     */
     public Result index() {
         return ok(views.html.sources.index.render(
                 getCurrentUser(),
@@ -31,6 +44,10 @@ public class SourceController extends AuthController {
                 false));
     }
 
+    /**
+     * Method to update page with new CSV information
+     * @return Http status
+     */
     public Result indexCSV() {
         return ok(views.html.sources.index.render(
                 getCurrentUser(),
@@ -41,6 +58,10 @@ public class SourceController extends AuthController {
                 true));
     }
 
+    /**
+     * Get the database elements to display on the sidebar
+     * @return list of SQL elements
+     */
     private List<SidebarElement> getSQLSidebarElements() {
         return SQLSource.find.all()
                 .stream().map(s -> new SidebarElement(
@@ -50,6 +71,10 @@ public class SourceController extends AuthController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Get the CSV elements to display on the sidebar
+     * @return list of CSV elements
+     */
     private List<SidebarElement> getCSVSidebarElements() {
         return CSVSource.find.all()
                 .stream().map(s -> new SidebarElement(
@@ -59,6 +84,10 @@ public class SourceController extends AuthController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Add a source for a pivot table from a database
+     * @return HTTP redirect or status depending on input
+     */
     public Result addSQLSource() {
         Form<SQLSource> sourceForm = formFactory.form(SQLSource.class).bindFromRequest();
         if (sourceForm.hasErrors()) {
@@ -84,6 +113,10 @@ public class SourceController extends AuthController {
         }
     }
 
+    /**
+     * Add a source for a pivot table for a CSV connection
+     * @return HTTP redirect or status depending on input
+     */
     public Result addCSVSource() {
         Form<CSVSource> sourceForm = formFactory.form(CSVSource.class).bindFromRequest();
         if (sourceForm.hasErrors()) {
@@ -103,7 +136,11 @@ public class SourceController extends AuthController {
         }
     }
 
-
+    /**
+     * Getter method for a database source
+     * @param id id of the source
+     * @return Http redirect or status
+     */
     public Result getSQLSource(Long id) {
         SQLSource src = SQLSource.find.byId(id);
         if(src != null) {
@@ -117,6 +154,11 @@ public class SourceController extends AuthController {
         }
     }
 
+    /**
+     * Getter method for a CSV source
+     * @param id id of the source
+     * @return Http redirect or status
+     */
     public Result getCSVSource(Long id) {
         CSVSource source = CSVSource.find.byId(id);
         if(source != null) {
@@ -130,6 +172,11 @@ public class SourceController extends AuthController {
         }
     }
 
+    /**
+     * Update a database source
+     * @param id id of the source
+     * @return Http redirect
+     */
     public Result updateSQLSource(Long id) {
         Form<SQLSource> connectionForm = formFactory.form(SQLSource.class).bindFromRequest();
         if (connectionForm.hasErrors()) {
@@ -152,6 +199,11 @@ public class SourceController extends AuthController {
         }
     }
 
+    /**
+     * Update a CSV source
+     * @param id id of the source
+     * @return Http redirect
+     */
     public Result updateCSVSource(Long id) {
         Form<CSVSource> sourceForm = formFactory.form(CSVSource.class).bindFromRequest();
         if (sourceForm.hasErrors()) {
@@ -173,6 +225,11 @@ public class SourceController extends AuthController {
         }
     }
 
+    /**
+     * delete a database source
+     * @param id of the source
+     * @return Http redirect
+     */
     public Result deleteSQLSource(Long id) {
         SQLSource src = SQLSource.find.byId(id);
         if(src != null) {
@@ -184,6 +241,11 @@ public class SourceController extends AuthController {
         return redirect(controllers.routes.SourceController.index());
     }
 
+    /**
+     * delete a CSV source
+     * @param id of the source
+     * @return Http redirect
+     */
     public Result deleteCSVSource(Long id) {
         CSVSource source = CSVSource.find.byId(id);
         if(source != null) {

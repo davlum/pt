@@ -4,6 +4,9 @@ import exceptions.UserException;
 import models.users.User;
 import play.data.validation.Constraints;
 
+/**
+ * Form of the login page
+ */
 public class LoginForm {
 
     @Constraints.Required

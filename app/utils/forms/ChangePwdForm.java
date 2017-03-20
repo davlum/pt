@@ -1,5 +1,8 @@
 package utils.forms;
 
+/**
+ * Form to change password.
+ */
 public class ChangePwdForm {
 
     private String password;

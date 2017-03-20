@@ -1,49 +1,74 @@
-This is your new Play application
-=================================
+[x]:tab: A Pivot Table Application
+=============================
 
-This file will be packaged with your application when using `activator dist`.
+[x]:tab is a Play application
+Visit https://www.playframework.com/ for more information.
 
-There are several demonstration files available in this template.
+Make sure you have a postgreSQL database. Visit https://www.postgresql.org/ for more info.
 
-Controllers
-===========
+Once postgres is installed, create a database 'pivottable',
+whose owner is a user called 'test' with the password 'test',
+or modify the information in conf/application.conf to match your database setup.
 
-- HomeController.java:
+In general, please explore conf/application.conf to adapt it to your specific needs
 
-  Shows how to handle simple HTTP requests.
+Two methods are available to launch the application using this code:
 
-- AsyncController.java:
+Launch in development mode
+==========================
 
-  Shows how to do asynchronous programming when handling a request.
+1. You will need to download Activator on this page
+https://playframework.com/download#activator
 
-- CountController.java:
+2. Then you will need to add activator to your path:
+On Unix, use export PATH=/path/to/activator:$PATH
+On Windows, add ;C:\path\to\activator to your PATH environment variable. Do not use a path with spaces.
 
-  Shows how to inject a component into a controller and use the component when
-  handling requests.
+3. On your Terminal/Command Prompt move to the folder containing this project
+(where this READ ME file is located), type export _JAVA_OPTIONS="-Xmx8g" to expand 
+the available RAM to be used by the application and then type 'activator run'
 
-Components
-==========
+4. On your browser of choice, go to: localhost:9000
 
-- Module.java:
+5. A red page might prompt you to do an 'Evolution' to the database. Click 'Apply this script now!'
+This will generate all the tables required to run the application correctly.
 
-  Shows how to use Guice to bind all the components needed by your application.
+6. Before trying to log in, use the script conf/import.sql and run it on the database 'pivottable'.
 
-- Counter.java:
+7. Log in using the username 'test.user@gmail.com' and the password 'MegaXTabPassword'. Actual user management
+will be added in a later version.
 
-  An example of a component that contains state, in this case a simple counter.
+8. Type Ctrl+D to stop the running application
 
-- ApplicationTimer.java:
+Launch in production mode
+=========================
 
-  An example of a component that starts when the application starts and stops
-  when the application stops.
+1. Load the file target/universal/pivot-table-1.0-SNAPSHOT.zip to your server (type 'activator dist' to generate a new
+one if the code was modified)
 
-Filters
-=======
+2. Unzip this file on your server
 
-- Filters.java:
+3. Your server must be able to run Java 8 applications. Move to the folder pivot-table-1.0-SNAPSHOT/bin
 
-  Creates the list of HTTP filters used by your application.
+4. As usual, make sure your server is running PostrgreSQL and contains the database 'pivottable' locally.
 
-- ExampleFilter.java
+5. Type the following command:
+sudo ./pivot-table -Dhttp.port=9000 -DapplyEvolutions.default=true -J-Xmx8G &
 
-  A simple filter that adds a header to every response.
+6. If there is a problem, you might need to restart the application. Kill the process running on port 9000, if
+necessary, and delete the file RUNNING_PID located in the folder pivot-table-1.0-SNAPSHOT before relaunching.
+
+7. Before trying to log in, use the script conf/import.sql and run it on the database 'pivottable'.
+
+8. Log in using the username 'test.user@gmail.com' and the password 'MegaXTabPassword'. Actual user management
+will be added in a later version.
+
+Note:
+=====
+- For CSV files, before running the application, change 'file.system.root' in conf/application.conf to
+match the path where a copy of the uploaded CSV files will be saved for future use.
+
+- CSV Files must be pretty standard: commas as separators. Quote handling is already taken into account.
+
+- This application can connect to most of the stated databases present in the SRS. You just need to
+enter the appropriate parameters in the connection form.

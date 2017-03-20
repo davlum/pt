@@ -6,6 +6,9 @@ import com.avaje.ebean.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * This class represents a field in the pivot table.
+ */
 @Entity
 public class Field extends Model {
 

@@ -7,6 +7,10 @@ import play.libs.Json;
 
 import javax.persistence.*;
 
+/**
+ * Persistent class for the column meta data.
+ * Is stored in the database.
+ */
 @Entity
 public class ColumnMetadata extends Model {
     @Id

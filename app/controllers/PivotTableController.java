@@ -21,19 +21,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Controller for the pivot table class
+ */
 public class PivotTableController extends AuthController {
 
+    /**
+     * Go to the table specified by Id
+     * @param id
+     * @return HTTP redirect to the table
+     */
     private Result goTable(Long id) {
         return redirect(controllers.routes.PivotTableController.getTable(id));
     }
 
     private final FormFactory formFactory;
 
+    /**
+     * Constructor for the class
+     * @param formFactory
+     */
     @Inject
     public PivotTableController(FormFactory formFactory){
         this.formFactory = formFactory;
     }
 
+    /**
+     * Renders page
+     * @return HTTP status 400
+     */
     public Result index(){
         return ok(views.html.tables.index.render(getCurrentUser(), formFactory.form(SQLTableForm.class),
                 formFactory.form(CSVTableForm.class), getSidebarElements(), false));
@@ -45,6 +61,10 @@ public class PivotTableController extends AuthController {
     }
 
 
+    /**
+     * Gets a list of the pivot tables from the sidebar
+     * @return list of pivot tables characteristics
+     */
     private List<SidebarElement> getSidebarElements() {
         return PivotTable.find.all()
                 .stream().map(s -> new SidebarElement(
@@ -54,6 +74,10 @@ public class PivotTableController extends AuthController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Adds a pivot table from a database connection
+     * @return HTTP redirect or status
+     */
     public Result addSQLTable(){
         Form<SQLTableForm> tableForm = formFactory.form(SQLTableForm.class).bindFromRequest();
         if (tableForm.hasErrors()) {
@@ -74,6 +98,10 @@ public class PivotTableController extends AuthController {
         }
     }
 
+    /**
+     * Adds a pivot table from a CSV connection
+     * @return HTTP redirect or status
+     */
     public Result addCSVTable(){
         Form<CSVTableForm> tableForm = formFactory.form(CSVTableForm.class).bindFromRequest();
         if (tableForm.hasErrors()) {
@@ -94,6 +122,11 @@ public class PivotTableController extends AuthController {
         }
     }
 
+    /**
+     * Getter method for a pivot table
+     * @param id of a pivot table
+     * @return HTTP redirect
+     */
     public Result getTable(Long id){
         Form<FieldForm> pageForm = formFactory.form(FieldForm.class);
         Form<FieldForm> rowForm = formFactory.form(FieldForm.class);
@@ -118,6 +151,11 @@ public class PivotTableController extends AuthController {
         }
     }
 
+    /**
+     * delete a table
+     * @param id of a pivot table
+     * @return HTTP redirect
+     */
     public Result deleteTable(Long id){
         PivotTable table = PivotTable.find.byId(id);
         if(table != null) {
@@ -129,6 +167,11 @@ public class PivotTableController extends AuthController {
         return redirect(controllers.routes.PivotTableController.index());
     }
 
+    /**
+     * Method to add a page to the pivot table
+     * @param id of the table
+     * @return a HTTP redirect to the new table
+     */
     public Result addPage(Long id){
         Form<FieldForm> fieldForm = formFactory.form(FieldForm.class).bindFromRequest();
         if (!fieldForm.hasErrors()) {
@@ -141,6 +184,12 @@ public class PivotTableController extends AuthController {
         return goTable(id);
     }
 
+    /**
+     * Method to delete a page of the Table
+     * @param id of the table
+     * @param pageID of the page to be deleted
+     * @return HTTP redirect to the new table
+     */
     public Result deletePage(Long id, Long pageID){
         PivotTable table = PivotTable.find.byId(id);
         if (table != null) {
@@ -149,6 +198,11 @@ public class PivotTableController extends AuthController {
         return goTable(id);
     }
 
+    /**
+     * Method to add a row to the table
+     * @param id id of the table
+     * @return HTTP redirect to the new table
+     */
     public Result addRow(Long id){
         Form<FieldForm> fieldForm = formFactory.form(FieldForm.class).bindFromRequest();
         if (!fieldForm.hasErrors()) {
@@ -161,6 +215,12 @@ public class PivotTableController extends AuthController {
         return goTable(id);
     }
 
+    /**
+     * Method to delete a row of the table
+     * @param id of the table
+     * @param rowID id of the row
+     * @return HTTP redirect to the new table
+     */
     public Result deleteRow(Long id, Long rowID){
         PivotTable table = PivotTable.find.byId(id);
         if (table != null) {
@@ -169,6 +229,11 @@ public class PivotTableController extends AuthController {
         return goTable(id);
     }
 
+    /**
+     * Method to add a column to the table
+     * @param id of the table
+     * @return HTTP redirect to the new table
+     */
     public Result addColumn(Long id){
         Form<FieldForm> fieldForm = formFactory.form(FieldForm.class).bindFromRequest();
         if (!fieldForm.hasErrors()) {
@@ -181,6 +246,12 @@ public class PivotTableController extends AuthController {
         return goTable(id);
     }
 
+    /**
+     * Method to delete a column from the table
+     * @param id of the table
+     * @param columnID id of the column
+     * @return HTTP redirect to the new table
+     */
     public Result deleteColumn(Long id, Long columnID){
         PivotTable table = PivotTable.find.byId(id);
         if (table != null) {
@@ -189,6 +260,11 @@ public class PivotTableController extends AuthController {
         return goTable(id);
     }
 
+    /**
+     * Method to add a value to the table
+     * @param id of the table
+     * @return HTTP redirect to the new table
+     */
     public Result addValue(Long id){
         Form<ValueForm> valueForm = formFactory.form(ValueForm.class).bindFromRequest();
         if (!valueForm.hasErrors()) {
@@ -208,6 +284,12 @@ public class PivotTableController extends AuthController {
         return goTable(id);
     }
 
+    /**
+     * Method to delete a value from the table
+     * @param id of the table
+     * @param valueID of the value
+     * @return HTTP redirect to the new table
+     */
     public Result deleteValue(Long id, Long valueID){
         PivotTable table = PivotTable.find.byId(id);
         if (table != null) {
@@ -216,6 +298,11 @@ public class PivotTableController extends AuthController {
         return goTable(id);
     }
 
+    /**
+     * Filters the data of the pivot table
+     * @param id of the table
+     * @return HTTP redirect to new table
+     */
     public Result addFilter(Long id){
         Map<String, String> filterData = formFactory.form().bindFromRequest().data();
         filterData.remove("csrfToken");
@@ -238,6 +325,12 @@ public class PivotTableController extends AuthController {
         return goTable(id);
     }
 
+    /**
+     * Deletes the filter
+     * @param id of the table
+     * @param filterID id of the filter
+     * @return HTTP redirect to the new table
+     */
     public Result deleteFilter(Long id, Long filterID){
         PivotTable table = PivotTable.find.byId(id);
         if (table != null) {
@@ -246,6 +339,11 @@ public class PivotTableController extends AuthController {
         return goTable(id);
     }
 
+    /**
+     * Method to display the table
+     * @param id of the table
+     * @return HTTP redirect to the page of the table
+     */
     public Result displayPivotTable(Long id){
         Form<FieldForm> pageForm = formFactory.form(FieldForm.class);
         Form<FieldForm> rowForm = formFactory.form(FieldForm.class);
@@ -270,6 +368,11 @@ public class PivotTableController extends AuthController {
         }
     }
 
+    /**
+     * Checks to make sure contents is of certain size
+     * @param id of the table
+     * @return Return HTTP status
+     */
     public Result contents(Long id){
         PivotTable table = PivotTable.find.byId(id);
         if(table != null) {
@@ -285,6 +388,11 @@ public class PivotTableController extends AuthController {
         return ok("<h4>An error has occurred.</h4>");
     }
 
+    /**
+     * Get the options for the different fields
+     * @param fieldID
+     * @return HTTP status
+     */
     public Result fieldOptions(Long fieldID){
         Field field = Field.find.byId(fieldID);
         StringBuilder sb = new StringBuilder();

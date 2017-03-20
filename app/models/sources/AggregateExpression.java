@@ -1,7 +1,8 @@
 package models.sources;
 
 /**
- * Created by hal on 2017-02-21.
+ * An object representing possible aggregate expressions
+ * the user would use.
  */
 class AggregateExpression {
     private AggregateFunction func;

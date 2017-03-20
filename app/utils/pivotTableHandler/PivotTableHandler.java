@@ -9,12 +9,20 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Class to manipulate the pivot table.
+ */
 public class PivotTableHandler {
 
     private List<Map<String, String>> pivotTableData;
     private List<Map<String, String>> pageData;
     private PivotTable pivotTable;
 
+    /**
+     * Constructor for the class.
+     * @param pivotTableData
+     * @param pivotTable
+     */
     public PivotTableHandler(List<Map<String, String>> pivotTableData, PivotTable pivotTable){
         this.pivotTableData = pivotTableData;
         this.pivotTable = pivotTable;
@@ -27,6 +35,10 @@ public class PivotTableHandler {
         });
     }
 
+    /**
+     * Returns a list of pages of the pivot table
+     * @return
+     */
     public List<String> pages(){
         if(pivotTable.getPivotPageList().size() > 0){
            return pivotTableData.stream().map(l -> l.get(pivotTable.getPivotPageList().get(0).getField().getFieldName()))
@@ -71,6 +83,7 @@ public class PivotTableHandler {
 
     private int i = 0;
     private int rand = 0;
+
     public String tableHtml(){
         StringBuilder pageHtml = new StringBuilder();
         rand = 0;
@@ -97,6 +110,10 @@ public class PivotTableHandler {
         return pageHtml.toString();
     }
 
+    /**
+     * Process the page and returns a string of HTML as a result
+     * @return string of HTML
+     */
     private String processPage(){
         //System.out.println("Start: " + new Date());
         StringBuilder tableHtml = new StringBuilder();
@@ -238,6 +255,11 @@ public class PivotTableHandler {
         return returnVal.toString();
     }
 
+    /**
+     * Method that converts to String
+     * @param restrictedData
+     * @return String
+     */
     private String printValues(List<Map<String, String>> restrictedData){
         StringBuilder returnVal = new StringBuilder();
         for (PivotValue pivotValue : pivotTable.getValuesList()) {
