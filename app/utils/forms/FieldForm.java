@@ -2,6 +2,9 @@ package utils.forms;
 
 import play.data.validation.Constraints;
 
+/**
+ * Form for the fields.
+ */
 public class FieldForm {
 
     @Constraints.Required

@@ -9,6 +9,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * This enumerated type is for the different types the fields
+ * of the pivot table can be.
+ */
 public enum FieldType {
     String("String"), Boolean("Boolean"), Long("Long"),
     Date("Date"), Time("Time"), DateTime("DateTime"), Double("Double");

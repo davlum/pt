@@ -16,5 +16,7 @@ libraryDependencies ++= Seq(
   "org.mindrot" % "jbcrypt" % "0.3m",
   "org.jooq" % "jooq" % "3.9.0",
   "org.jooq" % "jooq-meta" % "3.9.0",
-  "org.apache.commons" % "commons-math3" % "3.6.1"
+  "org.apache.commons" % "commons-math3" % "3.6.1",
+  "org.apache.poi" % "poi" % "3.14",
+  "org.apache.poi" % "poi-ooxml" % "3.14"
 )

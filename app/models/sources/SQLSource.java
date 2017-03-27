@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Object containing the data from a
+ * database connection.
+ */
 @Entity
 public class SQLSource extends Model {
     @Id
@@ -42,6 +46,11 @@ public class SQLSource extends Model {
 
     public static Model.Finder<Long, SQLSource> find = new Model.Finder<>(SQLSource.class);
 
+    /**
+     * Maps dbTypes to FieldTypes
+     * @param dbType
+     * @return a FieldTypes
+     */
     private static FieldType mapDatabaseFieldType(String dbType)
     {
         switch (dbType) {
@@ -79,6 +88,13 @@ public class SQLSource extends Model {
         }
     }
 
+    /**
+     * Given a list of fields return the data associated with those fields
+     * as a map of string field names to strings of the data. Currently limited
+     * to 10,000 lines per field.
+     * @param fields a list of fields
+     * @return map of field and their data.
+     */
     public List<Map<String, String>> getMapList(List<Field> fields){
         List<Map<String, String>> list = new ArrayList<>();
         try {
@@ -118,6 +134,10 @@ public class SQLSource extends Model {
         return list;
     }
 
+    /**
+     * Gets a list of fields from the given database source
+     * @return list of fields
+     */
     public List<Field> getFieldList(){
         List<Field> list = new ArrayList<>();
         try {
@@ -146,7 +166,14 @@ public class SQLSource extends Model {
         return list;
     }
 
-
+    /**
+     * Given a list of fields and a list of aggregate functions,
+     * return a result set
+     * @param dimensions of the data
+     * @param aggregates list of aggregate functions
+     * @return a ResultSet
+     * @throws SQLException
+     */
     public ResultSet executeQuery(List<Field> dimensions,
                         List<AggregateExpression> aggregates)
             throws SQLException

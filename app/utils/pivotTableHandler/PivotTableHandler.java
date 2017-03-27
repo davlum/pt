@@ -9,12 +9,20 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Class to manipulate the pivot table.
+ */
 public class PivotTableHandler {
 
     private List<Map<String, String>> pivotTableData;
     private List<Map<String, String>> pageData;
     private PivotTable pivotTable;
 
+    /**
+     * Constructor for the class.
+     * @param pivotTableData
+     * @param pivotTable
+     */
     public PivotTableHandler(List<Map<String, String>> pivotTableData, PivotTable pivotTable){
         this.pivotTableData = pivotTableData;
         this.pivotTable = pivotTable;
@@ -27,6 +35,10 @@ public class PivotTableHandler {
         });
     }
 
+    /**
+     * Returns a list of pages of the pivot table
+     * @return
+     */
     public List<String> pages(){
         if(pivotTable.getPivotPageList().size() > 0){
            return pivotTableData.stream().map(l -> l.get(pivotTable.getPivotPageList().get(0).getField().getFieldName()))
@@ -35,7 +47,7 @@ public class PivotTableHandler {
         return Collections.singletonList("all");
     }
 
-    private Map<Integer, Long> cellspanPerLevel(String dimension){
+    Map<Integer, Long> cellspanPerLevel(String dimension){
         Map<Integer, Long> nbColumnsPerLevel = new HashMap<>();
         long lastTotal = 1;
         for(int i = pivotTable.fieldsByDimension(dimension).size() - 1; i >= 0; i--){
@@ -69,8 +81,12 @@ public class PivotTableHandler {
 
     }
 
-    private int i = 0;
-    private int rand = 0;
+    int i = 0;
+    int rand = 0;
+
+    /* *
+    * Html That will be used to display the generated pivot table
+    * */
     public String tableHtml(){
         StringBuilder pageHtml = new StringBuilder();
         rand = 0;
@@ -97,6 +113,10 @@ public class PivotTableHandler {
         return pageHtml.toString();
     }
 
+    /**
+     * Process the page and returns a string of HTML as a result
+     * @return string of HTML
+     */
     private String processPage(){
         //System.out.println("Start: " + new Date());
         StringBuilder tableHtml = new StringBuilder();
@@ -249,7 +269,7 @@ public class PivotTableHandler {
         return returnVal.toString();
     }
 
-    private String valueAsRequested(List<Map<String, String>> restrictedData, PivotValue pivotValue){
+    String valueAsRequested(List<Map<String, String>> restrictedData, PivotValue pivotValue){
         final DecimalFormat decimalFormatter = new DecimalFormat("###0.00#");
         switch (pivotValue.getPivotValueType().getValueType()){
             case "count":

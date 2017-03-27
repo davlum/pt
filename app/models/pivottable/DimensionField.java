@@ -5,6 +5,9 @@ import com.avaje.ebean.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
+/**
+ * This class represents a dimension field (page, row, column) of the pivot table.
+ */
 @MappedSuperclass
 public class DimensionField extends Model {
 

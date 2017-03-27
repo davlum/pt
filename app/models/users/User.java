@@ -10,6 +10,9 @@ import tools.Hash;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * An object representing a user. Is persisted in the database.
+ */
 @Entity
 @Table(name = "user_list")
 public class User extends Model {

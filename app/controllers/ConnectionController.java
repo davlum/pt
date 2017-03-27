@@ -25,16 +25,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+/**
+ * This class is for controlling the forms for the connections
+ * to the CSV and SQL database connections
+ */
 public class ConnectionController extends AuthController {
 
     private final FormFactory formFactory;
 
+    /**
+     * Constructor for the Connection Controller Class
+     * @param formFactory
+     */
     @Inject
     public ConnectionController(FormFactory formFactory) {
         this.formFactory = formFactory;
     }
 
+    /**
+     * Display the connection home page
+     * @return HTTP status
+     */
     public Result index() {
         return ok(index.render(getCurrentUser(),
                 formFactory.form(SQLConnection.class),
@@ -44,6 +55,10 @@ public class ConnectionController extends AuthController {
                 false));
     }
 
+    /**
+     * Display the connection home page (CSV Form activated)
+     * @return HTTP status
+     */
     public Result indexCSV() {
         return ok(index.render(getCurrentUser(),
                 formFactory.form(SQLConnection.class),
@@ -53,6 +68,10 @@ public class ConnectionController extends AuthController {
                 true));
     }
 
+    /**
+     * Method gets all the CSV connections to be displayed on the sidebar
+     * @return a list of CSV sidebar elements
+     */
     private List<SidebarElement> getCSVSidebarElements() {
         return CSVConnection.find.all()
                 .stream().map(s -> new SidebarElement(
@@ -62,6 +81,10 @@ public class ConnectionController extends AuthController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Method gets all the SQL connections to be displayed on the sidebar
+     * @return a list of SQL sidebar elements
+     */
     private List<SidebarElement> getSQLSidebarElement() {
         return SQLConnection.find.all()
                 .stream().map(s -> new SidebarElement(
@@ -71,6 +94,11 @@ public class ConnectionController extends AuthController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Method that adds a new connection
+     * @return page redirect or HTTP result with status code
+     * depending on whether the connection was successful.
+     */
     public Result addSQLConnection() {
         Form<SQLConnection> connectionForm = formFactory.form(SQLConnection.class).bindFromRequest();
         if (connectionForm.hasErrors()) {
@@ -97,6 +125,11 @@ public class ConnectionController extends AuthController {
         }
     }
 
+    /**
+     * Method that adds a connection to a CSV file.
+     * @return page redirect or HTTP result with status code
+     * depending on whether the connection was successful.
+     */
     public Result addCSVConnection() {
         Form<CSVConnection> connectionForm = formFactory.form(CSVConnection.class).bindFromRequest();
         if (connectionForm.hasErrors()) {
@@ -118,6 +151,11 @@ public class ConnectionController extends AuthController {
         }
     }
 
+    /**
+     * Get an existing database connection based on its id
+     * @param id of connection
+     * @return HTTP status or redirect
+     */
     public Result getSQLConnection(Long id) {
         SQLConnection connection = SQLConnection.find.byId(id);
         if(connection != null) {
@@ -131,6 +169,11 @@ public class ConnectionController extends AuthController {
         }
     }
 
+    /**
+     * Get an existing CSV connection based on its id
+     * @param id of connection
+     * @return HTTP status or redirect
+     */
     public Result getCSVConnection(Long id) {
         CSVConnection connection = CSVConnection.find.byId(id);
         if(connection != null) {
@@ -144,6 +187,11 @@ public class ConnectionController extends AuthController {
         }
     }
 
+    /**
+     * Updates the connection to a database
+     * @param id of connection
+     * @return HTTP status or redirect
+     */
     public Result updateSQLConnection(Long id) {
         Form<SQLConnection> connectionForm = formFactory.form(SQLConnection.class).bindFromRequest();
         if (connectionForm.hasErrors()) {
@@ -168,6 +216,11 @@ public class ConnectionController extends AuthController {
         }
     }
 
+    /**
+     * Updates the connection to CSV file
+     * @param id of connection
+     * @return HTTP status or redirect
+     */
     public Result updateCSVConnection(Long id) {
         Form<CSVConnection> connectionForm = formFactory.form(CSVConnection.class).bindFromRequest();
         if (connectionForm.hasErrors()) {
@@ -191,6 +244,11 @@ public class ConnectionController extends AuthController {
         }
     }
 
+    /**
+     * Delete a connection to a database
+     * @param id of connection
+     * @return HTTP redirect
+     */
     public Result deleteSQLConnection(Long id) {
         SQLConnection connection = SQLConnection.find.byId(id);
         if(connection != null) {
@@ -202,6 +260,11 @@ public class ConnectionController extends AuthController {
         return redirect(controllers.routes.ConnectionController.index());
     }
 
+    /**
+     * Delete a connection to a CSV file
+     * @param id of connection
+     * @return HTTP redirect
+     */
     public Result deleteCSVConnection(Long id) {
         CSVConnection connection = CSVConnection.find.byId(id);
         if(connection != null) {
@@ -213,6 +276,13 @@ public class ConnectionController extends AuthController {
         return redirect(controllers.routes.ConnectionController.index());
     }
 
+    /**
+     * Gets the data about the tables from database connection
+     * and puts it in an Array List.
+     * @param conn database connection
+     * @return List of table data
+     * @throws SQLException
+     */
     private List<TableMetadata> reflectTables(Connection conn)
             throws SQLException
     {
@@ -288,6 +358,11 @@ public class ConnectionController extends AuthController {
         return ok(jsonTables);
     }
 
+    /**
+     * Method with which to upload a CSV file.
+     * @param id
+     * @return path of the file or null
+     */
     private String handleUpload(Long id){
         Http.MultipartFormData<File> body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart<File> document = body.getFile("csvFile");

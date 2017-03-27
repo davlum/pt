@@ -10,6 +10,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Persistent class representing the database connections.
+ */
 @Entity
 public class SQLConnection extends Model {
     @Id

@@ -5,6 +5,9 @@ import com.avaje.ebean.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
+/**
+ * A value of the pivot table.
+ */
 @Entity
 public class PivotValue extends Model {
 

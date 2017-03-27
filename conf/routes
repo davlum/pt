@@ -42,6 +42,7 @@ GET                 /pivot-tables/add-csv                       controllers.Pivo
 POST                /pivot-tables/add-sql                       controllers.PivotTableController.addSQLTable()
 POST                /pivot-tables/add-csv                       controllers.PivotTableController.addCSVTable()
 GET                 /pivot-tables/:id                           controllers.PivotTableController.getTable(id:Long)
+GET                 /pivot-tables/:id/export                    controllers.PivotTableController.excelExport(id:Long)
 GET                 /pivot-tables/:id/results                   controllers.PivotTableController.displayPivotTable(id:Long)
 GET                 /pivot-tables/:id/contents                  controllers.PivotTableController.contents(id:Long)
 GET                 /pivot-tables/:id/delete                    controllers.PivotTableController.deleteTable(id:Long)

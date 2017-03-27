@@ -10,6 +10,9 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class representing a CSV source.
+ */
 @Entity
 public class CSVSource extends Model {
 

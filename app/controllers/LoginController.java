@@ -13,15 +13,26 @@ import java.util.Date;
 
 import views.html.login.*;
 
+/**
+ * Controller to login or logout from the application
+ */
 public class LoginController extends Controller {
 
     private final FormFactory formFactory;
 
+    /**
+     * Constructor for the class.
+     * @param formFactory
+     */
     @Inject
     public LoginController(FormFactory formFactory){
         this.formFactory = formFactory;
     }
 
+    /**
+     * Home page of the application with the login form
+     * @return HTTP status
+     */
     public Result index() {
         // Check that the email matches a confirmed user before we redirect
         String userID = session("userID");
@@ -38,6 +49,10 @@ public class LoginController extends Controller {
         return ok(loginView.render(loginForm));
     }
 
+    /**
+     * Redirect based on login information
+     * @return HTTP redirect
+     */
     public Result login() {
         Form<LoginForm> loginForm = formFactory.form(LoginForm.class).bindFromRequest();
         if (loginForm.hasErrors()) {

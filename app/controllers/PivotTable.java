@@ -24,7 +24,6 @@ public class PivotTable extends AuthController {
         this.formFactory = formFactory;
     }
 
-
     public Result index() {
         Form<FieldForm> rowForm = formFactory.form(FieldForm.class);
         Form<FieldForm> columnForm = formFactory.form(FieldForm.class);

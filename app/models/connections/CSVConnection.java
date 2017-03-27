@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Persistent class representing CSV connection.
+ */
 @Entity
 public class CSVConnection extends Model {
 

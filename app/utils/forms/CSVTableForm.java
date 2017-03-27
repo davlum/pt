@@ -2,6 +2,9 @@ package utils.forms;
 
 import play.data.validation.Constraints;
 
+/**
+ * Form for the CSV table.
+ */
 public class CSVTableForm {
 
     @Constraints.Required
