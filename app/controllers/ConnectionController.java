@@ -303,6 +303,13 @@ public class ConnectionController extends AuthController {
         return tableMetadataList;
     }
 
+    /**
+     * Gets the data about the columns from database connection
+     * and puts it in an Array List.
+     * @param conn database connection
+     * @return List of column data
+     * @throws SQLException
+     */
     private List<ColumnMetadata> reflectColumns(TableMetadata tbl, Connection conn)
         throws SQLException
     {
@@ -324,6 +331,12 @@ public class ConnectionController extends AuthController {
         return columnMetadataList;
     }
 
+    /**
+     * Gets the data about the columns from the csv file
+     * and puts it in an Array List.
+     * @param tableId CSV Id
+     * @return HTTP 400 status
+     */
     public Result getJsonReflectedColumns(Long tableId) {
         List<ObjectNode> columns = ColumnMetadata
                 .find
@@ -342,6 +355,12 @@ public class ConnectionController extends AuthController {
         return ok(jsonColumns);
     }
 
+    /**
+     * Gets the data about the tables from the csv file
+     * and puts it in an Array List.
+     * @param connectionId CSV Id
+     * @return HTTP 400 status
+     */
     public Result getJsonReflectedTables(Long connectionId) {
         List<ObjectNode> tables = TableMetadata
                 .find

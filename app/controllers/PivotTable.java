@@ -15,10 +15,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class for the pivot table
+ */
 public class PivotTable extends AuthController {
 
     private final FormFactory formFactory;
 
+    /**
+     * Constructor for the class
+     * @param formFactory
+     */
     @Inject
     public PivotTable(FormFactory formFactory) {
         this.formFactory = formFactory;

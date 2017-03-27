@@ -258,6 +258,11 @@ public class PivotTableHandler {
         return returnVal.toString();
     }
 
+    /**
+     * Method that converts to String
+     * @param restrictedData
+     * @return String
+     */
     private String printValues(List<Map<String, String>> restrictedData){
         StringBuilder returnVal = new StringBuilder();
         for (PivotValue pivotValue : pivotTable.getValuesList()) {
