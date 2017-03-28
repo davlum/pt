@@ -49,6 +49,9 @@
             <li class ="@if(Controller.request.path.startsWith("/pivot-tables")){active}" >
               <a href="@controllers.routes.PivotTableController.index">Pivot Tables</a>
             </li>
+            <li class ="@if(Controller.request.path.startsWith("/users")){active}" >
+              <a href="@controllers.routes.UsersController.users()">Users</a>
+            </li>
           </ul>
         </div>
         <div id="navbar" class="navbar-collapse collapse">

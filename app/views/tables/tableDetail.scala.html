@@ -81,11 +81,19 @@
               </div>
             </div>
             <div class="hidden" id="tableID">@pivotTableHandler.getPivotTable.getId</div>
-            <ul class="nav nav-tabs">
-                @for((page, index) <- pivotTableHandler.pages().sortWith(_ < _).zipWithIndex) {
-                  <li @if(index == 0){class="active"}><a data-toggle="tab" href="#@page">@page</a></li>
-                }
-            </ul>
+            <dl class=" " id="pageSelect_field">
+              <dt><label for="pageSelect">Select Page</label></dt>
+              <dd>
+                <select class="form-control" id="pageSelect" name="pageSelect" style="width:100%">
+                  @for((page, index) <- pivotTableHandler.pages().sortWith(_ < _).zipWithIndex) {
+                    <option value="@page" @if(index == 0){selected}>@page</option>
+                  }
+                </select>
+              </dd>
+
+            </dl>
+
+            <div id="tableHere"></div>
 
           </div>
         }

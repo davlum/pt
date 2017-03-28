@@ -10,24 +10,6 @@
         <legend>@Html(formTitle)</legend>
     </div>
 
-    @inputText(sqlSourceForm("sourceName"),
-        '_showConstraints->false,
-        '_label->"Source Name",
-        'placeholder->"my-source-name",
-        'style-> "width:100%",
-        'class-> "form-control",
-        'required -> true,
-        'help->"Enter a name for this source")
-
-    @textarea(sqlSourceForm("sourceDescription"),
-        '_showConstraints->false,
-        '_label->"Source Description",
-        'placeholder->"Provide a description",
-        'rows->3, 'style-> "width:100%; resize:none;",
-        'class-> "form-control",
-        'required -> true,
-        'help->"Enter the connection description")
-
     <dl class=" " id="sqlconnection_id_field">
 
         <dt><label for="sqlconnection_id">SQL Connection</label></dt>
@@ -51,6 +33,24 @@
 
     </dl>
 
+    @inputText(sqlSourceForm("sourceName"),
+        '_showConstraints->false,
+        '_label->"Source Name",
+        'placeholder->"my-source-name",
+        'style-> "width:100%",
+        'class-> "form-control",
+        'required -> true,
+        'help->"Enter a name for this source")
+
+    @textarea(sqlSourceForm("sourceDescription"),
+        '_showConstraints->false,
+        '_label->"Source Description",
+        'placeholder->"Provide a description",
+        'rows->3, 'style-> "width:100%; resize:none;",
+        'class-> "form-control",
+        'required -> true,
+        'help->"Enter the connection description")
+
     <dl class=" " id="factTable_field">
 
         <dt><label for="factTable">Fact Table</label></dt>
@@ -72,15 +72,14 @@
 
     </dl>
 
-    <div class="form-group hidden">
-        <label for="fromClause">From Clause</label>
-        <textarea
-        class="form-control input"
-        id="fromClause"
-        name="fromClause">
-        @sqlSourceForm("fromClause").value()
-        </textarea>
+    <a id="addNewDimTable">
+        <i class="fa fa-plus mrgT3 addSign pull-right"></i>
+    </a>
+    <h4>Dimension Tables</h4>
+    <div id="dimTables" class="row">
+
     </div>
+
 
     <div class="pull-left hidden">
         <button type="button" class="btn btn-primary">Pivot</button>

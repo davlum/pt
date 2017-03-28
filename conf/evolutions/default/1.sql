@@ -132,6 +132,15 @@ create table sqlconnection (
   constraint pk_sqlconnection primary key (id)
 );
 
+create table sqldimension (
+  id                            bigserial not null,
+  dimension_table               varchar(255),
+  fact_field                    varchar(255),
+  dimension_field               varchar(255),
+  sqlsource_id                  bigint,
+  constraint pk_sqldimension primary key (id)
+);
+
 create table sqlsource (
   id                            bigserial not null,
   source_name                   varchar(255),
@@ -150,14 +159,21 @@ create table table_metadata (
   constraint pk_table_metadata primary key (id)
 );
 
+create table token (
+  token                         varchar(255) not null,
+  user_id                       bigint,
+  type                          varchar(8),
+  date_creation                 timestamptz,
+  constraint ck_token_type check ( type in ('PASSWORD','EMAIL','NEWUSER')),
+  constraint pk_token primary key (token)
+);
+
 create table user_list (
   id                            bigserial not null,
   email                         varchar(255),
   full_name                     varchar(255),
   password_hash                 varchar(255),
-  last_login                    timestamptz,
   confirmation_token            varchar(255),
-  date_creation                 timestamptz not null,
   constraint uq_user_list_email unique (email),
   constraint pk_user_list primary key (id)
 );
@@ -221,6 +237,9 @@ create index ix_pivot_value_pivot_table_id on pivot_value (pivot_table_id);
 
 alter table pivot_value add constraint fk_pivot_value_pivot_value_type_id foreign key (pivot_value_type_id) references pivot_value_type (id) on delete restrict on update restrict;
 create index ix_pivot_value_pivot_value_type_id on pivot_value (pivot_value_type_id);
+
+alter table sqldimension add constraint fk_sqldimension_sqlsource_id foreign key (sqlsource_id) references sqlsource (id) on delete restrict on update restrict;
+create index ix_sqldimension_sqlsource_id on sqldimension (sqlsource_id);
 
 alter table sqlsource add constraint fk_sqlsource_sqlconnection_id foreign key (sqlconnection_id) references sqlconnection (id) on delete restrict on update restrict;
 create index ix_sqlsource_sqlconnection_id on sqlsource (sqlconnection_id);
@@ -291,6 +310,9 @@ drop index if exists ix_pivot_value_pivot_table_id;
 alter table if exists pivot_value drop constraint if exists fk_pivot_value_pivot_value_type_id;
 drop index if exists ix_pivot_value_pivot_value_type_id;
 
+alter table if exists sqldimension drop constraint if exists fk_sqldimension_sqlsource_id;
+drop index if exists ix_sqldimension_sqlsource_id;
+
 alter table if exists sqlsource drop constraint if exists fk_sqlsource_sqlconnection_id;
 drop index if exists ix_sqlsource_sqlconnection_id;
 
@@ -327,9 +349,13 @@ drop table if exists pivot_value_type cascade;
 
 drop table if exists sqlconnection cascade;
 
+drop table if exists sqldimension cascade;
+
 drop table if exists sqlsource cascade;
 
 drop table if exists table_metadata cascade;
+
+drop table if exists token cascade;
 
 drop table if exists user_list cascade;
 

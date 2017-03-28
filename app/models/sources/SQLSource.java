@@ -39,6 +39,9 @@ public class SQLSource extends Model {
     @Constraints.Required
     private String factTable;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<SQLDimension> dimensionTables;
+
     private String fromClause;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -153,6 +156,31 @@ public class SQLSource extends Model {
                 field.setFieldName(key);
                 field.setFieldType(type);
                 list.add(field);
+            }
+            resultSet.close();
+            statement.close();
+            connection.close();
+
+            //list.forEach(System.out::println);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+
+    public List<String> fieldNames(String table){
+        List<String> list = new ArrayList<>();
+        try {
+            Connection connection = DriverManager.getConnection(getConnection().getUrl(),
+                    getConnection().getConnectionUser(), getConnection().getConnectionPassword());
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM "+table+" LIMIT 1;");
+            ResultSetMetaData meta = resultSet.getMetaData();
+            for (int i = 1; i <= meta.getColumnCount(); i++) {
+                String key = meta.getColumnName(i);
+                list.add(key);
             }
             resultSet.close();
             statement.close();

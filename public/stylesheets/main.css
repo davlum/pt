@@ -40,6 +40,10 @@ body {
     overflow: auto;
 }
 
+.wth-100 {
+    width: 100%;
+}
+
 /*
 #sidebar-wrapper {
     z-index: 1000;

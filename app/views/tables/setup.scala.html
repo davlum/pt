@@ -34,10 +34,17 @@
           <div class="panel-heading">Actions</div>
           <div class="panel-body">
             <div class="center">
-              <a href="@controllers.routes.PivotTableController.displayPivotTable(pivotTable.getId)" class="no-style">
-                <button type="button" class="btn btn-success mrgB10">Display Table</button>
-              </a>
-              <button id="deleteTable" type="button" class="btn btn-danger mrgB10" data-toggle="modal" data-target="#deleteModal">
+              <div>
+                <a href="@controllers.routes.PivotTableController.displayPivotTable(pivotTable.getId)" class="no-style">
+                  <button type="button" class="btn btn-success mrgB10 wth-100">Display Table</button>
+                </a>
+              </div>
+              <div>
+                <a href="@controllers.routes.PivotTableController.excelExport(pivotTable.getId)" class="no-style">
+                  <button type="button" class="btn btn-primary mrgB10 wth-100">Export Table</button>
+                </a>
+              </div>
+              <button id="deleteTable" type="button" class="btn btn-danger mrgB10 wth-100" data-toggle="modal" data-target="#deleteModal">
                 Delete Table
               </button>
             </div>

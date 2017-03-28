@@ -1,0 +1,48 @@
+@import helper._
+@import utils.forms.UserForm
+
+@(userForm: play.data.Form[UserForm], formTitle: String = "", deleteButton : Boolean)
+
+<fieldset>
+    <!-- Header -->
+  <div id="legend" class="mrgT10">
+    <legend>@Html(formTitle)</legend>
+  </div>
+
+  @inputText(userForm("fullName"),
+    '_showConstraints->false,
+    '_label->"Full Name",
+    'placeholder->"Full Name",
+    'style-> "width:100%",
+    'class-> "form-control",
+    'required -> true,
+    'help->"Enter the user's full name")
+
+  @inputText(userForm("email"),
+    '_showConstraints->false,
+    '_label->"Email",
+    'placeholder->"Email Address",
+    'style-> "width:100%",
+    'class-> "form-control",
+    'required -> true,
+    'help->"Enter the user's email address")
+
+  <div class="hidden">
+  @inputText(userForm("id"),
+    '_showConstraints->false,
+    'placeholder->"ID",
+    'style-> "display:none",
+    'class-> "form-control")
+  </div>
+
+  <div class="pull-right">
+  @if(deleteButton){
+    <button id="submit" type="submit" value="Submit" class="btn btn-success">Update</button>
+    <a href="@controllers.routes.UsersController.deleteUser(userForm.get.getId)" class="no-style">
+      <button type="button" class="btn btn-danger">Delete</button>
+    </a>
+  } else {
+    <button id="submit" type="submit" value="Submit" class="btn btn-primary">Submit</button>
+  }
+  </div>
+</fieldset>

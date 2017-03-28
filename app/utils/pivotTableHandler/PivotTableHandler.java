@@ -41,8 +41,9 @@ public class PivotTableHandler {
      */
     public List<String> pages(){
         if(pivotTable.getPivotPageList().size() > 0){
-           return pivotTableData.stream().map(l -> l.get(pivotTable.getPivotPageList().get(0).getField().getFieldName()))
+           List<String> list = pivotTableData.stream().map(l -> l.get(pivotTable.getPivotPageList().get(0).getField().getFieldName()))
                     .distinct().collect(Collectors.toList());
+           if (list.size() > 0) return list;
         }
         return Collections.singletonList("all");
     }
@@ -87,12 +88,12 @@ public class PivotTableHandler {
     /* *
     * Html That will be used to display the generated pivot table
     * */
-    public String tableHtml(){
+    public String tableHtml(String pageName){
         StringBuilder pageHtml = new StringBuilder();
         rand = 0;
         pageHtml.append("<div class=\"tab-content\">");
         if(pivotTable.getPivotPageList().size() > 0){
-            pages().forEach(page -> {
+            pages().stream().filter(page -> page.equals(pageName)).forEach(page -> {
                 pageHtml.append("<div id=\"").append(page).append("\" class=\"tab-pane fade")
                         .append(rand == 0 ? " in active" : "").append("\">");
                 pageData = pivotTableData.stream().filter(l ->
@@ -274,6 +275,9 @@ public class PivotTableHandler {
         return returnVal.toString();
     }
 
+    private static int size = 0;
+    private static double min = 0;
+    private static double max = 0;
     String valueAsRequested(List<Map<String, String>> restrictedData, PivotValue pivotValue){
         final DecimalFormat decimalFormatter = new DecimalFormat("###0.00#");
         switch (pivotValue.getPivotValueType().getValueType()){
@@ -290,10 +294,37 @@ public class PivotTableHandler {
                 double average = statistics.getMean();
                 return decimalFormatter.format(average);
             case "std_dev":
-                StandardDeviation stdDev = new StandardDeviation(false);
-                double standardDeviation = stdDev.evaluate(restrictedData.stream().filter(Objects::nonNull)
-                        .mapToDouble(s -> Double.parseDouble(s.get(s.get(pivotValue.getField().getFieldName())))).toArray());
+                StandardDeviation stdDev = new StandardDeviation(true);
+                List<Double> array = new ArrayList<>();
+                restrictedData.stream().filter(Objects::nonNull)
+                    .map(s -> Double.parseDouble(s.get(pivotValue.getField().getFieldName())))
+                    .forEach(array::add);
+                double[] a = new double[array.size()];
+                size = 0;
+                array.forEach(d -> {
+                    a[size] = d;
+                    size++;
+                });
+                double standardDeviation = stdDev.evaluate(a);
                 return decimalFormatter.format(standardDeviation);
+            case "min":
+                min = 999999999999999d;
+                restrictedData.stream().filter(Objects::nonNull)
+                        .map(s -> Double.parseDouble(s.get(pivotValue.getField().getFieldName())))
+                        .forEach(d -> {
+                            if (d < min) min = d;
+                        });
+                if (min == 999999999999999d) return "N.A.";
+                return decimalFormatter.format(min);
+            case "max":
+                max = -999999999999999d;
+                restrictedData.stream().filter(Objects::nonNull)
+                        .map(s -> Double.parseDouble(s.get(pivotValue.getField().getFieldName())))
+                        .forEach(d -> {
+                            if (d > max) max = d;
+                        });
+                if (max == -999999999999999d) return "N.A.";
+                return decimalFormatter.format(max);
         }
         return null;
     }

@@ -10,6 +10,9 @@ GET                 /logout                                     controllers.Logi
 GET                 /forgot-password                            controllers.LoginController.forgotPassword
 POST                /forgot-password                            controllers.LoginController.forgotSubmit
 
+GET                 /reset/:token                               controllers.LoginController.changePassword(token)
+POST                /reset/:token                               controllers.LoginController.changePasswordSubmit(token)
+
 GET                 /connections                                controllers.ConnectionController.index
 GET                 /connections/add-sql                        controllers.ConnectionController.index
 GET                 /connections/add-csv                        controllers.ConnectionController.indexCSV
@@ -35,6 +38,7 @@ POST                /sources/update-sql/:id                     controllers.Sour
 POST                /sources/update-csv/:id                     controllers.SourceController.updateCSVSource(id:Long)
 GET                 /sources/delete-sql/:id                     controllers.SourceController.deleteSQLSource(id:Long)
 GET                 /sources/delete-csv/:id                     controllers.SourceController.deleteCSVSource(id:Long)
+#POST                /sources/:id/dimension/:table               controllers.SourceController.sqlDimensionTableLine(id:Long, table)
 
 GET                 /pivot-tables                               controllers.PivotTableController.index
 GET                 /pivot-tables/add-sql                       controllers.PivotTableController.index
@@ -44,7 +48,7 @@ POST                /pivot-tables/add-csv                       controllers.Pivo
 GET                 /pivot-tables/:id                           controllers.PivotTableController.getTable(id:Long)
 GET                 /pivot-tables/:id/export                    controllers.PivotTableController.excelExport(id:Long)
 GET                 /pivot-tables/:id/results                   controllers.PivotTableController.displayPivotTable(id:Long)
-GET                 /pivot-tables/:id/contents                  controllers.PivotTableController.contents(id:Long)
+GET                 /pivot-tables/:id/contents/:page            controllers.PivotTableController.contents(id:Long, page:String)
 GET                 /pivot-tables/:id/delete                    controllers.PivotTableController.deleteTable(id:Long)
 POST                /pivot-tables/:id/add-page                  controllers.PivotTableController.addPage(id:Long)
 GET                 /pivot-tables/:id/delete-page/:pageID       controllers.PivotTableController.deletePage(id:Long, pageID:Long)
@@ -59,13 +63,11 @@ GET                 /pivot-tables/:id/delete-filter/:filterID   controllers.Pivo
 
 GET                 /pivot-tables/:fieldID/options              controllers.PivotTableController.fieldOptions(fieldID:Long)
 
-GET /test   controllers.PivotTable.index
-
 GET                 /users                                      controllers.UsersController.users
-#GET                 /users/add                                  controllers.UsersController.add
-#POST                /users/add                                  controllers.UsersController.add()
-#GET                 /users/:id                                  controllers.UsersController.get(id:Long)
-#POST                /users/:id                                  controllers.UsersController.save(id:Long)
+POST                /users/add                                  controllers.UsersController.addUser()
+GET                 /users/:id                                  controllers.UsersController.getUser(id:Long)
+POST                /users/:id/update                           controllers.UsersController.updateUser(id:Long)
+GET                 /users/:id/delete                           controllers.UsersController.deleteUser(id:Long)
 
 
 # Map static resources from the /public folder to the /assets URL path

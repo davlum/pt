@@ -1,14 +1,12 @@
 package models.users;
 
 import com.avaje.ebean.Model;
-import com.avaje.ebean.annotation.CreatedTimestamp;
 import exceptions.UserException;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 import tools.Hash;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * An object representing a user. Is persisted in the database.
@@ -33,13 +31,6 @@ public class User extends Model {
     @Constraints.Required
     private String passwordHash;
 
-    @Formats.DateTime(pattern = "yyyy-MM-dd HH:mm:ss")
-    @CreatedTimestamp
-    private Date dateCreation;
-
-    @Formats.DateTime(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date lastLogin;
-
     private String confirmationToken;
 
     public static Model.Finder<Long, User> find = new Model.Finder<>(User.class);
@@ -49,7 +40,9 @@ public class User extends Model {
     }
 
     public static User findByConfirmationToken(String token) {
-        return find.where().eq("confirmationToken", token).findUnique();
+        Token token2 = Token.find.byId(token);
+        if (token2 != null) return User.find.byId(token2.getUserId());
+        return null;
     }
 
     public static User authenticate(String email, String clearPassword) throws UserException {
@@ -96,22 +89,6 @@ public class User extends Model {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
-    }
-
-    public Date getDateCreation() {
-        return dateCreation;
-    }
-
-    public void setDateCreation(Date dateCreation) {
-        this.dateCreation = dateCreation;
-    }
-
-    public Date getLastLogin() {
-        return lastLogin;
-    }
-
-    public void setLastLogin(Date lastLogin) {
-        this.lastLogin = lastLogin;
     }
 
     public String getConfirmationToken() {

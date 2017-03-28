@@ -374,11 +374,11 @@ public class PivotTableController extends AuthController {
      * @param id of the table
      * @return Return HTTP status
      */
-    public Result contents(Long id){
+    public Result contents(Long id, String page){
         PivotTable table = PivotTable.find.byId(id);
         if(table != null) {
             PivotTableHandler handler = new PivotTableHandler(table.mapList(), table);
-            String contents = handler.tableHtml();
+            String contents = handler.tableHtml(page);
             if (contents.length() <= 1e6){
                 return ok(contents);
             } else {

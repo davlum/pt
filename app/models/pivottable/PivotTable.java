@@ -173,6 +173,14 @@ public class PivotTable extends Model {
         ).collect(Collectors.toList());
     }
 
+    public List<Field> availableFieldsValues(){
+        return fieldList.stream().filter(field ->
+                !pivotPageList.stream().map(PivotPage::getField).collect(Collectors.toList()).contains(field)
+                        && !pivotRowList.stream().map(PivotRow::getField).collect(Collectors.toList()).contains(field)
+                        && !pivotColumnList.stream().map(PivotColumn::getField).collect(Collectors.toList()).contains(field)
+        ).collect(Collectors.toList());
+    }
+
     public enum Dimension {
         ROW, COLUMN, PAGE
     }

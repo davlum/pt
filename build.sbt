@@ -18,5 +18,6 @@ libraryDependencies ++= Seq(
   "org.jooq" % "jooq-meta" % "3.9.0",
   "org.apache.commons" % "commons-math3" % "3.6.1",
   "org.apache.poi" % "poi" % "3.14",
-  "org.apache.poi" % "poi-ooxml" % "3.14"
+  "org.apache.poi" % "poi-ooxml" % "3.14",
+  "com.typesafe.play" %% "play-mailer" % "5.0.0"
 )

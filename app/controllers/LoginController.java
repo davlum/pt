@@ -1,15 +1,19 @@
 package controllers;
 
+import akka.actor.ActorSystem;
+import models.users.Token;
 import models.users.User;
+import play.api.libs.mailer.MailerClient;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
+import tools.Hash;
+import utils.forms.ChangePwdForm;
 import utils.forms.ForgotForm;
 import utils.forms.LoginForm;
 
 import javax.inject.Inject;
-import java.util.Date;
 
 import views.html.login.*;
 
@@ -19,14 +23,18 @@ import views.html.login.*;
 public class LoginController extends Controller {
 
     private final FormFactory formFactory;
+    private final MailerClient mailerClient;
+    private final ActorSystem actorSystem;
 
     /**
      * Constructor for the class.
      * @param formFactory
      */
     @Inject
-    public LoginController(FormFactory formFactory){
+    public LoginController(FormFactory formFactory, MailerClient mailerClient, ActorSystem actorSystem) {
         this.formFactory = formFactory;
+        this.mailerClient = mailerClient;
+        this.actorSystem = actorSystem;
     }
 
     /**
@@ -62,7 +70,6 @@ public class LoginController extends Controller {
             User user = User.findByEmail(loginForm.get().getInputEmail());
             session().clear();
             session("userID", user.getId().toString());
-            user.setLastLogin(new Date());
             user.update();
 
             return redirect(controllers.routes.ConnectionController.index());
@@ -87,16 +94,50 @@ public class LoginController extends Controller {
 
     public Result forgotSubmit() {
         Form<ForgotForm> forgotForm = formFactory.form(ForgotForm.class).bindFromRequest();
-        return ok();
+        if (!forgotForm.hasErrors()) {
+            User user = User.findByEmail(forgotForm.get().getInputEmail());
+            System.out.println(forgotForm.get().getInputEmail());
+            if (user != null) {
+                try {
+                    Token.sendMailResetPassword(user, mailerClient, actorSystem);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            System.out.println(forgotForm.errorsAsJson());
+        }
+        return redirect(routes.LoginController.index());
     }
 
-    public Result changePassword() {
-        Form<ForgotForm> changeForm = formFactory.form(ForgotForm.class);
-        return ok();
+    public Result changePassword(String token) {
+        Form<ChangePwdForm> changeForm = formFactory.form(ChangePwdForm.class);
+        return ok(changePwd.render(changeForm, token));
     }
 
-    public Result changePasswordSubmit() {
-        Form<ForgotForm> changeForm = formFactory.form(ForgotForm.class).bindFromRequest();
-        return ok();
+    public Result changePasswordSubmit(String token) {
+        Form<ChangePwdForm> changeForm = formFactory.form(ChangePwdForm.class).bindFromRequest();
+        if (!changeForm.hasErrors()) {
+            String password = changeForm.get().getPassword();
+            String confirm = changeForm.get().getConfirm();
+            if (!password.equals(confirm)){
+                flash("error", "Passwords do not match!");
+                return redirect(routes.LoginController.changePassword(token));
+            }
+
+            User user = User.findByConfirmationToken(token);
+            try {
+                user.setPasswordHash(Hash.createPassword(changeForm.get().getPassword()));
+                user.update();
+                flash("success", "Password successfully updated!");
+            } catch (Exception e){
+                System.out.println(password + " " + confirm);
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println(changeForm.errorsAsJson());
+        }
+
+        return redirect(routes.LoginController.index());
     }
 }
