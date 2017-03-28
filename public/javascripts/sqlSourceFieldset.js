@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-    $( "#sqlconnection_id").on("change", function () {
+    $( "#sqlconnection_id").on("focusout", function () {
         var val = $(" #sqlconnection_id").val();
         $.get("/connections/sql/" + val + "/tables", function(data) {
 
