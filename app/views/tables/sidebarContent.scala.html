@@ -1,7 +1,7 @@
 @import utils.SidebarElement
 @import views.html.components.sidebarGroup
 
-@(tableList: java.util.List[SidebarElement])
+@(tableList: java.util.List[SidebarElement])(builder: Html)
 
 <div>
   <h4>
@@ -17,3 +17,4 @@
 <div>
 @sidebarGroup(tableList, "Pivot Tables")
 </div>
+@builder

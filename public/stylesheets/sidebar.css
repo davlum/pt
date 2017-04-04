@@ -1,0 +1,40 @@
+#pageFrm{
+    width: 200px;
+    height: 30px;
+}
+
+
+.threadmain {
+    left: 0;
+    height: 200px;
+    width: 200px;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+}
+#valueFrm{
+    overflow-y: auto;
+    overflow-x: auto;
+    left: 0;
+    height: 85px;
+    width: 200px;
+    right: 0;
+    bottom: 0;
+}
+
+.wrapper {
+    float: left;
+    position: relative;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.threadwindow {
+    overflow-y: auto;
+    overflow-x: auto;
+    left: 0;
+    height: 85px;
+    width: 100px;
+    right: 0;
+    bottom: 0;
+}

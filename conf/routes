@@ -61,6 +61,11 @@ GET                 /pivot-tables/:id/delete-value/:valID       controllers.Pivo
 POST                /pivot-tables/:id/add-filter                controllers.PivotTableController.addFilter(id:Long)
 GET                 /pivot-tables/:id/delete-filter/:filterID   controllers.PivotTableController.deleteFilter(id:Long, filterID:Long)
 
+POST                /pivot-tables/:id/update-table              controllers.PivotTableController.updateTable(id: Long)
+
+
+
+
 GET                 /pivot-tables/:fieldID/options              controllers.PivotTableController.fieldOptions(fieldID:Long)
 
 GET                 /users                                      controllers.UsersController.users

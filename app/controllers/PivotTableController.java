@@ -7,6 +7,15 @@ import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.*;
 
+import play.Logger;
+import java.util.*;
+
+import play.mvc.BodyParser;
+import play.libs.Json;
+import play.libs.Json.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import utils.SidebarElement;
 import utils.forms.CSVTableForm;
 import utils.forms.FieldForm;
@@ -21,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import java.util.Iterator;
 
 /**
  * Controller for the pivot table generation and handling
@@ -185,6 +196,57 @@ public class PivotTableController extends AuthController {
         return goTable(id);
     }
 
+
+    private static void updateUtil(String paramName, JsonNode json, PivotTable pt) {
+        Iterator<JsonNode> param = json.findValue(paramName).elements();
+        Iterator<JsonNode> delParam = param.next().elements();
+        Iterator<JsonNode> addParam = param.next().elements();
+        while (delParam.hasNext()) {
+            Long paramId = delParam.next().asLong(-1);
+            switch (paramName) {
+                case "rows":
+                    pt.deleteRow(paramId);
+                    break;
+                case "columns":
+                    pt.deleteColumn(paramId);
+                    break;
+                case "page":
+                    pt.deletePage(paramId);
+                    break;
+                default:
+                    break;
+            }
+        }
+        while (addParam.hasNext()) {
+            Long paramId = addParam.next().asLong(-1);
+            switch (paramName) {
+                case "rows":
+                    pt.addRow(paramId);
+                    break;
+                case "columns":
+                    pt.addColumn(paramId);
+                    break;
+                case "page":
+                    pt.addPage(paramId);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    @BodyParser.Of(BodyParser.Json.class)
+    public Result updateTable(Long id) {
+        JsonNode json = request().body().asJson();
+        PivotTable table = PivotTable.find.byId(id);
+        if (table != null) {
+            updateUtil("columns", json, table);
+            updateUtil("rows", json, table);
+            updateUtil("page", json, table);
+        }
+        return goTable(id);
+    }
+
     /**
      * Method to delete a page of the Table
      * @param id of the table
@@ -212,7 +274,6 @@ public class PivotTableController extends AuthController {
                 table.addRow(fieldForm.get().getFieldID());
             }
         }
-
         return goTable(id);
     }
 
