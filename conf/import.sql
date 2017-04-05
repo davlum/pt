@@ -6,4 +6,4 @@ INSERT INTO pivot_value_type VALUES(nextval('pivot_value_type_id_seq'::regclass)
 INSERT INTO pivot_value_type VALUES(nextval('pivot_value_type_id_seq'::regclass), 'mean', 'Mean');
 INSERT INTO pivot_value_type VALUES(nextval('pivot_value_type_id_seq'::regclass), 'max', 'Max');
 INSERT INTO pivot_value_type VALUES(nextval('pivot_value_type_id_seq'::regclass), 'min', 'Min');
-INSERT INTO pivot_value_type VALUES(nextvalactiv('pivot_value_type_id_seq'::regclass), 'std_dev', 'StdDev');
+INSERT INTO pivot_value_type VALUES(nextval('pivot_value_type_id_seq'::regclass), 'std_dev', 'StdDev');

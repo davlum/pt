@@ -28,7 +28,10 @@ $(document).ready(function() {
     dragula([document.getElementById("fieldFrm"), document.getElementById("rowFrm"),
             document.getElementById("pageFrm"), document.getElementById("valueFrm"),
             document.getElementById("columnFrm")])
-            .on('drop', function(el, target) {
+            .on('drop', function(el, target, source) {
+                if (source.id === "valueFrm"){
+                    $("#"+el.id).find(".typeFrm").remove();
+                }
                 if (target.id === "pageFrm") {
                     var pages = target.getElementsByClassName("padB10");
                     if (pages[0].id === el.id) {
@@ -38,8 +41,12 @@ $(document).ready(function() {
                         $("#fieldFrm").append(pages[0]);
                     }
                 }
+
             })
-            .on('cancel', function(el){
+            .on('cancel', function(el, container, source){
+                if (source.id === "valueFrm"){
+                    $("#"+el.id).find(".typeFrm").detach();
+                }
                 $("#fieldFrm").append(el);
             });
 
@@ -63,7 +70,7 @@ $(document).ready(function() {
     }
 
 
-    $("#sideBarBuilder").on("click", function(e) {
+    $("#sidebarButton").on("click", function(e) {
         var newJson = fillTable(), sendJson = {},
             upRows = arrDiff(oldJson.rows, newJson.rows),
             upCols = arrDiff(oldJson.columns, newJson.columns),
