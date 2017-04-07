@@ -1,25 +1,27 @@
-#pageFrm{
-    width: 200px;
-    height: 30px;
+#sideBarBuilder{
+    position: relative;
+    width: 100%
 }
 
 
-.threadmain {
-    left: 0;
+#pagewrapper{
+    width: 100%;
+    height: 70px;
+}
+
+#fieldwrapper{
     height: 200px;
-    width: 200px;
-    right: 0;
-    bottom: 0;
-    overflow-y: auto;
+    width: 100%;
 }
-#valueFrm{
-    overflow-y: auto;
-    overflow-x: auto;
-    left: 0;
-    height: 85px;
-    width: 200px;
-    right: 0;
-    bottom: 0;
+
+#valueswrapper{
+    height: 150px;
+    width: 100%;
+}
+
+.rowcol{
+    height:125px;
+    width: 50%;
 }
 
 .wrapper {
@@ -31,10 +33,14 @@
 }
 .threadwindow {
     overflow-y: auto;
-    overflow-x: auto;
     left: 0;
-    height: 85px;
-    width: 100px;
+    position: absolute;
+    top: 40px;
+    min-width: 100%;
     right: 0;
     bottom: 0;
+}
+
+#pageFrm{
+    overflow-y: hidden;
 }

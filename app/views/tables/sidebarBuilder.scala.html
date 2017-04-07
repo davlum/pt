@@ -11,9 +11,9 @@
 columnForm : play.data.Form[FieldForm], valueForm : play.data.Form[ValueForm], filterForm : DynamicForm)
 
 <div id="sideBarBuilder" name=@pivotTable.getId>
-    <div class=" wrapper panel panel-default">
+    <div id="fieldwrapper" class="wrapper panel panel-default">
         <div class="panel-heading">Fields</div>
-        <form class="threadmain panel-body" id="fieldFrm" style="padding: 3px;">
+        <form class="threadwindow panel-body" id="fieldFrm" style="padding: 3px;">
             @if(pivotTable != null) {
                 @for(field <- pivotTable.availableFields){
                         <div class="padB10" id=@field.getId>
@@ -23,7 +23,7 @@ columnForm : play.data.Form[FieldForm], valueForm : play.data.Form[ValueForm], f
             }
         </form>
     </div>
-    <div class="wrapper panel panel-default">
+    <div id="pagewrapper" class="wrapper panel panel-default">
         <div class="panel-heading">Pages</div>
         <form class="threadwindow panel-body" id="pageFrm" style="padding: 3px;">
             @CSRF.formField
@@ -36,9 +36,9 @@ columnForm : play.data.Form[FieldForm], valueForm : play.data.Form[ValueForm], f
             }
         </form>
     </div>
-    <div class="wrapper panel panel-default">
+    <div id="valueswrapper" class="wrapper panel panel-default">
         <div class="panel-heading">Values</div>
-        <form class="panel-body" id="valueFrm" style="padding: 3px;">
+        <form class="threadwindow panel-body" id="valueFrm" style="padding: 3px;">
             @CSRF.formField
             @if(pivotTable != null) {
                 @for(value <- pivotTable.getValuesList){
@@ -58,7 +58,7 @@ columnForm : play.data.Form[FieldForm], valueForm : play.data.Form[ValueForm], f
             }
         </form>
     </div>
-    <div class="wrapper panel panel-default">
+    <div class="rowcol wrapper panel panel-default">
         <div class="panel-heading">Rows</div>
         <form class="threadwindow panel-body" id="rowFrm" style="padding: 3px;">
             @CSRF.formField
@@ -71,7 +71,7 @@ columnForm : play.data.Form[FieldForm], valueForm : play.data.Form[ValueForm], f
             }
         </form>
     </div>
-    <div class="wrapper panel panel-default">
+    <div class="rowcol wrapper panel panel-default">
         <div class="panel-heading">Columns</div>
         <form class="threadwindow panel-body" id="columnFrm" style="padding: 3px;">
             @CSRF.formField
@@ -84,5 +84,12 @@ columnForm : play.data.Form[FieldForm], valueForm : play.data.Form[ValueForm], f
             }
         </form>
     </div>
+    <span id="typeFrmhide">
+        <select class="typeFrm" style="float: right; border-radius:0px; border:0px; display: none;" value="1">
+        @for(valtype <- PivotValueType.find.all()){
+                <option value=@valtype.getId>@valtype.getDisplayName</option>
+        }
+        </select>
+    </span>
 </div>
-<button type="button" id="sidebarButton" class="btn btn-primary" >Submit</button>
+<button type="submit" id="sidebarButton" class="btn btn-primary" >Submit</button>

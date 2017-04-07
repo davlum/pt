@@ -201,6 +201,7 @@ public class PivotTableController extends AuthController {
         Iterator<JsonNode> param = json.findValue(paramName).elements();
         Iterator<JsonNode> delParam = param.next().elements();
         Iterator<JsonNode> addParam = param.next().elements();
+        Iterator<JsonNode> paramTypes = param.next().elements();
         while (delParam.hasNext()) {
             Long paramId = delParam.next().asLong(-1);
             switch (paramName) {
@@ -213,6 +214,8 @@ public class PivotTableController extends AuthController {
                 case "page":
                     pt.deletePage(paramId);
                     break;
+                case "values":
+                    pt.deleteValue(paramId);
                 default:
                     break;
             }
@@ -229,6 +232,15 @@ public class PivotTableController extends AuthController {
                 case "page":
                     pt.addPage(paramId);
                     break;
+                case "values":
+                    Long paramType = paramTypes.next().asLong(-1);
+                    Field field = Field.find.byId(paramId);
+                    PivotValueType type = PivotValueType.find.byId(paramType);
+                    if(field != null && FieldType.onlyCount(field.getFieldType())
+                            && type != null && !type.getValueType().equals("count")) {
+                        paramType = 1L;
+                    }
+                    pt.addValue(paramId, paramType);
                 default:
                     break;
             }
@@ -243,6 +255,7 @@ public class PivotTableController extends AuthController {
             updateUtil("columns", json, table);
             updateUtil("rows", json, table);
             updateUtil("page", json, table);
+            updateUtil("values", json, table);
         }
         return goTable(id);
     }
