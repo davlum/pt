@@ -9,7 +9,7 @@
     <div>
         <ul class="nav nav-sidebar">
             @for(a <- elements.sortWith(_.name < _.name)) {
-            <li @if(Controller.request.path.equals(a.link)){class="active"}><a href="@a.link" title="@a.hover">@a.name</a></li>
+            <li @if(Controller.request.path.contains(a.link)){class="active"}><a href="@a.link" title="@a.hover">@a.name</a></li>
             }
             @if(elements.size == 0){
                 <li><a  class="remove-style" href="#">None</a></li>

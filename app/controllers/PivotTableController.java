@@ -166,11 +166,19 @@ public class PivotTableController extends AuthController {
 
         PivotTable table = PivotTable.find.byId(id);
         if(table != null) {
-            return ok(tableDetail.render(getCurrentUser(),
-                    new PivotTableHandler(table.mapList(), table),
-                    getSidebarElements(), pageForm, rowForm, columnForm,
-                    valueForm, filterForm, permissionForm, "main",
-                    table.view(getCurrentUser()), table.edit(getCurrentUser())));
+            if (table.edit(getCurrentUser())) {
+                return ok(tableDetail.render(getCurrentUser(),
+                        new PivotTableHandler(table.mapList(), table),
+                        getSidebarElements(), pageForm, rowForm, columnForm,
+                        valueForm, filterForm, permissionForm, "main",
+                        table.view(getCurrentUser()), table.edit(getCurrentUser())));
+            } else {
+                return ok(tableDetail.render(getCurrentUser(),
+                        new PivotTableHandler(table.mapList(), table),
+                        getSidebarElements(), pageForm, rowForm, columnForm,
+                        valueForm, filterForm, permissionForm, "info",
+                        table.view(getCurrentUser()), table.edit(getCurrentUser())));
+            }
         } else {
             flash("error", "Table Does Not Exist");
             return redirect(controllers.routes.PivotTableController.index());

@@ -1,5 +1,3 @@
-@import utils.SidebarElement
-@import views.html.components.sidebarGroup
 @import models.pivottable.PivotTable
 @import views.html.tables.builder._
 @import utils.forms.ValueForm
@@ -11,120 +9,116 @@
         columnForm : play.data.Form[FieldForm], valueForm : play.data.Form[ValueForm], filterForm : DynamicForm)
 
 <h3>Pivot Table Builder</h3>
-<div id="sideBarBuilder" name=@pivotTable.getId>
-  <div class="row">
-        <div class="col-xs-4">
-            <div id="fieldwrapper" class="panel panel-default">
-                <div class="panel-heading">Fields</div>
-                <form class="panel-body" id="fieldFrm" style="padding: 3px;">
-                    @if(pivotTable != null) {
-                        @for(field <- pivotTable.availableFields){
-                            <div class="padB10" id=@field.getId>
-                            @field.getFieldName
-                            </div>
-                        }
+<div id="sideBarBuilder" class="row" name=@pivotTable.getId>
+    <div class="col-xs-4">
+        <div id="fieldwrapper" class="panel panel-default">
+            <div class="panel-heading">Fields</div>
+            <form class="panel-body" id="fieldFrm" style="padding: 3px;">
+                @if(pivotTable != null) {
+                    @for(field <- pivotTable.availableFields){
+                        <div class="padB10" id=@field.getId>
+                        @field.getFieldName
+                        </div>
                     }
-                </form>
-            </div>
-            <div id="valueswrapper" class="panel panel-default">
-                <div class="panel-heading">Values</div>
-                <form class="panel-body" id="valueFrm" style="padding: 3px;">
-                    @CSRF.formField
-                    @if(pivotTable != null) {
-                        @for(value <- pivotTable.getValuesList){
-                            <div class="padB10" data-field-id=@value.getId id=@value.getField.getId>
-                                @value.getField.getFieldName
-                            <select class="typeFrm" style="float: right; border-radius:0px; border:0px;">
-                            @for(valtype <- PivotValueType.find.all()){
-                                @if(value.getPivotValueType.getId == valtype.getId){
-                                    <option selected="selected" value=@valtype.getId>@valtype.getDisplayName</option>
-                                }else{
-                                    <option value=@valtype.getId>@valtype.getDisplayName</option>
-                                }
-                            }
-                            </select>
-                            </div>
-                        }
-                    }
-                </form>
-            </div>
+                }
+            </form>
         </div>
-        <div class="col-xs-4">
-            <div id="pagewrapper" class="wrapper panel panel-default">
-                <div class="panel-heading">Pages</div>
-                <form class="panel-body" id="pageFrm" style="padding: 3px;">
-                    @CSRF.formField
-                    @if(pivotTable != null) {
-                        @for(page <- pivotTable.getPivotPageList){
-                            <div class="padB10" data-field-id=@page.getId id=@page.getField.getId>
-                            @page.getField.getFieldName
-                            </div>
+        <div id="valueswrapper" class="panel panel-default">
+            <div class="panel-heading">Values</div>
+            <form class="panel-body" id="valueFrm" style="padding: 3px;">
+                @CSRF.formField
+                @if(pivotTable != null) {
+                    @for(value <- pivotTable.getValuesList){
+                        <div class="padB10" data-field-id=@value.getId id=@value.getField.getId>
+                            @value.getField.getFieldName
+                        <select class="typeFrm" style="float: right; border-radius:0px; border:0px;">
+                        @for(valtype <- PivotValueType.find.all()){
+                            @if(value.getPivotValueType.getId == valtype.getId){
+                                <option selected="selected" value=@valtype.getId>@valtype.getDisplayName</option>
+                            }else{
+                                <option value=@valtype.getId>@valtype.getDisplayName</option>
+                            }
                         }
+                        </select>
+                        </div>
                     }
-                </form>
-            </div>
-
-            <div class="rowcol wrapper panel panel-default">
-                <div class="panel-heading">Rows</div>
-                <form class="threadwindow panel-body" id="rowFrm" style="padding: 3px;">
-                    @CSRF.formField
-                    @if(pivotTable != null) {
-                        @for(row <- pivotTable.getPivotRowList){
-                            <div class="padB10" data-field-id=@row.getId id=@row.getField.getId>
-                            @row.getField.getFieldName
-                            </div>
-                        }
-                    }
-                </form>
-            </div>
-            <div class="rowcol wrapper panel panel-default">
-                <div class="panel-heading">Columns</div>
-                <form class="threadwindow panel-body" id="columnFrm" style="padding: 3px;">
-                    @CSRF.formField
-                    @if(pivotTable != null) {
-                        @for(column <- pivotTable.getPivotColumnList) {
-                            <div class="padB10" data-field-id=@column.getId id=@column.getField.getId>
-                            @column.getField.getFieldName
-                            </div>
-                        }
-                    }
-                </form>
-            </div>
+                }
+            </form>
+        </div>
     </div>
-        <div class="col-xs-4">
-            @filter(pivotTable)
-            <div class="panel panel-default">
-                <div class="panel-heading">Actions</div>
-                <div class="panel-body">
-                    <div class="center">
-                        <div>
-                            <a href="@controllers.routes.PivotTableController.displayPivotTable(pivotTable.getId)" class="no-style">
-                                <button type="button" class="btn btn-success mrgB10 wth-100">Display Table</button>
-                            </a>
+    <div class="col-xs-4">
+        <div id="pagewrapper" class="wrapper panel panel-default">
+            <div class="panel-heading">Pages</div>
+            <form class="panel-body" id="pageFrm" style="padding: 3px;">
+                @CSRF.formField
+                @if(pivotTable != null) {
+                    @for(page <- pivotTable.getPivotPageList){
+                        <div class="padB10" data-field-id=@page.getId id=@page.getField.getId>
+                        @page.getField.getFieldName
                         </div>
-                        <div>
-                            <a href="@controllers.routes.PivotTableController.excelExport(pivotTable.getId)" class="no-style">
-                                <button type="button" class="btn btn-primary mrgB10 wth-100">Export Table</button>
-                            </a>
+                    }
+                }
+            </form>
+        </div>
+
+        <div class="rowcol wrapper panel panel-default">
+            <div class="panel-heading">Rows</div>
+            <form class="threadwindow panel-body" id="rowFrm" style="padding: 3px;">
+                @CSRF.formField
+                @if(pivotTable != null) {
+                    @for(row <- pivotTable.getPivotRowList){
+                        <div class="padB10" data-field-id=@row.getId id=@row.getField.getId>
+                        @row.getField.getFieldName
                         </div>
-                        <button id="cancelTable" type="button" class="btn btn-danger mrgB10 wth-100" data-toggle="modal">
-                            Cancel Changes
-                        </button>
-                        <button id="deleteTable" type="button" class="btn btn-danger mrgB10 wth-100" data-toggle="modal" data-target="#deleteModal">
-                            Delete Table
-                        </button>
+                    }
+                }
+            </form>
+        </div>
+        <div class="rowcol wrapper panel panel-default">
+            <div class="panel-heading">Columns</div>
+            <form class="threadwindow panel-body" id="columnFrm" style="padding: 3px;">
+                @CSRF.formField
+                @if(pivotTable != null) {
+                    @for(column <- pivotTable.getPivotColumnList) {
+                        <div class="padB10" data-field-id=@column.getId id=@column.getField.getId>
+                        @column.getField.getFieldName
+                        </div>
+                    }
+                }
+            </form>
+        </div>
+    </div>
+    <div class="col-xs-4">
+        @filter(pivotTable)
+        <div class="panel panel-default">
+            <div class="panel-heading">Actions</div>
+            <div class="panel-body">
+                <div class="center">
+                    <div>
+                        <a href="@controllers.routes.PivotTableController.displayPivotTable(pivotTable.getId)" class="no-style">
+                            <button type="button" class="btn btn-success mrgB10 wth-100">Display Table</button>
+                        </a>
                     </div>
+                    <div>
+                        <a href="@controllers.routes.PivotTableController.excelExport(pivotTable.getId)" class="no-style">
+                            <button type="button" class="btn btn-primary mrgB10 wth-100">Excel Export</button>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="@controllers.routes.PivotTableController.pdfExport(pivotTable.getId)" class="no-style">
+                            <button type="button" class="btn btn-primary mrgB10 wth-100">PDF Export</button>
+                        </a>
+                    </div>
+                    <button id="cancelTable" type="button" class="btn btn-danger mrgB10 wth-100" data-toggle="modal">
+                        Cancel Changes
+                    </button>
+                    <button id="deleteTable" type="button" class="btn btn-danger mrgB10 wth-100" data-toggle="modal" data-target="#deleteModal">
+                        Delete Table
+                    </button>
                 </div>
             </div>
         </div>
-        </div>
     </div>
-  </div>
-    <div>
-
-
-    </div>
-  </div>
 </div>
 <span id="typeFrmhide">
     <select class="typeFrm" style="float: right; border-radius:0px; border:0px; display: none;" value="1">
@@ -140,3 +134,6 @@
   @filterDetailsModal(pivotTable, filter)
 }
 @deleteModal(pivotTable)
+
+
+<script src="@routes.Assets.versioned("javascripts/submitBuilder.js")"></script>
