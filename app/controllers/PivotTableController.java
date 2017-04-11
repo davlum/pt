@@ -238,7 +238,7 @@ public class PivotTableController extends AuthController {
                     PivotValueType type = PivotValueType.find.byId(paramType);
                     if(field != null && FieldType.onlyCount(field.getFieldType())
                             && type != null && !type.getValueType().equals("count")) {
-                        paramType = 1L;
+                        paramType = PivotValueType.findCount();
                     }
                     pt.addValue(paramId, paramType);
                 default:

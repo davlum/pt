@@ -1,3 +1,4 @@
+/*
 #sideBarBuilder{
     position: relative;
     width: 100%
@@ -44,3 +45,9 @@
 #pageFrm{
     overflow-y: hidden;
 }
+
+#cancelTable{
+    background-color: #e6b800;
+    border-color: #e6b800;
+}
+*/

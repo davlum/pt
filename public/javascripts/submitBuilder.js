@@ -5,6 +5,8 @@ $(document).ready(function() {
 
     var pivotTable = $("#sideBarBuilder").attr('name');
 
+    var cancel = false;
+
     function fillTable(){
         var jsonTables = {"columns": [], "rows": [], "page": [], "values": {}};
         $("#rowFrm").find(".padB10").each(function(){jsonTables.rows.push($(this).attr("id"))});
@@ -17,9 +19,6 @@ $(document).ready(function() {
     }
 
     var oldJson = fillTable();
-
-    console.log(oldJson);
-
 
     $.ajaxPrefilter(function( options ) {
         if ( !options.beforeSend) {
@@ -109,35 +108,42 @@ $(document).ready(function() {
         return diff;
     }
 
-    $("#sidebarButton").on("click", function(){
-        var valsInput = $("#valueFrm").find(".typeFrm");
-        var newJson = fillTable(), sendJson = {},
-            upRows = arrDiff(oldJson.rows, newJson.rows),
-            upCols = arrDiff(oldJson.columns, newJson.columns),
-            upPages = arrDiff(oldJson.page, newJson.page),
-            upVals = valDiff(oldJson.values, newJson.values);
-        if (upPages[1].length > 1){
-            location.reload(true); // If pages is submitting more than one addition, reload the page.
-        }
-        sendJson.rows = upRows;
-        sendJson.columns = upCols;
-        sendJson.page = upPages;
-        sendJson.values = upVals;
-        console.log(sendJson.values);
-        $.ajax({
-            url: "/pivot-tables/" + pivotTable + "/update-table",
-            data: JSON.stringify(sendJson),
-            type: "POST",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            error: function () {
-                $("#display").append("<h3>An error has occurred</h3>");
-            },
-            success: function (data) {
-                $("#display").append(data);
-            },
-            timeout: 60000 // sets timeout to 3 seconds
-        });
+    $("#cancelTable").on("click", function(){
         location.reload(true);
+        cancel = true;
     });
+
+    window.onbeforeunload = function() {
+        if (cancel) {}
+        else {
+            var valsInput = $("#valueFrm").find(".typeFrm");
+            var newJson = fillTable(), sendJson = {},
+                upRows = arrDiff(oldJson.rows, newJson.rows),
+                upCols = arrDiff(oldJson.columns, newJson.columns),
+                upPages = arrDiff(oldJson.page, newJson.page),
+                upVals = valDiff(oldJson.values, newJson.values);
+            if (upPages[1].length > 1) {
+                location.reload(true); // If pages is submitting more than one addition, reload the page.
+            }
+            sendJson.rows = upRows;
+            sendJson.columns = upCols;
+            sendJson.page = upPages;
+            sendJson.values = upVals;
+            console.log(sendJson.values);
+            $.ajax({
+                url: "/pivot-tables/" + pivotTable + "/update-table",
+                data: JSON.stringify(sendJson),
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                error: function () {
+                    $("#display").append("<h3>An error has occurred</h3>");
+                },
+                success: function (data) {
+                    $("#display").append(data);
+                },
+                timeout: 60000 // sets timeout to 3 seconds
+            });
+        }
+    }
 });
