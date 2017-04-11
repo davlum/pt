@@ -51,10 +51,8 @@ public class ExcelHandler extends PivotTableHandler {
                     sheet = wb.createSheet(page);
                     rNum = 0;
                     cNum = 0;
-                    pageData = pivotTableData.stream().filter(l ->
-                            l.get(pivotTable.getPivotPageList().get(0).getField().getFieldName())
-                                    .equals(page)).collect(Collectors.toList());
-                    processExcelPage();
+                    pageData = pivotTableData;
+                    processExcelPage(page);
                     rand = 1;
                 });
             } else {
@@ -62,7 +60,7 @@ public class ExcelHandler extends PivotTableHandler {
                 sheet = wb.createSheet("All");
                 rNum = 0;
                 cNum = 0;
-                processExcelPage();
+                processExcelPage(null);
             }
 
             wb.write(fileOut);
@@ -76,7 +74,7 @@ public class ExcelHandler extends PivotTableHandler {
     }
 
 
-    private void processExcelPage(){
+    private void processExcelPage(String page){
         Map<Integer, Long> colspanPerLevel = cellspanPerLevel("column");
         if (pivotTable.getPivotColumnList().size() > 0) {
             i = 0;
@@ -93,7 +91,7 @@ public class ExcelHandler extends PivotTableHandler {
                             .sorted(Comparator.nullsLast(comparator(pivotTable.getPivotColumnList().get(i).getField().getFieldType())))
                             .forEach(value -> {
                                 cell = eRow.createCell(cNum++);
-                                cell.setCellValue(value);
+                                cell.setCellValue( (value != null && !value.equals("") )? value : "(BLANK)");
                                 if(colspanPerLevel.get(i) * Math.max(pivotTable.getValuesList().size(), 1) > 1) {
                                     for (int n = 0; n < colspanPerLevel.get(i) * Math.max(pivotTable.getValuesList().size(), 1) - 1; n++) {
                                         cell = eRow.createCell(cNum++);
@@ -117,7 +115,16 @@ public class ExcelHandler extends PivotTableHandler {
             valueExcelTitle(1L);
         }
 
-        loopExcelRows(pageData, 0);
+        List<Map<String, String>> restrictedData;
+        if (page != null) {
+            restrictedData = pivotTableData.stream().filter(l ->
+                    l.get(pivotTable.getPivotPageList().get(0).getField().getFieldName())
+                            .equals(page)).collect(Collectors.toList());
+        } else {
+            restrictedData = pivotTableData;
+        }
+
+        loopExcelRows(restrictedData, 0);
         int i = 0;
         eRow = sheet.createRow(rNum++);
         cNum = 0;
@@ -127,8 +134,8 @@ public class ExcelHandler extends PivotTableHandler {
         }
         cell = eRow.createCell(cNum++);
         cell.setCellValue("Total");
-        loopExcelCols(pageData, 0);
-        printExcelValues(pageData);
+        loopExcelCols(restrictedData, 0);
+        printExcelValues(restrictedData);
 
     }
 
@@ -198,7 +205,7 @@ public class ExcelHandler extends PivotTableHandler {
                     for(int n = 0; n < level; n++) cell = eRow.createCell(cNum++);
                 }
                 cell = eRow.createCell(cNum++);
-                cell.setCellValue(value);
+                cell.setCellValue( (value != null && !value.equals("") )? value : "(BLANK)");
                 /*if (rowspanPerLevel.get(level) > 1) {
                     for (int n = 0; n < rowspanPerLevel.get(level); n++) {
                         cell = eRow.createCell(cNum++);

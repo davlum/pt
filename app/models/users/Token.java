@@ -17,11 +17,8 @@ import static play.mvc.Controller.request;
 @Entity
 public class Token extends Model {
 
-    // Reset tokens will expire after a day.
-    private static final int EXPIRATION_DAYS = 1;
-
     public enum TypeToken {
-        PASSWORD("reset"), EMAIL("reset"), NEWUSER("new-account");
+        PASSWORD("reset"), EMAIL("reset"), NEWUSER("reset");
         private String urlPath;
 
         TypeToken(String urlPath) {
@@ -38,7 +35,7 @@ public class Token extends Model {
 
     @Constraints.Required
     @Formats.NonEmpty
-    public Long userId;
+    private Long userId;
 
     @Constraints.Required
     @Enumerated(EnumType.STRING)
@@ -119,7 +116,7 @@ public class Token extends Model {
         String subject = null;
         String message = null;
 
-        String urlString = request().getHeader("Referer").replace("users/", "").replace("/forgot-password", "")
+        String urlString = request().getHeader("Referer").replace("/users", "").replace("/forgot-password", "")
                 + "/" + type.getUrlPath() + "/" + token.getToken();
 
         URL url = new URL(urlString); // validate the URL

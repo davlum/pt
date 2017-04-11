@@ -4,6 +4,7 @@ import com.avaje.ebean.Model;
 import com.avaje.ebean.annotation.JsonIgnore;
 import models.sources.CSVSource;
 import models.sources.SQLSource;
+import models.users.User;
 import play.data.validation.Constraints;
 import utils.forms.CSVTableForm;
 import utils.forms.SQLTableForm;
@@ -18,6 +19,14 @@ public class PivotTable extends Model {
     @Id
     @GeneratedValue
     private Long id;
+
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User owner;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<SharePermission> sharedList = new ArrayList<>();
 
     @Column(unique = true)
     @Constraints.Required
@@ -60,11 +69,12 @@ public class PivotTable extends Model {
         return find.byId(1L);
     }
 
-    public PivotTable(CSVTableForm tableForm){
+    public PivotTable(CSVTableForm tableForm, User owner){
         CSVSource source = CSVSource.find.byId(tableForm.getCsvSourceID());
         this.setCsvSource(source);
         this.setName(tableForm.getCsvTableName());
         this.setDescription(tableForm.getCsvTableDescription());
+        this.owner = owner;
 
         this.fieldList = new ArrayList<>();
 
@@ -83,12 +93,13 @@ public class PivotTable extends Model {
         this.save();
     }
 
-    public PivotTable(SQLTableForm tableForm){
+    public PivotTable(SQLTableForm tableForm, User owner){
         SQLSource source = SQLSource.find.byId(tableForm.getSqlSourceID());
         this.setSqlSource(source);
         this.setName(tableForm.getSqlTableName());
         this.setDescription(tableForm.getSqlTableDescription());
         if(source != null) this.setFieldList(source.getFieldList());
+        this.owner = owner;
         this.save();
     }
 
@@ -198,6 +209,16 @@ public class PivotTable extends Model {
         }
     }
 
+    public Boolean view(User user){
+        return user.equals(getOwner()) || getSharedList().stream().map(SharePermission::getUser).anyMatch(u -> u.equals(user));
+    }
+
+    public Boolean edit(User user){
+        return user.equals(getOwner()) ||
+                getSharedList().stream().filter(p -> p.getPermission().equals("View & Edit"))
+                        .map(SharePermission::getUser).anyMatch(u -> u.equals(user));
+    }
+
     public Long getId() {
         return id;
     }
@@ -284,5 +305,21 @@ public class PivotTable extends Model {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public List<SharePermission> getSharedList() {
+        return sharedList;
+    }
+
+    public void setSharedList(List<SharePermission> sharedList) {
+        this.sharedList = sharedList;
     }
 }

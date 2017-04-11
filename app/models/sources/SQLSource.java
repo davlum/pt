@@ -60,6 +60,7 @@ public class SQLSource extends Model {
             case "bigint":
             case "smallint":
             case "int":
+            case "int8":
             case "integer":
             case "serial":
             case "bigserial":
@@ -151,6 +152,7 @@ public class SQLSource extends Model {
             ResultSetMetaData meta = resultSet.getMetaData();
             for (int i = 1; i <= meta.getColumnCount(); i++) {
                 String key = meta.getColumnName(i);
+                System.out.println(meta.getColumnName(i) + " " + meta.getColumnTypeName(i));
                 FieldType type = mapDatabaseFieldType(meta.getColumnTypeName(i));
                 Field field = new Field();
                 field.setFieldName(key);

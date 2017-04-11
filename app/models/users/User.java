@@ -2,11 +2,15 @@ package models.users;
 
 import com.avaje.ebean.Model;
 import exceptions.UserException;
+import models.pivottable.PivotTable;
+import models.pivottable.SharePermission;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 import tools.Hash;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * An object representing a user. Is persisted in the database.
@@ -33,6 +37,12 @@ public class User extends Model {
 
     private String confirmationToken;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<PivotTable> pivotTables;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<SharePermission> sharePermissions;
+
     public static Model.Finder<Long, User> find = new Model.Finder<>(User.class);
 
     public static User findByEmail(String email) {
@@ -43,6 +53,12 @@ public class User extends Model {
         Token token2 = Token.find.byId(token);
         if (token2 != null) return User.find.byId(token2.getUserId());
         return null;
+    }
+
+    public static List<User> allBut(User excludeUser, List<SharePermission> sharePermissions){
+        List<User> sharedUsers = sharePermissions.stream().map(SharePermission::getUser).collect(Collectors.toList());
+        return find.all().stream().filter(user -> !user.equals(excludeUser)
+                    && !sharedUsers.contains(user)).collect(Collectors.toList());
     }
 
     public static User authenticate(String email, String clearPassword) throws UserException {
@@ -97,5 +113,21 @@ public class User extends Model {
 
     public void setConfirmationToken(String confirmationToken) {
         this.confirmationToken = confirmationToken;
+    }
+
+    public List<PivotTable> getPivotTables() {
+        return pivotTables;
+    }
+
+    public void setPivotTables(List<PivotTable> pivotTables) {
+        this.pivotTables = pivotTables;
+    }
+
+    public List<SharePermission> getSharePermissions() {
+        return sharePermissions;
+    }
+
+    public void setSharePermissions(List<SharePermission> sharePermissions) {
+        this.sharePermissions = sharePermissions;
     }
 }

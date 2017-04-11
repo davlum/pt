@@ -1,26 +1,34 @@
 package controllers;
 
+import akka.actor.ActorSystem;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
 import models.pivottable.*;
 import models.pivottable.PivotTable;
+import models.users.User;
+import play.Application;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.FormFactory;
+import play.libs.mailer.MailerClient;
 import play.mvc.*;
 
+import tools.Mail;
 import utils.SidebarElement;
-import utils.forms.CSVTableForm;
-import utils.forms.FieldForm;
-import utils.forms.SQLTableForm;
-import utils.forms.ValueForm;
+import utils.forms.*;
 import utils.pivotTableHandler.ExcelHandler;
 import utils.pivotTableHandler.PivotTableHandler;
 import views.html.tables.*;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 
 /**
  * Controller for the pivot table generation and handling
@@ -37,14 +45,21 @@ public class PivotTableController extends AuthController {
     }
 
     private final FormFactory formFactory;
+    private final MailerClient mailerClient;
+    private final ActorSystem actorSystem;
+    private final Provider<Application> application;
 
     /**
      * Constructor for the class
      * @param formFactory
      */
     @Inject
-    public PivotTableController(FormFactory formFactory){
+    public PivotTableController(FormFactory formFactory, MailerClient mailerClient, ActorSystem actorSystem,
+                                Provider<Application> application){
         this.formFactory = formFactory;
+        this.mailerClient = mailerClient;
+        this.actorSystem = actorSystem;
+        this.application = application;
     }
 
     /**
@@ -61,18 +76,26 @@ public class PivotTableController extends AuthController {
                 formFactory.form(CSVTableForm.class), getSidebarElements(), true));
     }
 
-
     /**
      * Gets a list of the pivot tables to be displayed on the sidebar
      * @return list of pivot tables characteristics
      */
     private List<SidebarElement> getSidebarElements() {
-        return PivotTable.find.all()
+        List<SidebarElement> myTables = getCurrentUser().getPivotTables()
                 .stream().map(s -> new SidebarElement(
                         controllers.routes.PivotTableController.getTable(s.getId()).url(),
                         s.getName(),
                         s.getDescription()))
                 .collect(Collectors.toList());
+
+        myTables.addAll(getCurrentUser().getSharePermissions().stream().map(SharePermission::getPivotTable)
+                .map(s -> new SidebarElement(
+                        controllers.routes.PivotTableController.getTable(s.getId()).url(),
+                        s.getName(),
+                        s.getDescription()))
+                .collect(Collectors.toList()));
+
+        return myTables;
     }
 
     /**
@@ -93,7 +116,7 @@ public class PivotTableController extends AuthController {
                         tableForm, formFactory.form(CSVTableForm.class), getSidebarElements(), false));
             }
 
-            PivotTable pt = new PivotTable(table);
+            PivotTable pt = new PivotTable(table, getCurrentUser());
             flash("success", "New Table Added");
             return redirect(controllers.routes.PivotTableController.getTable(pt.getId()));
         }
@@ -117,7 +140,7 @@ public class PivotTableController extends AuthController {
                         tableForm, getSidebarElements(), true));
             }
 
-            PivotTable pt = new PivotTable(table);
+            PivotTable pt = new PivotTable(table, getCurrentUser());
             flash("success", "New Table Added");
             return redirect(controllers.routes.PivotTableController.getTable(pt.getId()));
         }
@@ -133,19 +156,16 @@ public class PivotTableController extends AuthController {
         Form<FieldForm> rowForm = formFactory.form(FieldForm.class);
         Form<FieldForm> columnForm = formFactory.form(FieldForm.class);
         Form<ValueForm> valueForm = formFactory.form(ValueForm.class);
+        Form<PermissionForm> permissionForm = formFactory.form(PermissionForm.class);
         DynamicForm filterForm = formFactory.form();
 
         PivotTable table = PivotTable.find.byId(id);
         if(table != null) {
             return ok(tableDetail.render(getCurrentUser(),
                     new PivotTableHandler(table.mapList(), table),
-                    getSidebarElements(),
-                    pageForm,
-                    rowForm,
-                    columnForm,
-                    valueForm,
-                    filterForm,
-                    false));
+                    getSidebarElements(), pageForm, rowForm, columnForm,
+                    valueForm, filterForm, permissionForm, "main",
+                    table.view(getCurrentUser()), table.edit(getCurrentUser())));
         } else {
             flash("error", "Table Does Not Exist");
             return redirect(controllers.routes.PivotTableController.index());
@@ -350,23 +370,100 @@ public class PivotTableController extends AuthController {
         Form<FieldForm> rowForm = formFactory.form(FieldForm.class);
         Form<FieldForm> columnForm = formFactory.form(FieldForm.class);
         Form<ValueForm> valueForm = formFactory.form(ValueForm.class);
+        Form<PermissionForm> permissionForm = formFactory.form(PermissionForm.class);
         DynamicForm filterForm = formFactory.form();
 
         PivotTable table = PivotTable.find.byId(id);
         if(table != null) {
             return ok(tableDetail.render(getCurrentUser(),
                     new PivotTableHandler(table.mapList(), table),
-                    getSidebarElements(),
-                    pageForm,
-                    rowForm,
-                    columnForm,
-                    valueForm,
-                    filterForm,
-                    true));
+                    getSidebarElements(), pageForm, rowForm, columnForm, valueForm,
+                    filterForm, permissionForm, "display",
+                    table.view(getCurrentUser()), table.edit(getCurrentUser())));
         } else {
             flash("error", "Table Does Not Exist");
             return redirect(controllers.routes.PivotTableController.index());
         }
+    }
+
+
+    public Result infoPivotTable(Long id){
+        Form<FieldForm> pageForm = formFactory.form(FieldForm.class);
+        Form<FieldForm> rowForm = formFactory.form(FieldForm.class);
+        Form<FieldForm> columnForm = formFactory.form(FieldForm.class);
+        Form<ValueForm> valueForm = formFactory.form(ValueForm.class);
+        Form<PermissionForm> permissionForm = formFactory.form(PermissionForm.class);
+        DynamicForm filterForm = formFactory.form();
+
+        PivotTable table = PivotTable.find.byId(id);
+        if(table != null) {
+            return ok(tableDetail.render(getCurrentUser(),
+                    new PivotTableHandler(table.mapList(), table),
+                    getSidebarElements(), pageForm, rowForm, columnForm, valueForm,
+                    filterForm, permissionForm, "info",
+                    table.view(getCurrentUser()), table.edit(getCurrentUser())));
+        } else {
+            flash("error", "Table Does Not Exist");
+            return redirect(controllers.routes.PivotTableController.index());
+        }
+    }
+
+    public Result sharePivotTable(Long id){
+        Form<FieldForm> pageForm = formFactory.form(FieldForm.class);
+        Form<FieldForm> rowForm = formFactory.form(FieldForm.class);
+        Form<FieldForm> columnForm = formFactory.form(FieldForm.class);
+        Form<ValueForm> valueForm = formFactory.form(ValueForm.class);
+        Form<PermissionForm> permissionForm = formFactory.form(PermissionForm.class);
+        DynamicForm filterForm = formFactory.form();
+
+        PivotTable table = PivotTable.find.byId(id);
+        if(table != null) {
+            return ok(tableDetail.render(getCurrentUser(),
+                    new PivotTableHandler(table.mapList(), table),
+                    getSidebarElements(), pageForm, rowForm, columnForm, valueForm,
+                    filterForm, permissionForm, "share",
+                    table.view(getCurrentUser()), table.edit(getCurrentUser())));
+        } else {
+            flash("error", "Table Does Not Exist");
+            return redirect(controllers.routes.PivotTableController.index());
+        }
+    }
+
+    public Result addSharePermission(Long id){
+        Form<PermissionForm> permissionForm = formFactory.form(PermissionForm.class).bindFromRequest();
+        if (!permissionForm.hasErrors()) {
+            User user = User.find.byId(permissionForm.get().getUserID());
+            String perm = permissionForm.get().getPermission();
+            SharePermission permission = new SharePermission(user, perm);
+            PivotTable table = PivotTable.find.byId(id);
+            if (table != null) {
+                table.getSharedList().add(permission);
+                table.update();
+
+                String subject = getCurrentUser().getFullName() + " has shared with you a new pivot table!";
+                String message = getCurrentUser().getFullName() + " has shared with you the pivot table " +
+                        table.getName() + "! Login to your portal to view it!";
+                if(user != null) {
+                    Mail.Envelop envelop = new Mail.Envelop(subject, message, user.getEmail());
+                    Mail.sendMail(envelop, mailerClient, actorSystem);
+                }
+            }
+        }
+
+        return redirect(controllers.routes.PivotTableController.sharePivotTable(id));
+    }
+
+    public Result deleteSharePermission(Long id, Long permissionID){
+        SharePermission permission = SharePermission.find.byId(permissionID);
+
+        PivotTable table = PivotTable.find.byId(id);
+        if (table != null && permission != null) {
+            table.setSharedList(table.getSharedList().stream().filter(p ->
+                    !p.getId().equals(permissionID)).collect(Collectors.toList()));
+            table.update();
+        }
+
+        return redirect(controllers.routes.PivotTableController.sharePivotTable(id));
     }
 
     /**
@@ -420,4 +517,34 @@ public class PivotTableController extends AuthController {
         return ok();
     }
 
+    public Result pdfExport(Long tableID){
+        PivotTable table = PivotTable.find.byId(tableID);
+        if(table != null) {
+            PivotTableHandler handler = new PivotTableHandler(table.mapList(), table);
+
+            StringBuilder sb = new StringBuilder();
+            handler.pages().forEach(page -> {
+                sb.append("<h1>").append(page).append("</h1>");
+                sb.append(handler.tableHtml(page));
+            });
+
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                Document document = new Document();
+                PdfWriter writer = PdfWriter.getInstance(document, baos);
+                document.open();
+                InputStream is = new ByteArrayInputStream(sb.toString().getBytes());
+
+                XMLWorkerHelper.getInstance().parseXHtml(writer, document, is);
+                document.close();
+                byte[] pdf = baos.toByteArray();
+
+                return ok(pdf).as("application/pdf");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return getTable(tableID);
+    }
 }

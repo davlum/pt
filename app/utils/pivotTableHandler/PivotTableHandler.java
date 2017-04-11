@@ -96,17 +96,18 @@ public class PivotTableHandler {
             pages().stream().filter(page -> page.equals(pageName)).forEach(page -> {
                 pageHtml.append("<div id=\"").append(page).append("\" class=\"tab-pane fade")
                         .append(rand == 0 ? " in active" : "").append("\">");
-                pageData = pivotTableData.stream().filter(l ->
+                pageData = pivotTableData;
+                /*pageData = pivotTableData.stream().filter(l ->
                         l.get(pivotTable.getPivotPageList().get(0).getField().getFieldName())
-                                .equals(page)).collect(Collectors.toList());
-                pageHtml.append(processPage());
+                                .equals(page)).collect(Collectors.toList());*/
+                pageHtml.append(processPage(page));
                 pageHtml.append("</div>");
                 rand = 1;
             });
         } else {
             pageHtml.append("<div id=\"all\" class=\"tab-pane fade in active\">");
             pageData = pivotTableData;
-            pageHtml.append(processPage());
+            pageHtml.append(processPage(null));
             pageHtml.append("</div>");
         }
         pageHtml.append("</div>");
@@ -118,7 +119,7 @@ public class PivotTableHandler {
      * Process the page and returns a string of HTML as a result
      * @return string of HTML
      */
-    private String processPage(){
+    private String processPage(String page){
         //System.out.println("Start: " + new Date());
         StringBuilder tableHtml = new StringBuilder();
         tableHtml.append("<table id=\"\" class=\"table\"><thead>");
@@ -136,7 +137,8 @@ public class PivotTableHandler {
                 pageData.stream().map(line -> line.get(currentField)).distinct()
                         .sorted(Comparator.nullsLast(comparator(pivotTable.getPivotColumnList().get(i).getField().getFieldType())))
                         .forEach(value -> repeatPattern.append("<th colspan=\"").append(colspanPerLevel.get(i) *
-                                Math.max(pivotTable.getValuesList().size(), 1)).append("\">").append(value).append("</th>"));
+                                Math.max(pivotTable.getValuesList().size(), 1)).append("\">")
+                                .append( (value != null && !value.equals("") )? value : "(BLANK)").append("</th>"));
                 for (int r = 0; r < repeat; r++) {
                     tableHtml.append(repeatPattern);
                 }
@@ -154,15 +156,21 @@ public class PivotTableHandler {
             tableHtml.append(valueTitle(repeat));
 
         } else {
-            tableHtml.append("<tr><th></th>");
             tableHtml.append(valueTitle(1L));
-            tableHtml.append("</tr>");
         }
 
 
         tableHtml.append("</thead><tbody>");
         Map<Integer, Long> rowspanPerLevel = cellspanPerLevel("row");
-        tableHtml.append(loopRows(pageData, 0, rowspanPerLevel));
+        List<Map<String, String>> restrictedData;
+        if (page != null) {
+            restrictedData = pivotTableData.stream().filter(l ->
+                    l.get(pivotTable.getPivotPageList().get(0).getField().getFieldName())
+                            .equals(page)).collect(Collectors.toList());
+        } else {
+            restrictedData = pivotTableData;
+        }
+        tableHtml.append(loopRows(restrictedData, 0, rowspanPerLevel));
         int i = 0;
         tableHtml.append("<tr>");
         while(i < pivotTable.getPivotRowList().size() - 1){
@@ -170,8 +178,8 @@ public class PivotTableHandler {
             i++;
         }
         tableHtml.append("<th>Total</th>");
-        tableHtml.append(loopCols(pageData, 0));
-        tableHtml.append(printValues(pageData));
+        tableHtml.append(loopCols(restrictedData, 0));
+        tableHtml.append(printValues(restrictedData));
         tableHtml.append("</tr>");
         tableHtml.append("</tbody></table>");
 
@@ -213,6 +221,8 @@ public class PivotTableHandler {
         List<Map<String, String>> workData;
         if(pivotTable.getPivotRowList().size() > 0) {
             String currentField = pivotTable.getPivotRowList().get(level).getField().getFieldName();
+
+            boolean flag = false;
             for (String value : pageData.stream().map(line -> line.get(currentField)).distinct()
                     .sorted(Comparator.nullsLast(comparator(pivotTable.getPivotRowList().get(level).getField().getFieldType())))
                     .collect(Collectors.toList())) {
@@ -220,14 +230,17 @@ public class PivotTableHandler {
                 workData = workData.stream().filter(l ->
                         value != null ? (l.get(currentField) != null && l.get(currentField).equals(value)) : l.get(currentField) == null)
                         .collect(Collectors.toList());
-                if (level == 0) returnVal.append("<tr>");
-                returnVal.append("<th rowspan=\"").append(rowspanPerLevel.get(level)).append("\">").append(value).append("</th>");
+                if (level == 0 || flag) returnVal.append("<tr>");
+                returnVal.append("<th rowspan=\"").append(rowspanPerLevel.get(level)).append("\">")
+                        .append( (value != null && !value.equals("") )? value : "(BLANK)").append("</th>");
                 if (level == pivotTable.getPivotRowList().size() - 1) {
                     returnVal.append(loopCols(workData, 0));
                     returnVal.append(printValues(workData)).append("</tr>");
                 } else {
                     returnVal.append(loopRows(workData, level + 1, rowspanPerLevel));
                 }
+
+                flag = true;
             }
         } else {
             returnVal.append("<tr><td></td>").append(loopCols(restrictedData, 0)).append(printValues(restrictedData)).append("</tr>");

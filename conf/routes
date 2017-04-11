@@ -46,7 +46,9 @@ GET                 /pivot-tables/add-csv                       controllers.Pivo
 POST                /pivot-tables/add-sql                       controllers.PivotTableController.addSQLTable()
 POST                /pivot-tables/add-csv                       controllers.PivotTableController.addCSVTable()
 GET                 /pivot-tables/:id                           controllers.PivotTableController.getTable(id:Long)
+GET                 /pivot-tables/:id/info                      controllers.PivotTableController.infoPivotTable(id:Long)
 GET                 /pivot-tables/:id/export                    controllers.PivotTableController.excelExport(id:Long)
+GET                 /pivot-tables/:id/pdf                       controllers.PivotTableController.pdfExport(id:Long)
 GET                 /pivot-tables/:id/results                   controllers.PivotTableController.displayPivotTable(id:Long)
 GET                 /pivot-tables/:id/contents/:page            controllers.PivotTableController.contents(id:Long, page:String)
 GET                 /pivot-tables/:id/delete                    controllers.PivotTableController.deleteTable(id:Long)
@@ -60,6 +62,10 @@ POST                /pivot-tables/:id/add-value                 controllers.Pivo
 GET                 /pivot-tables/:id/delete-value/:valID       controllers.PivotTableController.deleteValue(id:Long, valID:Long)
 POST                /pivot-tables/:id/add-filter                controllers.PivotTableController.addFilter(id:Long)
 GET                 /pivot-tables/:id/delete-filter/:filterID   controllers.PivotTableController.deleteFilter(id:Long, filterID:Long)
+
+GET                 /pivot-tables/:id/share                     controllers.PivotTableController.sharePivotTable(id:Long)
+POST                /pivot-tables/:id/share/add                 controllers.PivotTableController.addSharePermission(id:Long)
+GET                 /pivot-tables/:id/share/delete/:perm        controllers.PivotTableController.deleteSharePermission(id:Long, perm:Long)
 
 GET                 /pivot-tables/:fieldID/options              controllers.PivotTableController.fieldOptions(fieldID:Long)
 
