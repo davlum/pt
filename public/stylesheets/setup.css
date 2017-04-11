@@ -1,0 +1,25 @@
+#fieldFrm{
+    height: 120px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+.threadwindow{
+    height: 74px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+#valueFrm{
+    height: 115px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+#pageFrm{
+    height:25px;
+}
+
+#cancelTable{
+    background-color: #e6b800;
+    border-color: #e6b800;
+}

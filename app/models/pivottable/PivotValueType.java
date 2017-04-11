@@ -1,6 +1,7 @@
 package models.pivottable;
 
 import com.avaje.ebean.Model;
+import models.users.User;
 
 import javax.persistence.*;
 import java.util.List;
@@ -23,6 +24,10 @@ public class PivotValueType extends Model {
     private List<PivotValue> pivotValues;
 
     public static Model.Finder<Long, PivotValueType> find = new Model.Finder<>(PivotValueType.class);
+
+    public static Long findCount() {
+        return find.where().eq("valueType", "count").findUnique().getId();
+    }
 
     public Long getId() {
         return id;

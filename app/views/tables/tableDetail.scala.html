@@ -21,7 +21,10 @@
         permissionForm : play.data.Form[PermissionForm],
         tab : String, view:Boolean, edit:Boolean)
 
-@main(user)(sidebar(sidebarContent(sidebarTables))) {
+@builder = {
+@views.html.tables.sidebarBuilder(pivotTableHandler.getPivotTable, pageForm, rowForm, columnForm, valueForm, filterForm)
+}
+@main(user)(sidebar(sidebarContent(sidebarTables)(builder))){
 
   <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     @if(flash.containsKey("success")) {

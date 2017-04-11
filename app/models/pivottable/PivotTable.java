@@ -80,13 +80,13 @@ public class PivotTable extends Model {
 
         if (source != null) {
             List<Map<String, String>> maps = source.getMapList();
-            if (maps.size() > 0){
-                maps.get(0).keySet().forEach(key -> {
-                    Field field = new Field();
-                    field.setFieldName(key);
-                    field.setFieldType(FieldType.decide(maps.stream().map(l -> l.get(key)).collect(Collectors.toList())));
-                    fieldList.add(field);
-                });
+                if (maps.size() > 0) {
+                    maps.get(0).keySet().forEach(key -> {
+                        Field field = new Field();
+                        field.setFieldName(key);
+                        field.setFieldType(FieldType.decide(maps.stream().map(l -> l.get(key)).collect(Collectors.toList())));
+                        fieldList.add(field);
+                    });
             }
         }
 

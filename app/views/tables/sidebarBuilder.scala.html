@@ -1,0 +1,94 @@
+@import utils.SidebarElement
+@import views.html.components.sidebarGroup
+@import models.pivottable.PivotTable
+@import views.html.tables.builder._
+@import utils.forms.ValueForm
+@import utils.forms.FieldForm
+@import models.pivottable.PivotValueType
+@import helper._
+
+@(pivotTable: PivotTable, pageForm : play.data.Form[FieldForm], rowForm : play.data.Form[FieldForm],
+columnForm : play.data.Form[FieldForm], valueForm : play.data.Form[ValueForm], filterForm : DynamicForm)
+
+<div id="sideBarBuilder" name=@pivotTable.getId>
+    <div id="fieldwrapper" class="wrapper panel panel-default">
+        <div class="panel-heading">Fields</div>
+        <form class="threadwindow panel-body" id="fieldFrm" style="padding: 3px;">
+            @if(pivotTable != null) {
+                @for(field <- pivotTable.availableFields){
+                        <div class="padB10" id=@field.getId>
+                            @field.getFieldName
+                        </div>
+                }
+            }
+        </form>
+    </div>
+    <div id="pagewrapper" class="wrapper panel panel-default">
+        <div class="panel-heading">Pages</div>
+        <form class="threadwindow panel-body" id="pageFrm" style="padding: 3px;">
+            @CSRF.formField
+            @if(pivotTable != null) {
+                @for(page <- pivotTable.getPivotPageList){
+                    <div class="padB10" data-field-id=@page.getId id=@page.getField.getId>
+                        @page.getField.getFieldName
+                    </div>
+                }
+            }
+        </form>
+    </div>
+    <div id="valueswrapper" class="wrapper panel panel-default">
+        <div class="panel-heading">Values</div>
+        <form class="threadwindow panel-body" id="valueFrm" style="padding: 3px;">
+            @CSRF.formField
+            @if(pivotTable != null) {
+                @for(value <- pivotTable.getValuesList){
+                    <div class="padB10" data-field-id=@value.getId id=@value.getField.getId>
+                        @value.getField.getFieldName
+                       <select class="typeFrm" style="float: right; border-radius:0px; border:0px;">
+                        @for(valtype <- PivotValueType.find.all()){
+                            @if(value.getPivotValueType.getId == valtype.getId){
+                                <option selected="selected" value=@valtype.getId>@valtype.getDisplayName</option>
+                            }else{
+                                <option value=@valtype.getId>@valtype.getDisplayName</option>
+                            }
+                        }
+                        </select>
+                    </div>
+                }
+            }
+        </form>
+    </div>
+    <div class="rowcol wrapper panel panel-default">
+        <div class="panel-heading">Rows</div>
+        <form class="threadwindow panel-body" id="rowFrm" style="padding: 3px;">
+            @CSRF.formField
+            @if(pivotTable != null) {
+                @for(row <- pivotTable.getPivotRowList){
+                    <div class="padB10" data-field-id=@row.getId id=@row.getField.getId>
+                        @row.getField.getFieldName
+                    </div>
+                }
+            }
+        </form>
+    </div>
+    <div class="rowcol wrapper panel panel-default">
+        <div class="panel-heading">Columns</div>
+        <form class="threadwindow panel-body" id="columnFrm" style="padding: 3px;">
+            @CSRF.formField
+            @if(pivotTable != null) {
+                @for(column <- pivotTable.getPivotColumnList) {
+                    <div class="padB10" data-field-id=@column.getId id=@column.getField.getId>
+                        @column.getField.getFieldName
+                    </div>
+                }
+            }
+        </form>
+    </div>
+    <span id="typeFrmhide">
+        <select class="typeFrm" style="float: right; border-radius:0px; border:0px; display: none;" value="1">
+        @for(valtype <- PivotValueType.find.all()){
+                <option value=@valtype.getId>@valtype.getDisplayName</option>
+        }
+        </select>
+    </span>
+</div>

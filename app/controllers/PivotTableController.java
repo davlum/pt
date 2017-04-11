@@ -15,6 +15,10 @@ import play.libs.mailer.MailerClient;
 import play.mvc.*;
 
 import tools.Mail;
+
+import play.mvc.BodyParser;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import utils.SidebarElement;
 import utils.forms.*;
 import utils.pivotTableHandler.ExcelHandler;
@@ -29,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import java.util.Iterator;
 
 /**
  * Controller for the pivot table generation and handling
@@ -205,6 +210,70 @@ public class PivotTableController extends AuthController {
         return goTable(id);
     }
 
+
+    private static void updateUtil(String paramName, JsonNode json, PivotTable pt) {
+        Iterator<JsonNode> param = json.findValue(paramName).elements();
+        Iterator<JsonNode> delParam = param.next().elements();
+        Iterator<JsonNode> addParam = param.next().elements();
+        Iterator<JsonNode> paramTypes = param.next().elements();
+        while (delParam.hasNext()) {
+            Long paramId = delParam.next().asLong(-1);
+            switch (paramName) {
+                case "rows":
+                    pt.deleteRow(paramId);
+                    break;
+                case "columns":
+                    pt.deleteColumn(paramId);
+                    break;
+                case "page":
+                    pt.deletePage(paramId);
+                    break;
+                case "values":
+                    pt.deleteValue(paramId);
+                default:
+                    break;
+            }
+        }
+        while (addParam.hasNext()) {
+            Long paramId = addParam.next().asLong(-1);
+            switch (paramName) {
+                case "rows":
+                    pt.addRow(paramId);
+                    break;
+                case "columns":
+                    pt.addColumn(paramId);
+                    break;
+                case "page":
+                    pt.addPage(paramId);
+                    break;
+                case "values":
+                    Long paramType = paramTypes.next().asLong(-1);
+                    Field field = Field.find.byId(paramId);
+                    PivotValueType type = PivotValueType.find.byId(paramType);
+                    if(field != null && FieldType.onlyCount(field.getFieldType())
+                            && type != null && !type.getValueType().equals("count")) {
+                        paramType = PivotValueType.findCount();
+                    }
+                    pt.addValue(paramId, paramType);
+                default:
+                    break;
+            }
+        }
+    }
+
+    @BodyParser.Of(BodyParser.Json.class)
+    public Result updateTable(Long id) {
+        JsonNode json = request().body().asJson();
+        PivotTable table = PivotTable.find.byId(id);
+        if (table != null) {
+            updateUtil("columns", json, table);
+            updateUtil("rows", json, table);
+            updateUtil("page", json, table);
+            updateUtil("values", json, table);
+        }
+        return goTable(id);
+    }
+
     /**
      * Method to delete a page of the Table
      * @param id of the table
@@ -232,7 +301,6 @@ public class PivotTableController extends AuthController {
                 table.addRow(fieldForm.get().getFieldID());
             }
         }
-
         return goTable(id);
     }
 

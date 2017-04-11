@@ -67,6 +67,9 @@ GET                 /pivot-tables/:id/share                     controllers.Pivo
 POST                /pivot-tables/:id/share/add                 controllers.PivotTableController.addSharePermission(id:Long)
 GET                 /pivot-tables/:id/share/delete/:perm        controllers.PivotTableController.deleteSharePermission(id:Long, perm:Long)
 
+POST                /pivot-tables/:id/update-table              controllers.PivotTableController.updateTable(id: Long)
+
+
 GET                 /pivot-tables/:fieldID/options              controllers.PivotTableController.fieldOptions(fieldID:Long)
 
 GET                 /users                                      controllers.UsersController.users
