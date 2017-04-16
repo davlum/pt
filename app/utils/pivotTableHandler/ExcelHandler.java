@@ -1,6 +1,5 @@
 package utils.pivotTableHandler;
 
-import models.pivottable.FilterValidValue;
 import models.pivottable.PivotRow;
 import models.pivottable.PivotTable;
 import models.pivottable.PivotValue;
@@ -13,7 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ExcelHandler extends PivotTableHandler {
+public class ExcelHandler extends RenderStrategy {
 
 
     private List<Map<String, String>> pivotTableData;
@@ -24,13 +23,6 @@ public class ExcelHandler extends PivotTableHandler {
         super(pivotTableData, pivotTable);
         this.pivotTableData = pivotTableData;
         this.pivotTable = pivotTable;
-
-        this.pivotTable.getFiltersList().forEach(filter -> {
-            List<String> validValues = filter.getFilterValidValues().stream()
-                    .map(FilterValidValue::getSpecificValue).collect(Collectors.toList());
-            this.pivotTableData = this.pivotTableData.stream().filter(l -> validValues.contains(l.get(filter.getField().getFieldName())))
-                    .collect(Collectors.toList());
-        });
     }
 
     private XSSFWorkbook wb;
@@ -52,7 +44,7 @@ public class ExcelHandler extends PivotTableHandler {
                     rNum = 0;
                     cNum = 0;
                     pageData = pivotTableData;
-                    processExcelPage(page);
+                    processPage(page);
                     rand = 1;
                 });
             } else {
@@ -60,7 +52,7 @@ public class ExcelHandler extends PivotTableHandler {
                 sheet = wb.createSheet("All");
                 rNum = 0;
                 cNum = 0;
-                processExcelPage(null);
+                processPage(null);
             }
 
             wb.write(fileOut);
@@ -73,8 +65,7 @@ public class ExcelHandler extends PivotTableHandler {
         }
     }
 
-
-    private void processExcelPage(String page){
+    private void processPage(String page){
         Map<Integer, Long> colspanPerLevel = cellspanPerLevel("column");
         if (pivotTable.getPivotColumnList().size() > 0) {
             i = 0;
@@ -99,20 +90,13 @@ public class ExcelHandler extends PivotTableHandler {
                                 }
                             });
                 }
-                /*if (pivotTable.getValuesList().size() > 0) {
-                    for (int r = 0; r < pivotTable.getValuesList().size(); r++) {
-                        cell = eRow.createCell(cNum++);
-                    }
-                } else {
-                    cell = eRow.createCell(cNum++);
-                }*/
                 repeat = repeat * pageData.stream().map(line -> line.get(currentField)).distinct().count();
                 i++;
             }
-            valueExcelTitle(repeat);
+            valueTitle(repeat);
 
         } else {
-            valueExcelTitle(1L);
+            valueTitle(1L);
         }
 
         List<Map<String, String>> restrictedData;
@@ -124,7 +108,7 @@ public class ExcelHandler extends PivotTableHandler {
             restrictedData = pivotTableData;
         }
 
-        loopExcelRows(restrictedData, 0);
+        loopRows(restrictedData, 0);
         int i = 0;
         eRow = sheet.createRow(rNum++);
         cNum = 0;
@@ -134,13 +118,12 @@ public class ExcelHandler extends PivotTableHandler {
         }
         cell = eRow.createCell(cNum++);
         cell.setCellValue("Total");
-        loopExcelCols(restrictedData, 0);
-        printExcelValues(restrictedData);
+        loopCols(restrictedData, 0);
+        printValues(restrictedData);
 
     }
 
-
-    private void valueExcelTitle(Long repeat){
+    private void valueTitle(Long repeat){
         eRow = sheet.createRow(rNum++);
         cNum = 0;
         if(pivotTable.getPivotRowList().size() > 0) {
@@ -172,20 +155,7 @@ public class ExcelHandler extends PivotTableHandler {
 
     }
 
-    Map<Integer, Long> cellspanPerLevel(String dimension){
-        Map<Integer, Long> nbColumnsPerLevel = new HashMap<>();
-        long lastTotal = 1;
-        for(int i = pivotTable.fieldsByDimension(dimension).size() - 1; i >= 0; i--){
-            String currentField = pivotTable.fieldsByDimension(dimension).get(i).getFieldName();
-            long currentCount = pageData.stream().map(line -> line.get(currentField)).distinct().count();
-            nbColumnsPerLevel.put(i, lastTotal);
-            lastTotal = currentCount * lastTotal;
-        }
-
-        return nbColumnsPerLevel;
-    }
-
-    private void loopExcelRows(List<Map<String, String>> restrictedData, int level) {
+    private void loopRows(List<Map<String, String>> restrictedData, int level) {
         List<Map<String, String>> workData;
         if(pivotTable.getPivotRowList().size() > 0) {
             String currentField = pivotTable.getPivotRowList().get(level).getField().getFieldName();
@@ -212,10 +182,10 @@ public class ExcelHandler extends PivotTableHandler {
                     }
                 }*/
                 if (level == pivotTable.getPivotRowList().size() - 1) {
-                    loopExcelCols(workData, 0);
-                    printExcelValues(workData);
+                    loopCols(workData, 0);
+                    printValues(workData);
                 } else {
-                    loopExcelRows(workData, level + 1);
+                    loopRows(workData, level + 1);
                 }
                 newLine = true;
             }
@@ -223,13 +193,13 @@ public class ExcelHandler extends PivotTableHandler {
             eRow = sheet.createRow(rNum++);
             cNum = 0;
             cell = eRow.createCell(cNum++);
-            loopExcelCols(restrictedData, 0);
-            printExcelValues(restrictedData);
+            loopCols(restrictedData, 0);
+            printValues(restrictedData);
         }
 
     }
 
-    private void loopExcelCols(List<Map<String, String>> restrictedData, int level) {
+    private void loopCols(List<Map<String, String>> restrictedData, int level) {
         if(pivotTable.getPivotColumnList().size() > 0) {
             String currentField = pivotTable.getPivotColumnList().get(level).getField().getFieldName();
             for (String value : pageData.stream().map(line -> line.get(currentField)).distinct()
@@ -239,18 +209,18 @@ public class ExcelHandler extends PivotTableHandler {
                 workData = workData.stream().filter(l ->
                         value != null ? l.get(currentField).equals(value) : l.get(currentField) == null).collect(Collectors.toList());
                 if (level == pivotTable.getPivotColumnList().size() - 1) {
-                    printExcelValues(workData);
+                    printValues(workData);
                 } else {
-                    loopExcelCols(workData, level + 1);
+                    loopCols(workData, level + 1);
                 }
             }
         } else {
-            printExcelValues(restrictedData);
+            printValues(restrictedData);
         }
 
     }
 
-    private void printExcelValues(List<Map<String, String>> restrictedData){
+    private void printValues(List<Map<String, String>> restrictedData){
         for (PivotValue pivotValue : pivotTable.getValuesList()) {
             cell = eRow.createCell(cNum++);
             cell.setCellValue(valueAsRequested(restrictedData, pivotValue));
@@ -263,5 +233,17 @@ public class ExcelHandler extends PivotTableHandler {
 
     }
 
+    Map<Integer, Long> cellspanPerLevel(String dimension){
+        Map<Integer, Long> nbColumnsPerLevel = new HashMap<>();
+        long lastTotal = 1;
+        for(int i = pivotTable.fieldsByDimension(dimension).size() - 1; i >= 0; i--){
+            String currentField = pivotTable.fieldsByDimension(dimension).get(i).getFieldName();
+            long currentCount = pageData.stream().map(line -> line.get(currentField)).distinct().count();
+            nbColumnsPerLevel.put(i, lastTotal);
+            lastTotal = currentCount * lastTotal;
+        }
+
+        return nbColumnsPerLevel;
+    }
 
 }
