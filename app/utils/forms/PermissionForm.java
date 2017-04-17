@@ -1,5 +1,8 @@
 package utils.forms;
 
+/**
+ * Pivot table sharing form
+ */
 public class PermissionForm {
 
     private Long userID;

@@ -12,6 +12,10 @@ import java.io.ByteArrayOutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Class to manipulate the pivot table
+ * and return an Excel Workbook
+ */
 public class ExcelHandler extends RenderStrategy {
 
 
@@ -32,6 +36,11 @@ public class ExcelHandler extends RenderStrategy {
     private Row eRow;
     private Cell cell;
 
+    /**
+     * Method (and sub-methods)
+     * that are be used to display the generated pivot table
+     * * for the selected page in Excel format
+     * */
     public byte[] tableExcel(){
         try {
             ByteArrayOutputStream fileOut = new ByteArrayOutputStream(8192);
@@ -65,6 +74,9 @@ public class ExcelHandler extends RenderStrategy {
         }
     }
 
+    /**
+     * Generate each page
+     */
     private void processPage(String page){
         Map<Integer, Long> colspanPerLevel = cellspanPerLevel("column");
         if (pivotTable.getPivotColumnList().size() > 0) {
@@ -123,6 +135,9 @@ public class ExcelHandler extends RenderStrategy {
 
     }
 
+    /**
+     * Generate Headers
+     */
     private void valueTitle(Long repeat){
         eRow = sheet.createRow(rNum++);
         cNum = 0;
@@ -155,6 +170,9 @@ public class ExcelHandler extends RenderStrategy {
 
     }
 
+    /**
+     * Loop through the rows as necessary
+     */
     private void loopRows(List<Map<String, String>> restrictedData, int level) {
         List<Map<String, String>> workData;
         if(pivotTable.getPivotRowList().size() > 0) {
@@ -199,6 +217,9 @@ public class ExcelHandler extends RenderStrategy {
 
     }
 
+    /**
+     * Loop through the columns as necessary
+     */
     private void loopCols(List<Map<String, String>> restrictedData, int level) {
         if(pivotTable.getPivotColumnList().size() > 0) {
             String currentField = pivotTable.getPivotColumnList().get(level).getField().getFieldName();
@@ -220,6 +241,9 @@ public class ExcelHandler extends RenderStrategy {
 
     }
 
+    /**
+     * Print the computed values
+     */
     private void printValues(List<Map<String, String>> restrictedData){
         for (PivotValue pivotValue : pivotTable.getValuesList()) {
             cell = eRow.createCell(cNum++);
@@ -233,6 +257,9 @@ public class ExcelHandler extends RenderStrategy {
 
     }
 
+    /**
+     * Compute number of cells per level
+     */
     Map<Integer, Long> cellspanPerLevel(String dimension){
         Map<Integer, Long> nbColumnsPerLevel = new HashMap<>();
         long lastTotal = 1;

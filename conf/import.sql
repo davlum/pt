@@ -1,3 +1,8 @@
+/**
+Small script to initialize the database content required before using the application for the first time
+It is possible to change the email address and user name to a value of your liking
+ */
+
 INSERT INTO user_list VALUES (nextval('user_list_id_seq'::regclass), 'test.user@gmail.com',
     'Test User', 'test', NULL);
 

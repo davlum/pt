@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * An object representing a user. Is persisted in the database.
+ * Class for users of the application
  */
 @Entity
 @Table(name = "user_list")
@@ -55,12 +55,25 @@ public class User extends Model {
         return null;
     }
 
+    /**
+     * Returns the list of users that can be used to create new sharing permissions
+     * @param excludeUser user to be excluded
+     * @param sharePermissions existing share permissions (can't have the same user for 2 permissions)
+     * @return
+     */
     public static List<User> allBut(User excludeUser, List<SharePermission> sharePermissions){
         List<User> sharedUsers = sharePermissions.stream().map(SharePermission::getUser).collect(Collectors.toList());
         return find.all().stream().filter(user -> !user.equals(excludeUser)
                     && !sharedUsers.contains(user)).collect(Collectors.toList());
     }
 
+    /**
+     * Validates the password entered by the user at login
+     * @param email of the user
+     * @param clearPassword password the user entered
+     * @return user instance if valid
+     * @throws UserException of not valid
+     */
     public static User authenticate(String email, String clearPassword) throws UserException {
         // get the user with username only to keep the salt password
         User user = findByEmail(email);
@@ -74,6 +87,8 @@ public class User extends Model {
         }
         return null;
     }
+
+    // Getters and setters
 
     public Long getId() {
         return id;

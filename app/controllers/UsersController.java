@@ -21,12 +21,16 @@ import java.util.stream.Collectors;
  * Controller for the users
  */
 public class UsersController extends AuthController {
+
     private final FormFactory formFactory;
     private final MailerClient mailerClient;
     private final ActorSystem actorSystem;
+
     /**
      * Constructor for the class
-     * @param formFactory
+     * @param formFactory FormFactory injection
+     * @param mailerClient MailerClient injection
+     * @param actorSystem ActorSystem injection
      */
     @Inject
     public UsersController(FormFactory formFactory, MailerClient mailerClient, ActorSystem actorSystem) {
@@ -35,6 +39,10 @@ public class UsersController extends AuthController {
         this.actorSystem = actorSystem;
     }
 
+    /**
+     * Display the list of users
+     * @return Http status
+     */
     public Result users() {
         return ok(views.html.users.index.render(getCurrentUser(),
                 formFactory.form(UserForm.class), getUserSidebarElements()));
@@ -55,6 +63,10 @@ public class UsersController extends AuthController {
     }
 
 
+    /**
+     * Add a new user
+     * @return Http status
+     */
     public Result addUser(){
         Form<UserForm> userForm = formFactory.form(UserForm.class).bindFromRequest();
         if (userForm.hasErrors()) {
@@ -91,6 +103,11 @@ public class UsersController extends AuthController {
         }
     }
 
+    /**
+     * Retrieve user info
+     * @param id of the user
+     * @return Http status
+     */
     public Result getUser(Long id){
         User user = User.find.byId(id);
         UserForm userForm = new UserForm();
@@ -107,6 +124,11 @@ public class UsersController extends AuthController {
         }
     }
 
+    /**
+     * Update user info
+     * @param id of the user
+     * @return Http status
+     */
     public Result updateUser(Long id){
         Form<UserForm> userForm = formFactory.form(UserForm.class).bindFromRequest();
         if (userForm.hasErrors()) {
@@ -148,6 +170,11 @@ public class UsersController extends AuthController {
         }
     }
 
+    /**
+     * Delete a user
+     * @param id of the user
+     * @return Http status
+     */
     public Result deleteUser(Long id){
         User user = User.find.byId(id);
         if(user != null) {

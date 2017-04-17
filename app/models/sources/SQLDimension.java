@@ -6,6 +6,10 @@ import com.avaje.ebean.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
+/**
+* (implementation incomplete)
+*/
+
 @Entity
 public class SQLDimension extends Model {
 

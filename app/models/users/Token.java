@@ -14,9 +14,17 @@ import java.util.UUID;
 
 import static play.mvc.Controller.request;
 
+/**
+ * Token that is sent by email to the user when they're newly created
+ * or when their password requires a change
+ */
+
 @Entity
 public class Token extends Model {
 
+    /**
+     * Enum of the possibilities when a password is sent
+     */
     public enum TypeToken {
         PASSWORD("reset"), EMAIL("reset"), NEWUSER("reset");
         private String urlPath;

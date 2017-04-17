@@ -12,6 +12,9 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Parent class that both handlers will have to extend in the strategy pattern
+ */
 class RenderStrategy {
 
     List<Map<String, String>> pivotTableData;
@@ -21,6 +24,11 @@ class RenderStrategy {
     int i = 0;
     int rand = 0;
 
+    /**
+     * constructor for the class
+     * @param pivotTableData list of maps that constitute the data
+     * @param pivotTable schema to be used to render the table
+     */
     RenderStrategy(List<Map<String, String>> pivotTableData, PivotTable pivotTable){
         this.pivotTableData = pivotTableData;
         this.pivotTable = pivotTable;
@@ -34,8 +42,8 @@ class RenderStrategy {
     }
 
     /**
-     * Returns a list of pages of the pivot table
-     * @return
+     * Returns a list of values that correspond to the pages of the pivot table
+     * @return list of string values
      */
     public List<String> pages(){
         if(pivotTable.getPivotPageList().size() > 0){
@@ -46,6 +54,11 @@ class RenderStrategy {
         return Collections.singletonList("all");
     }
 
+    /**
+     * Default comparator for sorting the pivot table
+     * @param fieldType to be compared
+     * @return a comparator
+     */
     public static Comparator<String> comparator(FieldType fieldType){
         switch (fieldType){
             case Long:
@@ -67,6 +80,11 @@ class RenderStrategy {
 
     }
 
+    /**
+     * number of cells at each depth in the html table
+     * @param dimension row or column
+     * @return map of int (level) to long (number of cells)
+     */
     Map<Integer, Long> cellspanPerLevel(String dimension){
         Map<Integer, Long> nbColumnsPerLevel = new HashMap<>();
         long lastTotal = 1;
@@ -83,6 +101,13 @@ class RenderStrategy {
     private static int size = 0;
     private static double min = 0;
     private static double max = 0;
+
+    /**
+     * Computes the values to be printed
+     * @param restrictedData working set data
+     * @param pivotValue value to be computed (field and type)
+     * @return
+     */
     String valueAsRequested(List<Map<String, String>> restrictedData, PivotValue pivotValue){
         final DecimalFormat decimalFormatter = new DecimalFormat("###0.00#");
         switch (pivotValue.getPivotValueType().getValueType()){

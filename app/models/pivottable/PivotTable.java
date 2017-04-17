@@ -13,6 +13,13 @@ import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * The pivot table class
+ * It is based on a composite pattern given that
+ * this class is based on a number of different components that combined together
+ * define the schema to use for rendering
+ */
+
 @Entity
 public class PivotTable extends Model {
 
@@ -65,10 +72,9 @@ public class PivotTable extends Model {
 
     public static Model.Finder<Long, PivotTable> find = new Model.Finder<>(PivotTable.class);
 
-    public static PivotTable pivotTable(){
-        return find.byId(1L);
-    }
-
+    /**
+     * Constructor for a CSV based pivot table
+     */
     public PivotTable(CSVTableForm tableForm, User owner){
         CSVSource source = CSVSource.find.byId(tableForm.getCsvSourceID());
         this.setCsvSource(source);
@@ -93,6 +99,9 @@ public class PivotTable extends Model {
         this.save();
     }
 
+    /**
+     * Constructor for an SQL based pivot table
+     */
     public PivotTable(SQLTableForm tableForm, User owner){
         SQLSource source = SQLSource.find.byId(tableForm.getSqlSourceID());
         this.setSqlSource(source);

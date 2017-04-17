@@ -18,7 +18,7 @@ import javax.inject.Inject;
 import views.html.login.*;
 
 /**
- * Controller to login or logout from the application
+ * Controller to login, logout or reset the password
  */
 public class LoginController extends Controller {
 
@@ -28,7 +28,7 @@ public class LoginController extends Controller {
 
     /**
      * Constructor for the class.
-     * @param formFactory
+     * @param formFactory factory injection
      */
     @Inject
     public LoginController(FormFactory formFactory, MailerClient mailerClient, ActorSystem actorSystem) {
@@ -87,11 +87,21 @@ public class LoginController extends Controller {
         return redirect(routes.LoginController.index());
     }
 
+    /**
+     * 'Forgot your password?' page
+     *
+     * @return Forgot page
+     */
     public Result forgotPassword() {
         Form<ForgotForm> forgotForm = formFactory.form(ForgotForm.class);
         return ok(forgotView.render(forgotForm));
     }
 
+    /**
+     * Submit user email and send them link to reset the password
+     *
+     * @return Index page with success message
+     */
     public Result forgotSubmit() {
         Form<ForgotForm> forgotForm = formFactory.form(ForgotForm.class).bindFromRequest();
         if (!forgotForm.hasErrors()) {
@@ -110,11 +120,22 @@ public class LoginController extends Controller {
         return redirect(routes.LoginController.index());
     }
 
+
+    /**
+     * Change password page
+     *
+     * @return change password form
+     */
     public Result changePassword(String token) {
         Form<ChangePwdForm> changeForm = formFactory.form(ChangePwdForm.class);
         return ok(changePwd.render(changeForm, token));
     }
 
+    /**
+     * Submit change password form
+     *
+     * @return Index page with confirmation message
+     */
     public Result changePasswordSubmit(String token) {
         Form<ChangePwdForm> changeForm = formFactory.form(ChangePwdForm.class).bindFromRequest();
         if (!changeForm.hasErrors()) {
@@ -126,13 +147,15 @@ public class LoginController extends Controller {
             }
 
             User user = User.findByConfirmationToken(token);
-            try {
-                user.setPasswordHash(Hash.createPassword(changeForm.get().getPassword()));
-                user.update();
-                flash("success", "Password successfully updated!");
-            } catch (Exception e){
-                System.out.println(password + " " + confirm);
-                e.printStackTrace();
+            if (user != null) {
+                try {
+                    user.setPasswordHash(Hash.createPassword(changeForm.get().getPassword()));
+                    user.update();
+                    flash("success", "Password successfully updated!");
+                } catch (Exception e) {
+                    System.out.println(password + " " + confirm);
+                    e.printStackTrace();
+                }
             }
         } else {
             System.out.println(changeForm.errorsAsJson());

@@ -5,7 +5,8 @@ import play.mvc.Controller;
 import play.mvc.Security;
 
 /**
- * Class for user authentification.
+ * Class for user authentification
+ * All controllers that require the user to be authenticated must extend this class
  */
 @Security.Authenticated(Secured.class)
 public class AuthController extends Controller {

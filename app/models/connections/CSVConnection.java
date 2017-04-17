@@ -40,11 +40,17 @@ public class CSVConnection extends Model {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<CSVSourceLink> sourceLinks;
 
+    /**
+     * Constructor for a CSV connection.
+     */
     public CSVConnection(String connectionName, String connectionDescription) {
         this.connectName = connectionName;
         this.connectDescription = connectionDescription;
     }
 
+    /**
+     * Update a CSV connection.
+     */
     public void updateCSVConnection(CSVConnection conn)
     {
         this.setConnectName(conn.getConnectName());
@@ -55,6 +61,9 @@ public class CSVConnection extends Model {
         this.update();
     }
 
+    /**
+     * Get all the data as a list of maps
+     */
     public List<Map<String, String>> getMapList(){
         try {
             File file = new File(getConnectionPath());

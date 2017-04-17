@@ -15,15 +15,14 @@ import java.util.stream.Collectors;
 
 /**
  * Class for controlling the sources of the pivot Tables, whether
- * that is a database or CSV connection. Although the methods names
- * here indicate SQL, a variety of database connections are available.
+ * that is a database or CSV connection
  */
 public class SourceController extends AuthController {
     private final FormFactory formFactory;
 
     /**
      * Constructor for the class
-     * @param formFactory
+     * @param formFactory FormFactory injection
      */
     @Inject
     public SourceController(FormFactory formFactory) {
@@ -31,7 +30,7 @@ public class SourceController extends AuthController {
     }
 
     /**
-     * Method to update page with new database information
+     * Method to display new SQL source form
      * @return Http status
      */
     public Result index() {
@@ -45,7 +44,7 @@ public class SourceController extends AuthController {
     }
 
     /**
-     * Method to update page with new CSV information
+     * Method to display new CSV source form
      * @return Http status
      */
     public Result indexCSV() {

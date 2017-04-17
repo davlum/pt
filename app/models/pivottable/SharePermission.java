@@ -6,6 +6,11 @@ import models.users.User;
 
 import javax.persistence.*;
 
+/**
+ * Class that defines the permissions (view or edit) to a pivot table
+ * that can be provided to other users
+ */
+
 @Entity
 public class SharePermission extends Model {
 

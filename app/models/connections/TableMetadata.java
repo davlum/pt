@@ -70,6 +70,9 @@ public class TableMetadata extends Model {
     }
     public static Model.Finder<Long, TableMetadata> find = new Model.Finder<>(TableMetadata.class);
 
+    /**
+     * Find the list of tables in a given database
+     */
     public List<TableMetadata> getTablesByConnectionId(Long id) {
         return find.where().eq("sqlconnection_id", id).findList();
     }

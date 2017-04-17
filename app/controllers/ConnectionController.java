@@ -26,8 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * This class is for controlling the forms for the connections
- * to the CSV and SQL database connections
+ * This class is for the management of CSV and SQL database connections
  */
 public class ConnectionController extends AuthController {
 
@@ -35,7 +34,7 @@ public class ConnectionController extends AuthController {
 
     /**
      * Constructor for the Connection Controller Class
-     * @param formFactory
+     * @param formFactory  FormFactory injection
      */
     @Inject
     public ConnectionController(FormFactory formFactory) {
@@ -56,7 +55,7 @@ public class ConnectionController extends AuthController {
     }
 
     /**
-     * Display the connection home page (CSV Form activated)
+     * Display the connection home page (CSV Form tab activated)
      * @return HTTP status
      */
     public Result indexCSV() {
@@ -281,7 +280,7 @@ public class ConnectionController extends AuthController {
      * and puts it in an Array List.
      * @param conn database connection
      * @return List of table data
-     * @throws SQLException
+     * @throws SQLException exception
      */
     private List<TableMetadata> reflectTables(Connection conn)
             throws SQLException
@@ -379,7 +378,7 @@ public class ConnectionController extends AuthController {
 
     /**
      * Method with which to upload a CSV file.
-     * @param id
+     * @param id of CSV file
      * @return path of the file or null
      */
     private String handleUpload(Long id){

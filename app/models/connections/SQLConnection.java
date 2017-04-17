@@ -131,6 +131,9 @@ public class SQLConnection extends Model {
         this.tableMetadataList = tableMetadataList;
     }
 
+    /**
+     * Constructor for an SQL connection
+     */
     public SQLConnection(String name, String driver, String desc, String host, Integer port,
                          String db, String user, String password)
     {
@@ -144,6 +147,9 @@ public class SQLConnection extends Model {
         connectionDriver = driver;
     }
 
+    /**
+     * Update an SQL connection.
+     */
     public void updateSQLConnection(SQLConnection conn, List<TableMetadata> metadataList)
     {
         this.setConnectionName(conn.getConnectionName());
@@ -164,6 +170,7 @@ public class SQLConnection extends Model {
     {
         return "jdbc:" + connectionDriver + "://" + connectionHost + ":" + connectionPort + "/" + connectionDBName;
     }
+
 
     public Connection connect() throws SQLException {
         return DriverManager.getConnection(

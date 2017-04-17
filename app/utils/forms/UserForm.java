@@ -2,7 +2,9 @@ package utils.forms;
 
 import play.data.validation.Constraints;
 
-
+/**
+ * User creation form
+ */
 public class UserForm {
 
     private Long id;

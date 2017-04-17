@@ -12,12 +12,10 @@ Make sure you have a postgreSQL database. Visit https://www.postgresql.org/ for 
 
  Once postgres is installed, create a database called 'pivottable'
 
-whose owner is a user called 'test' with the password 'test', or modify the information in conf/application.conf to match your database setup.
+whose owner is a user called 'test' with the password 'test', or modify the
+information in conf/application.conf to match your database setup.
 
-In general,
-please explore conf/application.conf to adapt it to your specific needs
-
-.
+In general, please explore conf/application.conf to adapt it to your specific needs.
 
 Two methods are available to launch the application using this code:
 
@@ -43,6 +41,7 @@ On
 (where this READ ME file is located),
 type export _JAVA_OPTIONS="-Xmx8g" to expand
 the available RAM to be used by the application and then type 'activator run'
+(the port number 9000 needs to be available)
 
 
 4. On your browser of choice, go to: localhost:9000
@@ -56,8 +55,8 @@ application correctly.
 6. Before trying to log in, use the script conf/import.sql and run it on the database 'pivottable'.
 
 
-7. Log in using the username 'test.user@gmail.com' and the password 'MegaXTabPassword'. Actual user management
-will be added in a later version.
+7. Log in using the username 'test.user@gmail.com' and the password 'MegaXTabPassword'.
+You can add more users from inside the application.
 
 
 8. Type Ctrl+D to stop the running application
@@ -70,9 +69,9 @@ Launch in production mode
 
 
 1. Load the file target/universal/pivot-table-1.0-SNAPSHOT.zip to your server (type 'activator dist' to generate a new
- one if the code was modified)
+ one if the code was modified).
 
-.
+
 2. Unzip this file on your server
 
 

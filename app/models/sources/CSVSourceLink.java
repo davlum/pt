@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * Class representing the link to a specific CSV file.
+ * (implementation incomplete)
  */
 @Entity
 public class CSVSourceLink extends Model {

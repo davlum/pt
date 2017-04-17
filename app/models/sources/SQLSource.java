@@ -17,8 +17,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Object containing the data from a
- * database connection.
+ * SQL Source Class
  */
 @Entity
 public class SQLSource extends Model {
@@ -51,8 +50,8 @@ public class SQLSource extends Model {
 
     /**
      * Maps dbTypes to FieldTypes
-     * @param dbType
-     * @return a FieldTypes
+     * @param dbType value
+     * @return a FieldType
      */
     private static FieldType mapDatabaseFieldType(String dbType)
     {
@@ -163,7 +162,6 @@ public class SQLSource extends Model {
             statement.close();
             connection.close();
 
-            //list.forEach(System.out::println);
         } catch (SQLException e){
             e.printStackTrace();
         }
@@ -171,7 +169,11 @@ public class SQLSource extends Model {
         return list;
     }
 
-
+    /**
+     * Method that return a list of column names
+     * @param table table name
+     * @return list of strings
+     */
     public List<String> fieldNames(String table){
         List<String> list = new ArrayList<>();
         try {
@@ -188,7 +190,6 @@ public class SQLSource extends Model {
             statement.close();
             connection.close();
 
-            //list.forEach(System.out::println);
         } catch (SQLException e){
             e.printStackTrace();
         }
@@ -202,7 +203,7 @@ public class SQLSource extends Model {
      * @param dimensions of the data
      * @param aggregates list of aggregate functions
      * @return a ResultSet
-     * @throws SQLException
+     * @throws SQLException if an connection error occurs
      */
     public ResultSet executeQuery(List<Field> dimensions,
                         List<AggregateExpression> aggregates)

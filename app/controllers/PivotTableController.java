@@ -7,7 +7,6 @@ import com.itextpdf.tool.xml.XMLWorkerHelper;
 import models.pivottable.*;
 import models.pivottable.PivotTable;
 import models.users.User;
-import play.Application;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.data.FormFactory;
@@ -26,7 +25,6 @@ import utils.pivotTableHandler.PivotTableHandler;
 import views.html.tables.*;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +40,7 @@ public class PivotTableController extends AuthController {
 
     /**
      * Go to the table specified by Id
-     * @param id
+     * @param id of pivot table
      * @return HTTP redirect to the table
      */
     private Result goTable(Long id) {
@@ -52,23 +50,22 @@ public class PivotTableController extends AuthController {
     private final FormFactory formFactory;
     private final MailerClient mailerClient;
     private final ActorSystem actorSystem;
-    private final Provider<Application> application;
 
     /**
      * Constructor for the class
-     * @param formFactory
+     * @param formFactory FormFactory injection
+     * @param mailerClient MailerClient injection
+     * @param actorSystem ActorSystem injection
      */
     @Inject
-    public PivotTableController(FormFactory formFactory, MailerClient mailerClient, ActorSystem actorSystem,
-                                Provider<Application> application){
+    public PivotTableController(FormFactory formFactory, MailerClient mailerClient, ActorSystem actorSystem){
         this.formFactory = formFactory;
         this.mailerClient = mailerClient;
         this.actorSystem = actorSystem;
-        this.application = application;
     }
 
     /**
-     * Renders page
+     * Renders main page for pivot table management
      * @return HTTP status 400
      */
     public Result index(){
@@ -83,7 +80,7 @@ public class PivotTableController extends AuthController {
 
     /**
      * Gets a list of the pivot tables to be displayed on the sidebar
-     * @return list of pivot tables characteristics
+     * @return list of pivot table sidebar elements
      */
     private List<SidebarElement> getSidebarElements() {
         List<SidebarElement> myTables = getCurrentUser().getPivotTables()
@@ -187,7 +184,7 @@ public class PivotTableController extends AuthController {
 
     /**
      * delete a table
-     * @param id of a pivot table
+     * @param id of the pivot table
      * @return HTTP redirect
      */
     public Result deleteTable(Long id){
@@ -204,7 +201,7 @@ public class PivotTableController extends AuthController {
     /**
      * Method to add a page to the pivot table
      * @param id of the table
-     * @return a HTTP redirect to the new table
+     * @return a HTTP redirect to table
      */
     public Result addPage(Long id){
         Form<FieldForm> fieldForm = formFactory.form(FieldForm.class).bindFromRequest();
@@ -218,7 +215,30 @@ public class PivotTableController extends AuthController {
         return goTable(id);
     }
 
+    /**
+     * Method to update the pivot table schema through ajax call
+     * @param id of the pivot table
+     * @return an HTTP redirect to the table
+     */
+    @BodyParser.Of(BodyParser.Json.class)
+    public Result updateTable(Long id) {
+        JsonNode json = request().body().asJson();
+        PivotTable table = PivotTable.find.byId(id);
+        if (table != null) {
+            updateUtil("columns", json, table);
+            updateUtil("rows", json, table);
+            updateUtil("page", json, table);
+            updateUtil("values", json, table);
+        }
+        return goTable(id);
+    }
 
+    /**
+     * Method to update the pivot table schema through ajax call
+     * @param paramName columns, rows, etc. to be updated
+     * @param json json to be updated
+     * @param pt the pivot table
+     */
     private static void updateUtil(String paramName, JsonNode json, PivotTable pt) {
         Iterator<JsonNode> param = json.findValue(paramName).elements();
         Iterator<JsonNode> delParam = param.next().elements();
@@ -267,19 +287,6 @@ public class PivotTableController extends AuthController {
                     break;
             }
         }
-    }
-
-    @BodyParser.Of(BodyParser.Json.class)
-    public Result updateTable(Long id) {
-        JsonNode json = request().body().asJson();
-        PivotTable table = PivotTable.find.byId(id);
-        if (table != null) {
-            updateUtil("columns", json, table);
-            updateUtil("rows", json, table);
-            updateUtil("page", json, table);
-            updateUtil("values", json, table);
-        }
-        return goTable(id);
     }
 
     /**
@@ -396,7 +403,7 @@ public class PivotTableController extends AuthController {
     }
 
     /**
-     * Filters the data of the pivot table
+     * Add filter to the pivot table
      * @param id of the table
      * @return HTTP redirect to new table
      */
@@ -423,7 +430,7 @@ public class PivotTableController extends AuthController {
     }
 
     /**
-     * Deletes the filter
+     * Delete a filter
      * @param id of the table
      * @param filterID id of the filter
      * @return HTTP redirect to the new table
@@ -462,7 +469,11 @@ public class PivotTableController extends AuthController {
         }
     }
 
-
+    /**
+     * Method to display info about the pivot table
+     * @param id of the table
+     * @return HTTP redirect to the page of the table
+     */
     public Result infoPivotTable(Long id){
         Form<FieldForm> pageForm = formFactory.form(FieldForm.class);
         Form<FieldForm> rowForm = formFactory.form(FieldForm.class);
@@ -484,6 +495,11 @@ public class PivotTableController extends AuthController {
         }
     }
 
+    /**
+     * Method to display the sharing page
+     * @param id of the table
+     * @return HTTP redirect to the page of the table
+     */
     public Result sharePivotTable(Long id){
         Form<FieldForm> pageForm = formFactory.form(FieldForm.class);
         Form<FieldForm> rowForm = formFactory.form(FieldForm.class);
@@ -505,6 +521,11 @@ public class PivotTableController extends AuthController {
         }
     }
 
+    /**
+     * Method to add a share permission
+     * @param id of the table
+     * @return HTTP redirect to the page of the table
+     */
     public Result addSharePermission(Long id){
         Form<PermissionForm> permissionForm = formFactory.form(PermissionForm.class).bindFromRequest();
         if (!permissionForm.hasErrors()) {
@@ -529,6 +550,11 @@ public class PivotTableController extends AuthController {
         return redirect(controllers.routes.PivotTableController.sharePivotTable(id));
     }
 
+    /**
+     * Method to delete a share permission
+     * @param id of the table
+     * @return HTTP redirect to the page of the table
+     */
     public Result deleteSharePermission(Long id, Long permissionID){
         SharePermission permission = SharePermission.find.byId(permissionID);
 
@@ -543,6 +569,7 @@ public class PivotTableController extends AuthController {
     }
 
     /**
+     * Provides the html to be printed on the display table page
      * Checks to make sure contents is of certain size
      * @param id of the table
      * @return Return HTTP status
@@ -564,7 +591,7 @@ public class PivotTableController extends AuthController {
 
     /**
      * Get the options for the different fields
-     * @param fieldID
+     * @param fieldID id of the field
      * @return HTTP status
      */
     public Result fieldOptions(Long fieldID){
@@ -583,6 +610,11 @@ public class PivotTableController extends AuthController {
 
     }
 
+    /**
+     * Method to export the table to an Excel file
+     * @param tableID of the table
+     * @return HTTP redirect to the page of the table
+     */
     public Result excelExport(Long tableID){
         PivotTable table = PivotTable.find.byId(tableID);
         if(table != null) {
@@ -593,6 +625,11 @@ public class PivotTableController extends AuthController {
         return ok();
     }
 
+    /**
+     * Method to export the table to a PDF file
+     * @param tableID of the table
+     * @return HTTP redirect to the page of the table
+     */
     public Result pdfExport(Long tableID){
         PivotTable table = PivotTable.find.byId(tableID);
         if(table != null) {

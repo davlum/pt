@@ -5,7 +5,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Class to manipulate the pivot table.
+ * Class to manipulate the pivot table
+ * and return an HTML table
  */
 public class PivotTableHandler extends RenderStrategy {
 
@@ -13,9 +14,11 @@ public class PivotTableHandler extends RenderStrategy {
         super(pivotTableData, pivotTable);
     }
 
-    /* *
-    * Html That will be used to display the generated pivot table
-    * */
+    /**
+     * Method (and sub-methods)
+     * that are be used to display the generated pivot table
+     * * for the selected page in HTML format
+     * */
     public String tableHtml(String pageName){
         StringBuilder pageHtml = new StringBuilder();
         rand = 0;
@@ -44,12 +47,10 @@ public class PivotTableHandler extends RenderStrategy {
     }
 
     /**
-     * Process the page and returns a string of HTML as a result
+     * Process the page and return a string of HTML as a result
      * @return string of HTML
      */
-
     private String processPage(String page){
-        //System.out.println("Start: " + new Date());
         StringBuilder tableHtml = new StringBuilder();
         tableHtml.append("<table id=\"\" class=\"table\"><thead>");
         Map<Integer, Long> colspanPerLevel = cellspanPerLevel("column");
@@ -112,11 +113,14 @@ public class PivotTableHandler extends RenderStrategy {
         tableHtml.append("</tr>");
         tableHtml.append("</tbody></table>");
 
-        //System.out.println("End: " + tableHtml.length() + " " + new Date());
-
         return tableHtml.toString();
     }
 
+    /**
+     * Generate header cells
+     * @param repeat nb of times the process must be repeated
+     * @return generated string
+     */
     private String valueTitle(Long repeat){
         StringBuilder returnVal = new StringBuilder();
         StringBuilder repeatPattern = new StringBuilder();
@@ -145,6 +149,9 @@ public class PivotTableHandler extends RenderStrategy {
         return returnVal.toString();
     }
 
+    /**
+     * Loop through the rows as necessary
+     */
     private String loopRows(List<Map<String, String>> restrictedData, int level, Map<Integer, Long> rowspanPerLevel) {
         StringBuilder returnVal = new StringBuilder();
         List<Map<String, String>> workData;
@@ -178,6 +185,9 @@ public class PivotTableHandler extends RenderStrategy {
         return returnVal.toString();
     }
 
+    /**
+     * Loop through the columns as necessary
+     */
     private String loopCols(List<Map<String, String>> restrictedData, int level) {
         StringBuilder returnVal = new StringBuilder();
         if(pivotTable.getPivotColumnList().size() > 0) {
@@ -201,6 +211,9 @@ public class PivotTableHandler extends RenderStrategy {
         return returnVal.toString();
     }
 
+    /**
+     * Print the computed values
+     */
     private String printValues(List<Map<String, String>> restrictedData){
         StringBuilder returnVal = new StringBuilder();
         for (PivotValue pivotValue : pivotTable.getValuesList()) {

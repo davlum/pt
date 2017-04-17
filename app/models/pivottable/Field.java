@@ -31,6 +31,9 @@ public class Field extends Model {
         this.tableName = tableName;
     }
 
+    /**
+     * Name as it is displayed in the application
+     */
     public String qualifiedName() {
         return (tableName != null ? ("\"" + tableName + "\"" + ".") : "") + "\"" + fieldName + "\"";
     }

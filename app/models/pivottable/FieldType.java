@@ -33,6 +33,10 @@ public enum FieldType {
         }
     }
 
+    /**
+     * Based on the different values of a certain field
+     * Decide which type best corresponds to it
+     */
     public static FieldType decide(List<String> list){
         Map<FieldType, List<FieldType>> types = list.stream().filter(Objects::nonNull).map(s -> {
             try {

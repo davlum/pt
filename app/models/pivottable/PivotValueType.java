@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.List;
 
 /**
- * The possible types a pivot value can inhabit.
+ * The possible types of a pivot value (count, sum, etc.)
  */
 @Entity
 public class PivotValueType extends Model {

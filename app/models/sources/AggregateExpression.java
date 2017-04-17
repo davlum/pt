@@ -3,6 +3,7 @@ package models.sources;
 /**
  * An object representing possible aggregate expressions
  * the user would use.
+ * (implementation incomplete)
  */
 class AggregateExpression {
     private AggregateFunction func;
