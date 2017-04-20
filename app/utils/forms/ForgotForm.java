@@ -1,5 +1,8 @@
 package utils.forms;
 
+/**
+ * Forgot password form
+ */
 public class ForgotForm {
 
     private String inputEmail;

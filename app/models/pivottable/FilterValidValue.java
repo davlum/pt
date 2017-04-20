@@ -6,6 +6,10 @@ import com.avaje.ebean.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * When a filter is applied, this class represents the values that are considered to be valid
+ */
+
 @Entity
 public class FilterValidValue extends Model {
 

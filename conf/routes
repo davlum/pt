@@ -2,14 +2,19 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# An example controller showing a sample home page
+# Login module routes
 GET                 /                                           controllers.LoginController.index
 POST                /                                           controllers.LoginController.login
 GET                 /logout                                     controllers.LoginController.logout
 
+# Forgot and reset password routes
 GET                 /forgot-password                            controllers.LoginController.forgotPassword
 POST                /forgot-password                            controllers.LoginController.forgotSubmit
 
+GET                 /reset/:token                               controllers.LoginController.changePassword(token)
+POST                /reset/:token                               controllers.LoginController.changePasswordSubmit(token)
+
+# Connections (SQL and CSV) management routes
 GET                 /connections                                controllers.ConnectionController.index
 GET                 /connections/add-sql                        controllers.ConnectionController.index
 GET                 /connections/add-csv                        controllers.ConnectionController.indexCSV
@@ -24,6 +29,7 @@ GET                 /connections/delete-csv/:id                 controllers.Conn
 GET                 /connections/sql/:id/tables                 controllers.ConnectionController.getJsonReflectedTables(id:Long)
 GET                 /connections/sql/table/:id/columns          controllers.ConnectionController.getJsonReflectedColumns(id:Long)
 
+# Sources (SQL and CSV) management routes
 GET                 /sources                                    controllers.SourceController.index
 GET                 /sources/add-sql                            controllers.SourceController.index
 GET                 /sources/add-csv                            controllers.SourceController.indexCSV
@@ -35,15 +41,20 @@ POST                /sources/update-sql/:id                     controllers.Sour
 POST                /sources/update-csv/:id                     controllers.SourceController.updateCSVSource(id:Long)
 GET                 /sources/delete-sql/:id                     controllers.SourceController.deleteSQLSource(id:Long)
 GET                 /sources/delete-csv/:id                     controllers.SourceController.deleteCSVSource(id:Long)
+#POST                /sources/:id/dimension/:table               controllers.SourceController.sqlDimensionTableLine(id:Long, table)
 
+# Pivot Tables (SQL and CSV) management routes
 GET                 /pivot-tables                               controllers.PivotTableController.index
 GET                 /pivot-tables/add-sql                       controllers.PivotTableController.index
 GET                 /pivot-tables/add-csv                       controllers.PivotTableController.indexCSV
 POST                /pivot-tables/add-sql                       controllers.PivotTableController.addSQLTable()
 POST                /pivot-tables/add-csv                       controllers.PivotTableController.addCSVTable()
 GET                 /pivot-tables/:id                           controllers.PivotTableController.getTable(id:Long)
+GET                 /pivot-tables/:id/info                      controllers.PivotTableController.infoPivotTable(id:Long)
+GET                 /pivot-tables/:id/export                    controllers.PivotTableController.excelExport(id:Long)
+GET                 /pivot-tables/:id/pdf                       controllers.PivotTableController.pdfExport(id:Long)
 GET                 /pivot-tables/:id/results                   controllers.PivotTableController.displayPivotTable(id:Long)
-GET                 /pivot-tables/:id/contents                  controllers.PivotTableController.contents(id:Long)
+GET                 /pivot-tables/:id/contents/:page            controllers.PivotTableController.contents(id:Long, page:String)
 GET                 /pivot-tables/:id/delete                    controllers.PivotTableController.deleteTable(id:Long)
 POST                /pivot-tables/:id/add-page                  controllers.PivotTableController.addPage(id:Long)
 GET                 /pivot-tables/:id/delete-page/:pageID       controllers.PivotTableController.deletePage(id:Long, pageID:Long)
@@ -56,15 +67,21 @@ GET                 /pivot-tables/:id/delete-value/:valID       controllers.Pivo
 POST                /pivot-tables/:id/add-filter                controllers.PivotTableController.addFilter(id:Long)
 GET                 /pivot-tables/:id/delete-filter/:filterID   controllers.PivotTableController.deleteFilter(id:Long, filterID:Long)
 
+GET                 /pivot-tables/:id/share                     controllers.PivotTableController.sharePivotTable(id:Long)
+POST                /pivot-tables/:id/share/add                 controllers.PivotTableController.addSharePermission(id:Long)
+GET                 /pivot-tables/:id/share/delete/:perm        controllers.PivotTableController.deleteSharePermission(id:Long, perm:Long)
+
+POST                /pivot-tables/:id/update-table              controllers.PivotTableController.updateTable(id: Long)
+
+
 GET                 /pivot-tables/:fieldID/options              controllers.PivotTableController.fieldOptions(fieldID:Long)
 
-GET /test   controllers.PivotTable.index
-
+# User Management routes
 GET                 /users                                      controllers.UsersController.users
-#GET                 /users/add                                  controllers.UsersController.add
-#POST                /users/add                                  controllers.UsersController.add()
-#GET                 /users/:id                                  controllers.UsersController.get(id:Long)
-#POST                /users/:id                                  controllers.UsersController.save(id:Long)
+POST                /users/add                                  controllers.UsersController.addUser()
+GET                 /users/:id                                  controllers.UsersController.getUser(id:Long)
+POST                /users/:id/update                           controllers.UsersController.updateUser(id:Long)
+GET                 /users/:id/delete                           controllers.UsersController.deleteUser(id:Long)
 
 
 # Map static resources from the /public folder to the /assets URL path

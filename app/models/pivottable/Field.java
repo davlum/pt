@@ -6,6 +6,9 @@ import com.avaje.ebean.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * This class represents a field in the pivot table data
+ */
 @Entity
 public class Field extends Model {
 
@@ -28,6 +31,9 @@ public class Field extends Model {
         this.tableName = tableName;
     }
 
+    /**
+     * Name as it is displayed in the application
+     */
     public String qualifiedName() {
         return (tableName != null ? ("\"" + tableName + "\"" + ".") : "") + "\"" + fieldName + "\"";
     }
@@ -48,6 +54,9 @@ public class Field extends Model {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<PivotValue> pivotValues;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Filter> filters;
 
     public static Model.Finder<Long, Field> find = new Model.Finder<>(Field.class);
 
@@ -117,5 +126,17 @@ public class Field extends Model {
 
     public String getTableName() {
         return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    public List<Filter> getFilters() {
+        return filters;
+    }
+
+    public void setFilters(List<Filter> filters) {
+        this.filters = filters;
     }
 }

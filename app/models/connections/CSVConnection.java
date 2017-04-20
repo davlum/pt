@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Persistent class representing CSV connection.
+ */
 @Entity
 public class CSVConnection extends Model {
 
@@ -37,11 +40,17 @@ public class CSVConnection extends Model {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<CSVSourceLink> sourceLinks;
 
+    /**
+     * Constructor for a CSV connection.
+     */
     public CSVConnection(String connectionName, String connectionDescription) {
         this.connectName = connectionName;
         this.connectDescription = connectionDescription;
     }
 
+    /**
+     * Update a CSV connection.
+     */
     public void updateCSVConnection(CSVConnection conn)
     {
         this.setConnectName(conn.getConnectName());
@@ -52,6 +61,9 @@ public class CSVConnection extends Model {
         this.update();
     }
 
+    /**
+     * Get all the data as a list of maps
+     */
     public List<Map<String, String>> getMapList(){
         try {
             File file = new File(getConnectionPath());
@@ -69,7 +81,10 @@ public class CSVConnection extends Model {
                     int i = 0;
                     Map<String, String> map = new HashMap<>();
                     for (String s : line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)")) {
-                        map.put(keys[i], s);
+                        if (s.startsWith("\"") && s.endsWith("\"")) s = s.substring(1, s.length() - 1);
+                        String key = keys[i];
+                        if (key.startsWith("\"") && key.endsWith("\"")) key = key.substring(1, key.length() - 1);
+                        map.put(key, s);
                         i++;
                     }
                     allValues.add(map);

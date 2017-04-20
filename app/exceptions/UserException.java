@@ -1,6 +1,9 @@
 package exceptions;
 
-public class UserException  extends Exception {
+/**
+ * Exception Class for User Authentication
+ */
+public class UserException extends Exception {
 
     public UserException(String message) {
         super(message);

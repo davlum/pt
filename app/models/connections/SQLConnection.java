@@ -10,6 +10,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Persistent class representing the database connections.
+ */
 @Entity
 public class SQLConnection extends Model {
     @Id
@@ -44,7 +47,7 @@ public class SQLConnection extends Model {
     @Constraints.Required
     private String connectionDBName;
 
-    @OneToMany(mappedBy = "connection")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<SQLSource> sources;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -128,6 +131,9 @@ public class SQLConnection extends Model {
         this.tableMetadataList = tableMetadataList;
     }
 
+    /**
+     * Constructor for an SQL connection
+     */
     public SQLConnection(String name, String driver, String desc, String host, Integer port,
                          String db, String user, String password)
     {
@@ -141,6 +147,9 @@ public class SQLConnection extends Model {
         connectionDriver = driver;
     }
 
+    /**
+     * Update an SQL connection.
+     */
     public void updateSQLConnection(SQLConnection conn, List<TableMetadata> metadataList)
     {
         this.setConnectionName(conn.getConnectionName());
@@ -161,6 +170,7 @@ public class SQLConnection extends Model {
     {
         return "jdbc:" + connectionDriver + "://" + connectionHost + ":" + connectionPort + "/" + connectionDBName;
     }
+
 
     public Connection connect() throws SQLException {
         return DriverManager.getConnection(

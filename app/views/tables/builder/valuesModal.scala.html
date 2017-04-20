@@ -23,7 +23,7 @@
 
                     @select(
                         field = valueForm("fieldID"),
-                        options = pivotTable.availableFields.map(field => field.getId.toString -> field.getFieldName),
+                        options = pivotTable.availableFieldsValues.map(field => field.getId.toString -> field.getFieldName),
                         '_label -> "Field",
                         '_default -> "Please Select a Field",
                         '_showConstraints->false,

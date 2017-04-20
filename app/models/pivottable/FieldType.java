@@ -9,6 +9,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * This enumerated type is for the different types the fields
+ * of the pivot table can be.
+ */
 public enum FieldType {
     String("String"), Boolean("Boolean"), Long("Long"),
     Date("Date"), Time("Time"), DateTime("DateTime"), Double("Double");
@@ -29,6 +33,10 @@ public enum FieldType {
         }
     }
 
+    /**
+     * Based on the different values of a certain field
+     * Decide which type best corresponds to it
+     */
     public static FieldType decide(List<String> list){
         Map<FieldType, List<FieldType>> types = list.stream().filter(Objects::nonNull).map(s -> {
             try {

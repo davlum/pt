@@ -5,6 +5,10 @@ import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Security;
 
+/**
+ * Security class that checks the
+ * session of a user.
+ */
 public class Secured extends Security.Authenticator {
 
     @Override

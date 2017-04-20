@@ -1,0 +1,19 @@
+@import utils.SidebarElement
+@import views.html.components.sidebarGroup
+
+@(userList: java.util.List[SidebarElement])
+
+<div>
+    <h4>
+        General
+    </h4>
+    <ul class="nav nav-sidebar">
+        <li @if(Controller.request.path.equals(controllers.routes.UsersController.users.url)){class="active"}>
+        <a href="@controllers.routes.UsersController.users">Users Home</a>
+        </li>
+    </ul>
+</div>
+<hr>
+<div>
+@sidebarGroup(userList, "User List")
+</div>

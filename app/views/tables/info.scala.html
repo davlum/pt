@@ -1,0 +1,18 @@
+@import models.pivottable.PivotTable
+
+@(pivotTable: PivotTable)
+
+<div id="info" class="tab-pane fade in active">
+  <label for="tableName" class="mrgT10">Table Name</label>
+  <input type="text" id="tableName" name="tableName" class="form-control" value="@pivotTable.getName" readonly>
+
+  <label for="tableDesc" class="mrgT10">Description</label>
+  <input type="text" id="tableDesc" name="tableDesc" class="form-control" value="@pivotTable.getDescription" readonly>
+
+  <label for="source" class="mrgT10">Source</label>
+  @if(pivotTable.getCsvSource == null) {
+    <input type="text" id="source" name="source" class="form-control" value="@pivotTable.getSqlSource.getSourceName" readonly>
+  } else {
+    <input type="text" id="source" name="source" class="form-control" value="@pivotTable.getCsvSource.getSourceName" readonly>
+}
+</div>

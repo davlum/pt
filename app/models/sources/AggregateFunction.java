@@ -1,7 +1,8 @@
 package models.sources;
 
 /**
- * Created by hal on 2017-02-21.
+ * An enumeration type of the different possible aggregate functions
+ * (implementation incomplete)
  */
 public enum AggregateFunction {
     SUM("SUM"), MEAN("MEAN"), MIN("MIN"), MAX("MAX"),

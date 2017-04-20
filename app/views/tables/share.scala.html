@@ -1,0 +1,72 @@
+@import helper._
+@import models.users.User
+@import models.pivottable.PivotTable
+@import utils.forms.PermissionForm
+
+@(currentUser : User, pivotTable: PivotTable, permissionForm : play.data.Form[PermissionForm])
+
+<div id="display" class="tab-pane fade in active">
+    <h3>Table Owner</h3>
+    <h4>@pivotTable.getOwner.getFullName (@pivotTable.getOwner.getEmail)</h4>
+
+
+    <h3>Shared With:</h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="center">Name</th>
+            <th class="center">Permissions</th>
+            <th class="center">Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+            @if(pivotTable.getSharedList.size > 0) {
+                @for(permission <- pivotTable.getSharedList) {
+                    <tr>
+                        <td class="center">@permission.getUser.getFullName</td>
+                        <td class="center">@permission.getPermission</td>
+                        <td class="center">
+                            <a class="red" href="@controllers.routes.PivotTableController.deleteSharePermission(pivotTable.getId, permission.getId)">
+                                <i class="fa fa-times danger mrgT3"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            } else {
+                <tr>
+                    <td class="center" colspan="3">Nothing To Show</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @helper.form(controllers.routes.PivotTableController.addSharePermission(pivotTable.getId), 'enctype -> "multipart/form-data", 'class -> "rowForm",  'id -> "rowForm"){
+        @CSRF.formField
+
+            @select(
+                field = permissionForm("userID"),
+                options = User.allBut(currentUser, pivotTable.getSharedList).map(user => user.getId.toString -> user.getFullName),
+                '_label -> "Share With:",
+                '_default -> "Please Select a User",
+                '_showConstraints->false,
+                'rows->3, 'style-> "width:100%; resize:none;",
+                'class-> "form-control",
+                'required -> true
+            )
+
+            @select(
+                field = permissionForm("permission"),
+                options = Seq("View Only" -> "View Only",
+                            "View & Edit" -> "View & Edit"),
+                '_label -> "Permissions",
+                '_showConstraints->false,
+                'rows->3, 'style-> "width:100%; resize:none;",
+                'class-> "form-control",
+                'required -> true
+            )
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    }
+
+
+</div>

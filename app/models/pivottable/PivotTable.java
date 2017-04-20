@@ -4,6 +4,7 @@ import com.avaje.ebean.Model;
 import com.avaje.ebean.annotation.JsonIgnore;
 import models.sources.CSVSource;
 import models.sources.SQLSource;
+import models.users.User;
 import play.data.validation.Constraints;
 import utils.forms.CSVTableForm;
 import utils.forms.SQLTableForm;
@@ -12,12 +13,27 @@ import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * The pivot table class
+ * It is based on a composite pattern given that
+ * this class is based on a number of different components that combined together
+ * define the schema to use for rendering
+ */
+
 @Entity
 public class PivotTable extends Model {
 
     @Id
     @GeneratedValue
     private Long id;
+
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User owner;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<SharePermission> sharedList = new ArrayList<>();
 
     @Column(unique = true)
     @Constraints.Required
@@ -56,45 +72,49 @@ public class PivotTable extends Model {
 
     public static Model.Finder<Long, PivotTable> find = new Model.Finder<>(PivotTable.class);
 
-    public static PivotTable pivotTable(){
-        return find.byId(1L);
-    }
-
-    public PivotTable(CSVTableForm tableForm){
+    /**
+     * Constructor for a CSV based pivot table
+     */
+    public PivotTable(CSVTableForm tableForm, User owner){
         CSVSource source = CSVSource.find.byId(tableForm.getCsvSourceID());
         this.setCsvSource(source);
         this.setName(tableForm.getCsvTableName());
         this.setDescription(tableForm.getCsvTableDescription());
+        this.owner = owner;
 
         this.fieldList = new ArrayList<>();
 
         if (source != null) {
             List<Map<String, String>> maps = source.getMapList();
-            if (maps.size() > 0){
-                maps.get(0).keySet().forEach(key -> {
-                    Field field = new Field();
-                    field.setFieldName(key);
-                    field.setFieldType(FieldType.decide(maps.stream().map(l -> l.get(key)).collect(Collectors.toList())));
-                    fieldList.add(field);
-                });
+                if (maps.size() > 0) {
+                    maps.get(0).keySet().forEach(key -> {
+                        Field field = new Field();
+                        field.setFieldName(key);
+                        field.setFieldType(FieldType.decide(maps.stream().map(l -> l.get(key)).collect(Collectors.toList())));
+                        fieldList.add(field);
+                    });
             }
         }
 
         this.save();
     }
 
-    public PivotTable(SQLTableForm tableForm){
+    /**
+     * Constructor for an SQL based pivot table
+     */
+    public PivotTable(SQLTableForm tableForm, User owner){
         SQLSource source = SQLSource.find.byId(tableForm.getSqlSourceID());
         this.setSqlSource(source);
         this.setName(tableForm.getSqlTableName());
         this.setDescription(tableForm.getSqlTableDescription());
         if(source != null) this.setFieldList(source.getFieldList());
+        this.owner = owner;
         this.save();
     }
 
     public List<Map<String, String>> mapList(){
         if (csvSource != null) return csvSource.getMapList();
-        return sqlSource.getMapList();
+        return sqlSource.getMapList(getFieldList());
     }
 
     public void addPage(long fieldID){
@@ -173,6 +193,14 @@ public class PivotTable extends Model {
         ).collect(Collectors.toList());
     }
 
+    public List<Field> availableFieldsValues(){
+        return fieldList.stream().filter(field ->
+                !pivotPageList.stream().map(PivotPage::getField).collect(Collectors.toList()).contains(field)
+                        && !pivotRowList.stream().map(PivotRow::getField).collect(Collectors.toList()).contains(field)
+                        && !pivotColumnList.stream().map(PivotColumn::getField).collect(Collectors.toList()).contains(field)
+        ).collect(Collectors.toList());
+    }
+
     public enum Dimension {
         ROW, COLUMN, PAGE
     }
@@ -188,6 +216,16 @@ public class PivotTable extends Model {
             default:
                 return null;
         }
+    }
+
+    public Boolean view(User user){
+        return user.equals(getOwner()) || getSharedList().stream().map(SharePermission::getUser).anyMatch(u -> u.equals(user));
+    }
+
+    public Boolean edit(User user){
+        return user.equals(getOwner()) ||
+                getSharedList().stream().filter(p -> p.getPermission().equals("View & Edit"))
+                        .map(SharePermission::getUser).anyMatch(u -> u.equals(user));
     }
 
     public Long getId() {
@@ -276,5 +314,21 @@ public class PivotTable extends Model {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public List<SharePermission> getSharedList() {
+        return sharedList;
+    }
+
+    public void setSharedList(List<SharePermission> sharedList) {
+        this.sharedList = sharedList;
     }
 }

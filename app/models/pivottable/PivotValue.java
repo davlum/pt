@@ -5,6 +5,9 @@ import com.avaje.ebean.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
+/**
+ * A value of the pivot table (sum, mean, etc.)
+ */
 @Entity
 public class PivotValue extends Model {
 
@@ -27,6 +30,9 @@ public class PivotValue extends Model {
     @JsonIgnore
     private PivotValueType pivotValueType;
 
+    /**
+     * Persistent class representing a CSV connection.
+     */
     public String displayTitle(){
         return pivotValueType.getDisplayName() + " - " + field.getFieldName();
     }

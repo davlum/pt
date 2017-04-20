@@ -1,0 +1,40 @@
+@import helper._
+@import models.users.User
+@import utils.forms.UserForm
+
+@import views.html.components.main
+@import views.html.components.sidebar
+@import views.html.users.sidebarContent
+@import utils.SidebarElement
+
+@(user: User, userForm: play.data.Form[UserForm],
+        sidebarUsers: java.util.List[SidebarElement])
+
+
+@main(user)(sidebar(sidebarContent(sidebarUsers))) {
+  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    @if(flash.containsKey("success")) {
+      <div class="well">
+        <div id="success-message" class="text-success">
+        @Controller.flash.get("success")
+        </div>
+      </div>
+    }
+    @if(flash.containsKey("error")) {
+      <div class="well">
+        <div id="error-message" class="text-danger">
+        @Controller.flash.get("error")
+        </div>
+      </div>
+    }
+    <div>
+      <div id="edit-user">
+      @form(action = controllers.routes.UsersController.updateUser(userForm.get().getId), 'class -> "form-horizontal"
+        , 'enctype -> "multipart/form-data") {
+        @CSRF.formField
+        @views.html.users.userFieldset(userForm, "Edit User", true)
+      }
+      </div>
+    </div>
+  </div>
+}
